@@ -1,0 +1,390 @@
+'
+' mei 2013 setfocustodwg en PostCommandPrompt toegevoegd aan meerdere routines om betere puntvragen te krijgen
+' mei 2013 BlokkenOpNaam en ElementenMetXref toegevoegd.
+' jan 2014 functie TekeningElement(en) toegevoegd om objectid(collection) om te zetten naar dbobject(collection)
+
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.ApplicationServices
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports Autodesk.AutoCAD.Geometry
+Imports Autodesk.AutoCAD.EditorInput
+
+
+Public Module Opvragen
+
+    <CommandMethod("Cursus_Opvragen_Test")> Public Sub Test()
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim Vraag = New PromptKeywordOptions("")
+        Vraag.Message = vbLf & "Maak uw keuze:  "
+        Vraag.Keywords.Add("Lijn")
+        Vraag.Keywords.Add("Cirkel")
+        Vraag.Keywords.Add("Tekst")
+        Vraag.Keywords.Add("Kleur")
+
+        Vraag.AllowNone = False
+
+        Dim Antwoord = doc.Editor.GetKeywords(Vraag)
+
+        Select Case Antwoord.StringResult
+            Case "Lijn"
+                Application.ShowAlertDialog("U heeft de lijn gekozen.")
+                Dim x1, y1, x2, y2 As Double
+                If Opvragen.EerstePunt("Startpunt: ", x1, y1) Then
+                    If Opvragen.TweedePunt("Eindpunt", x1, y1, x2, y2) Then
+                        Toevoegen.Lijn(x1, y1, x2, y2)
+                    End If
+                End If
+
+            Case "Cirkel"
+                Application.ShowAlertDialog("U heeft de cirkel gekozen.")
+                Dim x1, y1, r As Double
+                If Opvragen.EerstePunt("Middelpunt: ", x1, y1) Then
+                    If Opvragen.Afstand("Radius", x1, y1, r) Then
+                        Toevoegen.Cirkel(x1, y1, r)
+                    End If
+                End If
+            Case "Tekst"
+
+                Application.ShowAlertDialog("U heeft de tekst gekozen.")
+                Dim x1, y1 As Double
+                Dim invoer As String = ""
+                If Opvragen.EerstePunt("Startpunt: ", x1, y1) Then
+                    If Opvragen.Tekst("Geef tekst", invoer) Then
+                        Toevoegen.Tekst(invoer, x1, y1, 10)
+                    End If
+                End If
+
+            Case "Kleur"
+                Application.ShowAlertDialog("U heeft de kleur gekozen.")
+                Dim ss, ss1 As New ObjectIdCollection
+                If Opvragen.Elementen(ss) Then
+                    Toevoegen.Kleur(ss, 255)
+                    Toevoegen.BlokDefinitie("Blok", ss)
+                    Toevoegen.BlokReferentie(0, 0, "Blok")
+                    Opvragen.AlleBlokken(ss1)
+                    Toevoegen.Kleur(ss1, 2)
+
+                End If
+
+        End Select
+
+    End Sub
+
+    ''' <summary>
+    ''' Voorbeeld van een algemene veranderfunctie wijs eerst een cirkel aan, dan meerdere lijnen
+    ''' </summary>
+    ''' <remarks></remarks>
+    ''' 
+    <CommandMethod("Cursus_Opvragen_Test1")> Public Sub Test1()
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim id = New ObjectId
+        If Opvragen.Element_ID("kies", id) Then
+            Dim temp = Opvragen.TekeningElement(id)
+
+            If TypeOf temp Is Circle Then
+                Dim Cirkel = CType(temp, Circle)
+                Cirkel.Radius = 100
+                Toevoegen.Element(Cirkel)
+            Else
+                Toevoegen.Element(temp)
+            End If
+        End If
+
+        Dim ids = New ObjectIdCollection
+        Dim elementen As DBObjectCollection
+        If Opvragen.Elementen(ids) Then
+            elementen = Opvragen.TekeningElementen(ids)
+            For Each ding In elementen
+                ding.colorindex = 1
+            Next
+            Toevoegen.Elementen(elementen)
+        End If
+    End Sub
+    Function EerstePunt(ByVal Melding As String, ByRef x1 As Double, ByRef y1 As Double) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim Vraag = New PromptPointOptions("")
+        Vraag.Message = vbLf & Melding
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+
+        Dim Antwoord = doc.Editor.GetPoint(Vraag)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            EerstePunt = True
+            x1 = Antwoord.Value(0)
+            y1 = Antwoord.Value(1)
+        Else
+            EerstePunt = False
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+    Function TweedePunt(ByVal Melding As String, ByVal x1 As Double, ByVal y1 As Double, ByRef x2 As Double, ByRef y2 As Double) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim Vraag = New PromptPointOptions("")
+        Vraag.Message = vbLf & Melding
+        Vraag.UseBasePoint = True
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+
+        Vraag.BasePoint = New Point3d(x1, y1, 0)
+
+        Dim Antwoord = doc.Editor.GetPoint(Vraag)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            TweedePunt = True
+            x2 = Antwoord.Value(0)
+            y2 = Antwoord.Value(1)
+        Else
+            TweedePunt = False
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+
+    Function Afstand(ByVal Melding As String, ByVal x1 As Double, ByVal y1 As Double, ByRef r As Double) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim Vraag = New PromptDistanceOptions("")
+        Vraag.Message = vbLf & Melding
+        Vraag.UseBasePoint = True
+        Vraag.BasePoint = New Point3d(x1, y1, 0)
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+
+        Dim Antwoord = doc.Editor.GetDistance(Vraag)
+        Dim a = System.Math.PI
+        If Antwoord.Status = PromptStatus.OK Then
+            Afstand = True
+            r = Antwoord.Value
+        Else
+            Afstand = False
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+    Function Tekst(ByVal Melding As String, ByRef Waarde As String) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim Vraag = New PromptStringOptions("")
+        Vraag.AllowSpaces = True
+        Vraag.Message = vbLf & Melding
+
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+        Dim Antwoord = doc.Editor.GetString(Vraag)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Tekst = True
+            Waarde = Antwoord.StringResult
+        Else
+            Tekst = False
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+
+    Function Elementen(ByRef Col As ObjectIdCollection) As Boolean
+
+        Dim vraag = New PromptSelectionOptions
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+
+        Dim Antwoord = doc.Editor.GetSelection
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Dim SelectieSet = Antwoord.Value
+            Col = New ObjectIdCollection(SelectieSet.GetObjectIds)
+            Elementen = True
+        Else
+            Elementen = False
+        End If
+    End Function
+    Function Element(ByVal Melding As String) As ObjectId
+
+        Dim Vraag = New PromptEntityOptions("")
+        Vraag.Message = vbLf & Melding
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+        Dim Antwoord = doc.Editor.GetEntity(Vraag)
+        If Antwoord.Status = PromptStatus.OK Then
+            Element = Antwoord.ObjectId
+        Else
+            Element = Nothing
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+    ''' <summary>
+    ''' Functie voor opvragen van objectId
+    ''' True als opvragen goed gaat, false als opvragen fout gaat.
+    ''' </summary>
+    ''' <param name="Melding"></param>
+    ''' <param name="ID"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function Element_ID(ByVal Melding As String, ByRef ID As ObjectId) As Boolean
+
+        Dim Vraag = New PromptEntityOptions("")
+        Vraag.Message = vbLf & Melding
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+        Dim Antwoord = doc.Editor.GetEntity(Vraag)
+        If Antwoord.Status = PromptStatus.OK Then
+            ID = Antwoord.ObjectId
+            Element_ID = True
+        Else
+            ID = Nothing
+            Element_ID = False
+        End If
+        Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
+    End Function
+    Function AlleBlokken(ByRef Col As ObjectIdCollection) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim filter(1) As TypedValue
+        filter(0) = New TypedValue(DxfCode.Start, "Insert")
+        filter(1) = New TypedValue(DxfCode.LayerName, "0")
+
+        Dim selectiefilter As New SelectionFilter(filter)
+
+        Dim Antwoord = doc.Editor.SelectAll(selectiefilter)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Dim SelectieSet = Antwoord.Value
+            Col = New ObjectIdCollection(SelectieSet.GetObjectIds)
+            AlleBlokken = True
+        Else
+            AlleBlokken = False
+        End If
+    End Function
+
+
+    Function BlokkenOpNaam(ByVal Naam As String, ByRef Col As ObjectIdCollection) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim filter(1) As TypedValue
+        filter(0) = New TypedValue(DxfCode.Start, "INSERT")
+        filter(1) = New TypedValue(DxfCode.BlockName, Naam)
+
+        Dim selectiefilter As New SelectionFilter(filter)
+
+        Dim Antwoord = doc.Editor.SelectAll(selectiefilter)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Dim SelectieSet = Antwoord.Value
+            Col = New ObjectIdCollection(SelectieSet.GetObjectIds)
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+    Function ElementenMetXdata(ByVal Toepassing As String, ByRef Col As ObjectIdCollection) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim filter(0) As TypedValue
+        filter(0) = New TypedValue(1001, Toepassing)
+
+
+        Dim selectiefilter As New SelectionFilter(filter)
+
+        Dim Antwoord = doc.Editor.SelectAll(selectiefilter)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Dim SelectieSet = Antwoord.Value
+            Col = New ObjectIdCollection(SelectieSet.GetObjectIds)
+            Return True
+        Else
+            Return False
+        End If
+    End Function
+
+
+    <CommandMethod("Cursus_Opvragen_TestMaat")> Public Sub testMaat()
+        Dim m As New ObjectIdCollection
+
+        AlleGewijzigdeMaten(m)
+        Toevoegen.Kleur(m, 1)
+    End Sub
+    Function AlleGewijzigdeMaten(ByRef Col As ObjectIdCollection) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim filter(3) As TypedValue
+        filter(0) = New TypedValue(DxfCode.Start, "DIMENSION")
+        filter(1) = New TypedValue(DxfCode.Operator, "<NOT")
+        filter(2) = New TypedValue(DxfCode.Text, "")
+        filter(3) = New TypedValue(DxfCode.Operator, "NOT>")
+
+
+        Dim selectiefilter As New SelectionFilter(filter)
+
+        Dim Antwoord = doc.Editor.SelectAll(selectiefilter)
+
+        If Antwoord.Status = PromptStatus.OK Then
+            Dim SelectieSet = Antwoord.Value
+            Col = New ObjectIdCollection(SelectieSet.GetObjectIds)
+            AlleGewijzigdeMaten = True
+        Else
+            AlleGewijzigdeMaten = False
+        End If
+    End Function
+    ''' <summary>
+    ''' Maakt een element aan op basis van een id en verwijdert het origineel
+    ''' </summary>
+    ''' <param name="objId"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function TekeningElement(ByVal objId As ObjectId) As DBObject
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim temp = transactie.GetObject(objId, OpenMode.ForWrite)
+                    TekeningElement = temp.Clone()
+                    temp.Erase()
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout met functie TekeningElement : " & vbCrLf & ex.Message)
+                    TekeningElement = Nothing
+                End Try
+            End Using
+        End Using
+
+    End Function
+    ''' <summary>
+    ''' Maakt objecten aan die horen bij een verzameling objectId's en verwijdert de originelen.  
+    ''' </summary>
+    ''' <param name="objIds"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function TekeningElementen(objIds As ObjectIdCollection) As DBObjectCollection
+        TekeningElementen = New DBObjectCollection
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    For Each objId In objIds
+                        Dim Element As Entity
+                        Dim temp = transactie.GetObject(objId, OpenMode.ForWrite)
+                        Element = temp.Clone
+                        temp.Erase()
+                        TekeningElementen.Add(Element)
+                    Next
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout met functie TekeningElementen : " & vbCrLf & ex.Message)
+                    TekeningElementen = Nothing
+                End Try
+            End Using
+        End Using
+
+    End Function
+End Module

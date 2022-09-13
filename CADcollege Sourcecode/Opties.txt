@@ -1,0 +1,31 @@
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.Windows
+Imports Autodesk.AutoCAD.ApplicationServices
+
+Public Class Opties
+
+    <CommandMethod("Cursus_Opties1")> Public Sub Opties1()
+
+        AddHandler Application.DisplayingOptionDialog, AddressOf Tab_Nieuw
+
+    End Sub
+    Private Shared Sub Tab_Nieuw(ByVal sender As Object, _
+                               ByVal e As TabbedDialogEventArgs)
+
+        Dim frmTab = New Opties
+        Dim TDA = New TabbedDialogAction(AddressOf frmTab.OK_Click)
+        Dim TDE = New TabbedDialogExtension(frmTab, TDA)
+        e.AddTab("Nieuwe blz", TDE)
+
+    End Sub
+
+    Public Sub OK_Click()
+
+        My.Settings.Save()
+
+        MsgBox(Me.TextBox1.Text)
+
+    End Sub
+
+    
+End Class

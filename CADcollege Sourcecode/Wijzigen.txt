@@ -1,0 +1,361 @@
+' Deze module gebruikt de module Opvragen. Deze moet u ook downloaden.
+' November 2011 Nieuw voorbeeld Cursus_eigenschappen voor het wijzigen van elementen
+' mei 2012 Nieuwe procedure Eigenschappen, zoals gebruikt in het boek AutoCAD 2013
+' mei 2013 Using doc.lockdocument toegevoegd aan functie Verwijderen
+
+
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.ApplicationServices
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports Autodesk.AutoCAD.Geometry
+
+
+Public Module Wijzigen
+    <CommandMethod("Cursus_Wijzigen_Test")> Public Sub Test()
+
+
+        Dim coll1 As New ObjectIdCollection()
+        coll1.Add(Toevoegen.Lijn(120, 210, 300, 210))
+        coll1.Add(Toevoegen.Lijn(300, 210, 210, 54.1))
+        coll1.Add(Toevoegen.Lijn(210, 54.1, 120, 210))
+        Toevoegen.Kleur(coll1, 1)
+        ZoomExtends()
+        Application.ShowAlertDialog("origineel")
+
+
+        Dim Coll2 = Wijzigen.MaakKopie(coll1)
+        Wijzigen.Schaal(Coll2, 120, 210, 0.5)
+        Toevoegen.Kleur(Coll2, 2)
+        Application.UpdateScreen()
+        Application.ShowAlertDialog("kopie verschaald")
+
+        Wijzigen.Verwijderen(coll1)
+        Dim Coll3 = Wijzigen.MaakKopie(Coll2)
+        Wijzigen.Plaats(Coll3, 90, 0)
+        Toevoegen.Kleur(Coll3, 3)
+        Application.UpdateScreen()
+        Application.ShowAlertDialog("kopie verplaatst")
+
+        Dim Coll4 = Wijzigen.MaakKopie(Coll3)
+        Wijzigen.Hoek(Coll4, 210, 210, -60)
+        Toevoegen.Kleur(Coll4, 4)
+        Application.UpdateScreen()
+        Application.ShowAlertDialog("kopie gedraaid")
+
+
+        Dim Coll6 = Wijzigen.MaakKopie(Coll2)
+        Dim Coll7 = Wijzigen.MaakKopie(Coll3)
+        Dim Coll8 = Wijzigen.MaakKopie(Coll4)
+        Wijzigen.Spiegelen(Coll6, 120, 210, 210, 210)
+        Wijzigen.Spiegelen(Coll7, 120, 210, 210, 210)
+        Wijzigen.Spiegelen(Coll8, 120, 210, 210, 210)
+        ZoomExtends()
+        Application.ShowAlertDialog("kopie gespiegeld")
+    End Sub
+    
+    ''' <summary>
+    ''' Algemeen voorbeeld over hoe eigenschappen veranderd kunnen worden.
+    ''' Dit voorbeeld is te gebruiken voor iedere verandering of voor het uitlezen van waarden.
+    ''' omdat het type gedimd wordt, zijn de gegevens beschikbaar in de tooltip.
+    ''' dit voorbeeld moet nog verder uitgewerkt worden.
+    ''' </summary>
+    ''' <remarks></remarks>
+    <CommandMethod("Cursus_eigenschappen1")> Sub testeigenschap1()
+
+        Dim nr = Cirkel(0, 0, 100)
+
+        Dim Gekopieerd As Circle = Kopie1(nr)
+        Gekopieerd.Radius = 10
+
+        Toevoegen.Element(Gekopieerd)
+        Verwijder1(nr)
+
+
+    End Sub
+    Function Kopie1(ByVal objId As ObjectId) As Entity
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objId, OpenMode.ForRead)
+                    Kopie1 = Element.Clone
+                Catch ex As Exception
+
+                    MsgBox("Er ging iets fout met de kleur: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+    
+    
+    
+     <CommandMethod("Cursus_eigenschappen2")> Sub testEigenschappen2()
+        Dim id = Toevoegen.Element(New Line(New Point3d(0, 0, 0), New Point3d(100, 100, 0)))
+        Eigenschap(id, KleurNr:=1, LijnDikte:=18, laag:="nieuw", lijnsoort:="Hidden")
+    End Sub
+
+    ''' <summary>
+    ''' Met deze routine kunt u de algemene eigenschappen van een entiteit (tekeningelement) veranderen.
+    ''' U hoeft niet alle eigenschappen te gebruiken. Gebruik in de aanroep als volgt: Eigenschappen(id, KleurNr := 1)
+    ''' </summary>
+    ''' <param name="objId">Het nummer van het element</param>
+    ''' <param name="LijnDikte"></param>
+    ''' <param name="KleurNr"></param>
+    ''' <param name="laag"></param>
+    ''' <param name="lijnsoort"></param>
+    ''' <remarks></remarks>
+    Sub Eigenschap(ByVal objId As ObjectId, Optional ByVal LijnDikte As LineWeight = 0, _
+                                            Optional ByVal KleurNr As Short = 0, _
+                                            Optional ByVal laag As String = "", _
+                                            Optional ByVal lijnsoort As String = "")
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                    If LijnDikte <> 0 Then Element.LineWeight = LijnDikte
+                    If KleurNr <> 0 Then Element.ColorIndex = KleurNr
+                    If laag <> "" Then
+
+                        Dim LagenTabel As LayerTable
+                        LagenTabel = transactie.GetObject(dwg.LayerTableId, OpenMode.ForWrite)
+                        If Not LagenTabel.Has(laag) Then
+                            Dim LaagObject = New LayerTableRecord
+                            LaagObject.Name = laag
+                            LagenTabel.Add(LaagObject)
+                        End If
+                        Element.Layer = laag
+                    End If
+                    If lijnsoort <> "" Then
+
+                        Dim LijnsoortTabel As LinetypeTable
+                        LijnsoortTabel = transactie.GetObject(dwg.LinetypeTableId, OpenMode.ForRead)
+                        If Not LijnsoortTabel.Has(lijnsoort) Then dwg.LoadLineTypeFile(lijnsoort, "acadiso.lin")
+                    	Element.Linetype = lijnsoort                        
+                    End If
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Sub
+    
+    ''' <summary>
+    ''' Met deze routine kunt u de algemene eigenschappen van een collectie van tekeningelementen veranderen.
+    ''' U hoeft niet alle eigenschappen te gebruiken. Gebruik in de aanroep als volgt: Eigenschappen(verzameling, KleurNr := 1)
+    ''' </summary>
+    ''' <param name="objIds">De collectie van objecten</param>
+    ''' <param name="LijnDikte"></param>
+    ''' <param name="KleurNr"></param>
+    ''' <param name="laag"></param>
+    ''' <param name="lijnsoort"></param>
+    ''' <remarks></remarks>
+    Sub Eigenschap(ByVal objIds As ObjectIdCollection, Optional ByVal LijnDikte As LineWeight = 0, _
+                                            Optional ByVal KleurNr As Short = 0, _
+                                            Optional ByVal laag As String = "", _
+                                            Optional ByVal lijnsoort As String = "")
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    For Each objid In objIds
+                        Dim Element As Entity
+                        Element = transactie.GetObject(objid, OpenMode.ForWrite)
+                        If LijnDikte <> 0 Then Element.LineWeight = LijnDikte
+                        If KleurNr <> 0 Then Element.ColorIndex = KleurNr
+                        If laag <> "" Then
+
+                            Dim LagenTabel As LayerTable
+                            LagenTabel = transactie.GetObject(dwg.LayerTableId, OpenMode.ForWrite)
+                            If Not LagenTabel.Has(laag) Then
+                                Dim LaagObject = New LayerTableRecord
+                                LaagObject.Name = laag
+                                LagenTabel.Add(LaagObject)
+                            End If
+                            Element.Layer = laag
+                        End If
+                        If lijnsoort <> "" Then
+
+                            Dim LijnsoortTabel As LinetypeTable
+                            LijnsoortTabel = transactie.GetObject(dwg.LinetypeTableId, OpenMode.ForRead)
+                            If Not LijnsoortTabel.Has(lijnsoort) Then dwg.LoadLineTypeFile(lijnsoort, "acadiso.lin")
+                        	Element.Linetype = lijnsoort                            
+                        End If
+
+                    Next
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+
+            End Using
+        End Using
+    End Sub    
+    Sub ZoomExtends()
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Dim View = doc.Editor.GetCurrentView
+        View.Height = dwg.Extmax.Y - dwg.Extmin.Y
+        View.Width = dwg.Extmax.X - dwg.Extmin.X
+        Dim Xmidden = (dwg.Extmax.X + dwg.Extmin.X) / 2
+        Dim Ymidden = (dwg.Extmax.Y + dwg.Extmin.Y) / 2
+        View.CenterPoint = New Point2d(Xmidden, Ymidden)
+        doc.Editor.SetCurrentView(View)
+        Application.UpdateScreen()
+    End Sub
+
+
+    Function MaakKopie(ByVal objIds As ObjectIdCollection) As ObjectIdCollection
+        MaakKopie = New ObjectIdCollection
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.lockdocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim s As BlockTableRecord
+                    s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+
+                    For Each objId In objIds
+                        Dim Element As Entity
+                        Element = transactie.GetObject(objId, OpenMode.ForWrite)
+
+                        Dim Kopie = Element.Clone
+                        Dim id = s.AppendEntity(Kopie)
+                        transactie.AddNewlyCreatedDBObject(Kopie, True)
+
+                        MaakKopie.Add(id)
+                    Next
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                    MaakKopie = Nothing
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+
+
+    Function Verwijderen(ByVal objIds As ObjectIdCollection) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        
+		Using doc.lockdocument
+        Using transactie = doc.TransactionManager.StartTransaction()
+            Try
+                Dim s As BlockTableRecord
+                s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+
+                For Each objId In objIds
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                    Element.Erase()
+                Next
+                transactie.Commit()
+            Catch ex As Exception
+                MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+            End Try
+        End Using
+     End Using
+
+    End Function
+
+    Function Verwijder1(ByVal objId As ObjectId) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        
+		Using doc.lockdocument
+        Using transactie = doc.TransactionManager.StartTransaction()
+            Try
+                Dim s As BlockTableRecord
+                s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+
+
+                Dim Element As Entity
+                Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                Element.Erase()
+
+                transactie.Commit()
+            Catch ex As Exception
+                MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+            End Try
+        End Using
+       End Using
+    End Function
+
+
+
+    Function Transformeren(ByRef col As ObjectIdCollection, ByVal matrix As Matrix3d) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Using doc.lockdocument
+            Using Transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim Element As Entity
+                    For Each ElementId In col
+                        Element = Transactie.GetObject(ElementId, OpenMode.ForWrite)
+                        Element.TransformBy(matrix)
+                    Next
+                    Transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Ergens ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+
+    Function Plaats(ByVal col As ObjectIdCollection, ByVal x As Double, ByVal y As Double) As Boolean
+
+        Dim matrix = Matrix3d.Displacement(New Vector3d(x, y, 0))
+        Transformeren(col, matrix)
+
+    End Function
+    Function Schaal(ByVal col As ObjectIdCollection, ByVal x As Double, ByVal y As Double, ByVal S As Double) As Boolean
+
+        Dim Matrix = Matrix3d.Scaling(S, New Point3d(x, y, 0))
+        Transformeren(col, Matrix)
+
+    End Function
+    Function Hoek(ByVal col As ObjectIdCollection, ByVal x As Double, ByVal y As Double, ByVal H As Double) As Boolean
+
+        H = H * System.Math.PI / 180
+        Dim Matrix = Matrix3d.Rotation(H, New Vector3d(0, 0, 1), New Point3d(x, y, 0))
+        Transformeren(col, Matrix)
+
+    End Function
+    Function Spiegelen(ByVal col As ObjectIdCollection, ByVal x1 As Double, ByVal y1 As Double, ByVal x2 As Double, ByVal y2 As Double) As Boolean
+
+        Dim matrix = Matrix3d.Mirroring(New Line3d(New Point3d(x1, y1, 0), New Point3d(x2, y2, 0)))
+        Transformeren(col, matrix)
+
+    End Function
+
+    Sub rechts()
+        Dim ss As New ObjectIdCollection
+        If Opvragen.Elementen(ss) Then
+            Wijzigen.Plaats(ss, 10, 0)
+        End If
+    End Sub
+
+End Module

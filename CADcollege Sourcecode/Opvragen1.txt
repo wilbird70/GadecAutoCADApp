@@ -1,0 +1,40 @@
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.ApplicationServices
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports Autodesk.AutoCAD.Geometry
+Imports Autodesk.AutoCAD.EditorInput
+
+
+Public Module Opvragen
+
+<CommandMethod("Cursus_Opvragen_Test")> Public Sub Test() 
+
+ Dim Vraag = New PromptKeywordOptions("")
+ Vraag.Message = vbLf & "Maak uw keuze:  "
+ Vraag.Keywords.Add("Lijn")
+ Vraag.Keywords.Add("Cirkel")
+ Vraag.Keywords.Add("Tekst")
+ Vraag.Keywords.Add("Kleur")
+ Vraag.AllowNone = False
+
+ Dim doc = Application.DocumentManager.MdiActiveDocument
+ Dim Antwoord = doc.Editor.GetKeywords(Vraag)
+
+ Select Case Antwoord.StringResult
+  Case "Lijn"
+   Application.ShowAlertDialog("U heeft lijn gekozen.")
+
+  Case "Cirkel"
+   Application.ShowAlertDialog("U heeft cirkel gekozen.")
+
+  Case "Tekst"
+   Application.ShowAlertDialog("U heeft tekst gekozen.")
+
+  Case "Kleur" 
+   Application.ShowAlertDialog("U heeft kleur gekozen.")
+
+  End Select
+End Sub
+
+
+End Module

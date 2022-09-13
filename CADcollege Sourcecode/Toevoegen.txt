@@ -1,0 +1,991 @@
+'
+'Okt 2010: Loc.document in Using gestopt, zodat het slot open gaat en de tekening opgeslagen kan worden.
+'Nov 2011 Commentaar toegevoegd bij de algemene functies
+'Nov 2012 Nieuwe functies voor tekststijlen. Dit zijn in wezen dezelfde functies als die van de lagen
+'Jan 2014 Veranderde functie voor het toevoegen van een extern blok / Nieuwe functie preview extern blok
+'Feb 2019 Twee Nieuwe functies voor het toevoegen van een polylijn
+'Maart 2019 Drie nieuwe functies voor region en 3D objecten zie Cursus_Toevoegen_test5.
+'Maart 2019 Uitbreiding in sub previews voor grote iconen
+
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.ApplicationServices
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports Autodesk.AutoCAD.Geometry
+Imports System.Drawing.Imaging
+
+Public Module Toevoegen
+
+    <CommandMethod("Cursus_Toevoegen_test")> Public Sub test()
+
+        Dim coll As New ObjectIdCollection()
+
+        coll.Add(Toevoegen.Lijn(10, 20, 50, 20))
+        coll.Add(Toevoegen.Lijn(50, 20, 30, 40))
+        coll.Add(Toevoegen.Lijn(30, 40, 10, 20))
+        coll.Add(Toevoegen.Cirkel(30, 30, 50))
+        coll.Add(Toevoegen.Cirkel(55, 45, 5))
+        coll.Add(Toevoegen.Cirkel(5, 45, 5))
+        coll.Add(Toevoegen.Boog(30, 40, 40, 210, -30))
+        coll.Add(Toevoegen.Tekst("Hallo wereld", 90, 40, 20))
+
+        Toevoegen.Kleur(coll, 1)
+
+        Toevoegen.BlokDefinitie("test", coll)
+        Toevoegen.BlokReferentie(0, 0, "Test")
+
+        Toevoegen.ExternBlok("C:\a.dwg", "b")
+        Toevoegen.BlokReferentie(0, 0, "b")
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Dim Tekst = "(command ""insert"" ""C:/a.dwg"" pause 1 1 0) "
+
+        doc.SendStringToExecute(Tekst, False, False, False)
+
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test1")> Public Sub tes1t()
+
+        Dim coll1 As New DBObjectCollection()
+        coll1.Add(New Line(New Point3d(-10, 0, 0), New Point3d(10, 0, 0)))
+        coll1.Add(New Circle(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 10))
+        coll1.Add(New Arc(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 15, 0, System.Math.PI))
+
+        Dim Tekst = New DBText
+        Tekst.Position = New Point3d(-20, -20, 0)
+        Tekst.TextString = "Hallo Wereld"
+        Tekst.Height = 5
+        coll1.Add(Tekst)
+
+        Dim coll2 = Toevoegen.Elementen(coll1)
+        Toevoegen.Kleur(coll2, 1)
+
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test2")> Public Sub test2()
+
+        Dim pl As New Polyline
+        pl.SetDatabaseDefaults()
+
+
+        pl.AddVertexAt(0, New Point2d(50, 50), 0, 0, 0)
+        pl.AddVertexAt(1, New Point2d(150, 50), System.Math.Tan(System.Math.PI / 8), 0, 0)
+        pl.AddVertexAt(2, New Point2d(200, 100), 0, 0, 0)
+        pl.AddVertexAt(3, New Point2d(200, 200), 0, 0, 0)
+        pl.Closed = True
+        Toevoegen.Element(pl)
+
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test2a")> Public Sub test2a()
+
+        Dim wp As New Wipeout
+        Dim punten As New Point2dCollection
+        punten.Add(New Point2d(0, 0))
+        punten.Add(New Point2d(10, 0))
+        punten.Add(New Point2d(10, 10))
+        punten.Add(New Point2d(0, 10))
+        wp.SetFrom(punten, New Vector3d(0, 0, 1))
+
+        Toevoegen.Element(wp)
+
+
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test3")> Public Sub test3()
+
+
+
+        Dim Contour = New Circle(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 30)
+        Dim coll As New DBObjectCollection
+        coll.Add(Contour)
+        Dim RegionCollectie = Region.CreateFromCurves(coll)
+        Dim objRegion As Region = RegionCollectie(0)
+        Dim id0 = Toevoegen.Element(objRegion)
+
+        Contour = New Circle(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 10)
+        coll.Clear()
+        coll.Add(Contour)
+        RegionCollectie = Region.CreateFromCurves(coll)
+        objRegion = RegionCollectie(0)
+        Dim id1 = Toevoegen.Element(objRegion)
+
+        Toevoegen.CombinatieVanRegions(id0, id1, BooleanOperationType.BoolSubtract)
+
+
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test4")> Public Sub test4()
+
+        Dim obj3d As New Solid3d
+        obj3d.SetDatabaseDefaults()
+        obj3d.CreateBox(100, 100, 100)
+        Dim id1 = Toevoegen.Element(obj3d)
+
+        Dim extrusie As New Solid3d
+        extrusie.SetDatabaseDefaults()
+        extrusie.RecordHistory = False
+        Dim optiesBouwer = New SweepOptionsBuilder
+        optiesBouwer.DraftAngle = Math.Atan(10 / 50)
+        Dim opties = optiesBouwer.ToSweepOptions
+        Dim Cirkel As New Circle(New Point3d(0, 0, 50), New Vector3d(0, 0, 1), 50)
+        extrusie.CreateExtrudedSolid(Cirkel, New Vector3d(0, 0, 50), opties)
+        Dim id2 = Toevoegen.Element(extrusie)
+
+        Dim rev As New Solid3d
+        rev.SetDatabaseDefaults()
+        rev.RecordHistory = False
+        Dim optiesBouwer2 = New RevolveOptionsBuilder
+        Dim opties2 = optiesBouwer2.ToRevolveOptions
+        Cirkel = New Circle(New Point3d(0, 0, 100), New Vector3d(0, 0, 1), 40)
+        Dim Center As New Line(New Point3d(100, 0, 100), New Point3d(100, 100, 100))
+        rev.CreateRevolvedSolid(Cirkel, New Point3d(100, 0, 100), New Vector3d(0, 100, 0), 1.57, 0, opties2)
+        Dim id3 = Toevoegen.Element(rev)
+
+
+        Dim sweep As New Solid3d
+        sweep.SetDatabaseDefaults()
+        sweep.RecordHistory = False
+        Dim optiesBouwer1 = New SweepOptionsBuilder
+        optiesBouwer1.BasePoint = New Point3d(0, 0, 0)
+        optiesBouwer1.Align = SweepOptionsAlignOption.AlignSweepEntityToPath
+        Dim opties1 = optiesBouwer1.ToSweepOptions
+        Cirkel = New Circle(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 40)
+        Dim Pad As New Line(New Point3d(100, 0, 200), New Point3d(500, 0, 200))
+        sweep.CreateSweptSolid(Cirkel, Pad, opties1)
+        Dim id4 = Toevoegen.Element(sweep)
+
+        CombinatieVanSolids(id1, id2, BooleanOperationType.BoolUnite)
+        CombinatieVanSolids(id1, id3, BooleanOperationType.BoolUnite)
+        CombinatieVanSolids(id1, id4, BooleanOperationType.BoolUnite)
+    End Sub
+    <CommandMethod("Cursus_Toevoegen_test5")> Public Sub Test5()
+        Dim id0 = Toevoegen.polylijn(False, 0, 0, 1000, 0, 1000, 1000, 0, 1000)
+        Dim id1 = Toevoegen.polylijnMetAfronding(True, -30, -30, 6, 30, -30, 6, 30, 30, 6, -30, 30, 6)
+        Dim id2 = Toevoegen.polylijnMetAfronding(True, -25, -25, 1, 25, -25, 1, 25, 25, 1, -25, 25, 1)
+        Dim id3 = Toevoegen.RegionVanafId(id1, id2)
+        Dim id4 = Toevoegen.SweepVanafId(id3, id0)
+
+    End Sub
+    Function CombinatieVanSolids(ByVal EersteId As ObjectId, ByVal TweedeId As ObjectId, ByVal operatie As BooleanOperationType) As ObjectId
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim EersteSolid As Solid3d
+                    EersteSolid = transactie.GetObject(EersteId, OpenMode.ForWrite)
+
+                    Dim TweedeSolid As Solid3d
+                    TweedeSolid = transactie.GetObject(TweedeId, OpenMode.ForWrite)
+
+                    EersteSolid.BooleanOperation(operatie, TweedeSolid)
+                    TweedeSolid.Erase()
+
+                    transactie.Commit()
+
+                    Return EersteId
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout in CombinatieVanSolids: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+    Function CombinatieVanRegions(ByVal EersteId As ObjectId, ByVal TweedeId As ObjectId, ByVal operatie As BooleanOperationType) As ObjectId
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim EersteRegion As Region
+                    EersteRegion = transactie.GetObject(EersteId, OpenMode.ForWrite)
+
+                    Dim TweedeRegion As Region
+                    TweedeRegion = transactie.GetObject(TweedeId, OpenMode.ForWrite)
+
+                    EersteRegion.BooleanOperation(operatie, TweedeRegion)
+                    TweedeRegion.Erase()
+
+                    transactie.Commit()
+                    Return EersteId
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout in CombinatieVanRegions: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+
+
+    End Function
+
+    ''' <summary>
+    ''' Voegt een 2D-lijn toe aan de huidige ruimte in het WCS.
+    ''' Het resultaat is het ObjectId.
+    ''' Met het ObjectId verandert u de kleur of laag. Zie functie Kleur.
+    ''' </summary>
+    ''' <param name="x1">De x-waarde van het eerste punt.</param>
+    ''' <param name="y1">De y-waarde van het eerste punt.</param>
+    ''' <param name="x2">De x-waarde van het tweede punt.</param>
+    ''' <param name="y2">De y-waarde van het tweede punt.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Lijn(ByVal x1 As Double, ByVal y1 As Double, ByVal x2 As Double, ByVal y2 As Double) As ObjectId
+
+        Dim objLijn = New Line
+        objLijn.StartPoint = New Point3d(x1, y1, 0)
+        objLijn.EndPoint = New Point3d(x2, y2, 0)
+
+        Return Toevoegen.Element(objLijn)
+
+    End Function
+    ''' <summary>
+    ''' Voegt een polylijn toe aan de huidige ruimte in het WCS.
+    ''' </summary>
+    ''' <param name="Gesloten">Polylijn wel/niet Closed</param>
+    ''' <param name="coordinaten">x, y waarden van alle punten bv: 0,0,10,0,10,10,0,10,0,0</param>
+    ''' <returns>Het resultaat is het ObjectId van de polylijn.</returns>
+    ''' 
+    Function polylijn(ByVal Gesloten As Boolean, ByVal ParamArray coordinaten() As Double) As ObjectId
+        Dim pl As New Polyline
+        pl.SetDatabaseDefaults()
+
+        For i = 0 To UBound(coordinaten) / 2
+            Dim ix = coordinaten(2 * i)
+            Dim iy = coordinaten(2 * i + 1)
+            pl.AddVertexAt(i, New Point2d(ix, iy), 0, 0, 0)
+        Next i
+
+        pl.Closed = Gesloten
+        Return Toevoegen.Element(pl)
+    End Function
+
+    ''' <summary>
+    ''' Voegt een boog toe aan de huidige ruimte in het WCS.
+    ''' </summary>
+    ''' <param name="x">De x-waarde van het centrum.</param>
+    ''' <param name="y">De y-waarde van het centrum.</param>
+    ''' <param name="r">De radius van de boog.</param>
+    ''' <param name="h1">De starthoek tov de x-as in graden.</param>
+    ''' <param name="h2">De eindhoek tov de x-as in graden.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Boog(ByVal x As Double, ByVal y As Double, ByVal r As Double, ByVal h1 As Double, ByVal h2 As Double) As ObjectId
+
+        Dim objBoog As New Arc
+        objBoog.Center = New Point3d(x, y, 0)
+        objBoog.Radius = r
+        objBoog.StartAngle = h1 * System.Math.PI / 180
+        objBoog.EndAngle = h2 * System.Math.PI / 180
+
+        Return Toevoegen.Element(objBoog)
+
+    End Function
+    Public Function Cirkel(ByVal x As Double, ByVal y As Double, ByVal r As Double) As ObjectId
+
+        Dim objCirkel As New Circle
+        objCirkel.Center = New Point3d(x, y, 0)
+        objCirkel.Radius = r
+
+        Return Toevoegen.Element(objCirkel)
+
+    End Function
+    Public Function Tekst(ByVal regel As String, ByVal x As Double, ByVal y As Double, ByVal h As Double) As ObjectId
+
+
+        Dim objTekst As New DBText
+
+        objTekst.Position = New Point3d(x, y, 0)
+        objTekst.Height = h
+        objTekst.TextString = regel
+
+        Return Toevoegen.Element(objTekst)
+
+    End Function
+
+
+    Function Attribuutdefinitie(ByVal Naam As String, ByVal x As Double, ByVal y As Double, ByVal h As Double) As ObjectId
+        Dim attobject = New AttributeDefinition
+        attobject.Position = New Point3d(x, y, 0)
+        attobject.Tag = Naam
+        attobject.Prompt = Naam
+        attobject.LockPositionInBlock = True
+        attobject.TextString = Naam
+        attobject.Height = h
+        Attribuutdefinitie = Toevoegen.Element(attobject)
+    End Function
+
+
+
+
+
+    ''' <summary>
+    ''' Met deze sub wordt de kleur veranderd van een verzameling objecten.
+    ''' Gebruik deze functie als voorbeeld voor andere functies.
+    ''' </summary>
+    ''' <param name="objIds">De ObjectIdCollection van de elementen die veranderd worden.</param>
+    ''' <param name="KleurNr">De nieuwe index-kleur: 0-255</param>
+    ''' <remarks>Gebruik deze functie als voorbeeld. U kunt deze aanpassen voor iedere andere eigenschap.</remarks>
+
+    Sub Kleur(ByVal objIds As ObjectIdCollection, ByVal KleurNr As Byte)
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    For Each objId In objIds
+                        Dim Element As Entity
+                        Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                        Element.ColorIndex = KleurNr
+                    Next
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout met de kleur : " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Sub
+    ''' <summary>
+    ''' Met deze sub wordt de kleur veranderd van een enkel element.
+    ''' </summary>
+    ''' <param name="objId">De ObjectId van het element dat veranderd wordt.</param>
+    ''' <param name="KleurNr">De nieuwe index-kleur: 0-255</param>
+    ''' <remarks>Gebruik deze functie als voorbeeld. U kunt deze aanpassen voor iedere andere eigenschap.</remarks>
+
+    Sub Kleur1(ByVal objId As ObjectId, ByVal KleurNr As Byte)
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                    Element.ColorIndex = KleurNr
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets foutt met de kleur: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Sub
+    ''' <summary>
+    ''' Het resultaat van deze functie is de kleur van een enkel element.
+    ''' </summary>
+    ''' <param name="objId">De ObjectId van het element.</param>
+    ''' <returns>De index-kleur: 0-255</returns>
+    ''' <remarks>Gebruik deze functie als voorbeeld. U kunt deze aanpassen voor iedere andere eigenschap.</remarks>
+
+    Function Kleur1Opvragen(ByVal objId As ObjectId) As Integer
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objId, OpenMode.ForRead)
+                    Kleur1Opvragen = Element.ColorIndex
+                Catch ex As Exception
+                    Kleur1Opvragen = 0
+                    MsgBox("Er ging iets foutt met de kleur: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+
+    ''' <summary>
+    ''' Uitgaande van een objectidcollection wordt een blokdefinitie aangemaakt.
+    ''' </summary>
+    ''' <param name="Naam">De naam van het blok.</param>
+    ''' <param name="objIds">De objectIDCollection van de elementen die de blokdefinitie gaan vormen.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+
+    Function BlokDefinitie(ByVal Naam As String, ByVal objIds As ObjectIdCollection) As ObjectId
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim objBlok As New BlockTableRecord
+                    objBlok.Name = Naam
+
+                    Dim Blokken As BlockTable
+                    Blokken = transactie.GetObject(dwg.BlockTableId, OpenMode.ForWrite)
+                    If Not Blokken.Has(Naam) Then
+                        BlokDefinitie = Blokken.Add(objBlok)
+                        transactie.AddNewlyCreatedDBObject(objBlok, True)
+
+                        For Each objId In objIds
+                            Dim Element As Entity
+                            Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                            Dim Kopie = Element.Clone
+                            objBlok.AppendEntity(Kopie)
+                            transactie.AddNewlyCreatedDBObject(Kopie, True)
+                        Next
+                    End If
+
+                    For Each objId In objIds
+                        Dim Element As Entity
+                        Element = transactie.GetObject(objId, OpenMode.ForWrite)
+                        Element.Erase()
+                    Next
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+
+
+    ''' <summary>
+    ''' Een lijst van blokken in een externe tekening.
+    ''' </summary>
+    ''' <param name="NaamDwg">De naam van de externe tekening. Bv c:\a.dwg</param>
+    ''' <remarks>De tekening moet wel bestaan.</remarks>
+
+    Function LijstVanExternBlokken(ByVal NaamDwg As String) As List(Of String)
+        LijstVanExternBlokken = New List(Of String)
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim Xdwg = New Database(False, True)
+        Using doc.LockDocument
+            Try
+                Xdwg.ReadDwgFile(NaamDwg, IO.FileShare.Read, True, "")
+                Using XTransactie = Xdwg.TransactionManager.StartTransaction()
+                    Dim XBlokken As BlockTable
+                    XBlokken = XTransactie.GetObject(Xdwg.BlockTableId, OpenMode.ForRead, False)
+                    For Each XBlok In XBlokken
+                        Dim XBlokObject As BlockTableRecord
+                        XBlokObject = XTransactie.GetObject(XBlok, OpenMode.ForRead, False)
+                        If XBlokObject.Name(0) <> "*" Then
+                            LijstVanExternBlokken.Add(XBlokObject.Name)
+                        End If
+                    Next
+                End Using
+            Catch ex As Exception
+                MsgBox("Er ging iets fout in LijstVanExternBlokken: " & vbCrLf & ex.Message)
+            End Try
+        End Using
+    End Function
+
+    ''' <summary>
+    ''' 'Een plaatje van een blok (gemaakt met autocad commando blockicon)
+    ''' </summary>
+    ''' <param name="NaamDwg"></param>
+    ''' <param name="NaamBlok"></param>
+    ''' <returns></returns>
+    Function PreviewExternBlok(ByVal NaamDwg As String, ByVal NaamBlok As String) As System.Drawing.Bitmap
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim Xdwg = New Database(False, True)
+        Using doc.LockDocument
+            Try
+                Xdwg.ReadDwgFile(NaamDwg, IO.FileShare.Read, True, "")
+                Using XTransactie = Xdwg.TransactionManager.StartTransaction()
+                    Dim XBlokken As BlockTable
+                    XBlokken = XTransactie.GetObject(Xdwg.BlockTableId, OpenMode.ForRead, False)
+                    If XBlokken.Has(NaamBlok) Then
+                        Dim XBlokObject As BlockTableRecord
+                        XBlokObject = XTransactie.GetObject(XBlokken.Item(NaamBlok), OpenMode.ForRead, False)
+                        If XBlokObject.Name(0) <> "*" Then
+
+
+
+                            ' Als u een plaatje van 190x120 pixels wilt:
+                            ' Maak dan een referentie naar WindowsBase. 
+                            ' En verander dan in de volgende regel False naar True
+#If False Then
+                            Dim Image = Autodesk.AutoCAD.Windows.Data.CMLContentSearchPreviews.GetBlockTRThumbnail(XBlokObject)
+                            Dim ms As IO.MemoryStream = New IO.MemoryStream()
+                            Dim encoder = New System.Windows.Media.Imaging.BmpBitmapEncoder()
+                            Dim Frame = System.Windows.Media.Imaging.BitmapFrame.Create(Image)
+                            encoder.Frames.Add(Frame)
+                            encoder.Save(ms)
+                            ms.Flush()
+                            Return System.Drawing.Image.FromStream(ms)
+#Else
+                            'Plaatje 32x32 pixels
+                            Return XBlokObject.PreviewIcon
+#End If
+
+
+
+                        End If
+                    End If
+                End Using
+            Catch ex As Exception
+                MsgBox("Er ging iets fout in PreviewExternBlok: " & vbCrLf & ex.Message)
+            End Try
+        End Using
+    End Function
+
+
+    ''' <summary>
+    ''' Een blokdefinitie van een externe tekening worden gekopieerd in de huidige tekening.
+    ''' Deze functie lijkt op wat de toolpalette doet. 
+    ''' </summary>
+    ''' <param name="NaamDwg">De naam van de externe tekening. Bv c:\a.dwg</param>
+    ''' <param name="NaamBlok">De naam van de blokdefinitie. Bv B.</param>
+    ''' <remarks>Dit blok B moet natuurlijk wel bestaan in C:\a.dwg</remarks>
+    Function ExternBlok(ByVal NaamDwg As String, ByVal NaamBlok As String) As Boolean
+
+        ExternBlok = True
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim destDb As Database = doc.Database
+        Dim sourceDb = New Database(False, True)
+
+
+        Using doc.LockDocument()
+            Try
+
+                ' Lees de DWG in een tijdelijke database
+                sourceDb.ReadDwgFile(NaamDwg, System.IO.FileShare.Read, True, "")
+                ' Maak een variabele aan om de blok id's op te slaan
+                Dim blockIds As New ObjectIdCollection()
+                Dim TransactieManager As Autodesk.AutoCAD.DatabaseServices.TransactionManager = sourceDb.TransactionManager
+                Using Transactie As Transaction = TransactieManager.StartTransaction()
+                    ' Open de blokkentabel
+                    Dim bt As BlockTable = TransactieManager.GetObject(sourceDb.BlockTableId, OpenMode.ForRead, False)
+                    If bt.Has(NaamBlok) Then
+                        ' Voeg hetblok uit de aanroep toe
+                        blockIds.Add(bt.Item(NaamBlok))
+
+                    End If
+                End Using
+
+                ' kopieer blok van bron naar huidige tekening. Vervangt de blokdefinitie als deze al bestaat. 
+
+                sourceDb.WblockCloneObjects(blockIds, destDb.BlockTableId, New IdMapping, DuplicateRecordCloning.Replace, False)
+
+            Catch ex As Autodesk.AutoCAD.Runtime.Exception
+                ExternBlok = False
+                MsgBox(vbLf & "Foutje bij kopieren van: " & NaamBlok & "uit: " & NaamDwg & vbCr & ex.Message)
+            End Try
+
+            sourceDb.Dispose()
+        End Using
+    End Function
+
+
+
+
+    ''' <summary>
+    ''' Een blokreferntie wordt geplaatst in de huidige tekening, ruimte en in het WCS.
+    ''' Voorafgaande aan dit commando heeft u de blokdefinitie aangemaakt of geimporteerd.
+    ''' Attributen worden achteraf aangebracht met Informatie.AttributenToevoegen en Informatie.AttributenVeranderen.
+    ''' Dynamische eigenschappen worden achteraf ingesteld met Informatie.DynamischeEigenschappenVeranderen.
+    ''' </summary>
+    ''' <param name="x">De x-waarde van de blokreferentie.</param>
+    ''' <param name="y">De y-waarde van de blokreferentie.</param>
+    ''' <param name="Bloknaam">De naam van het blok.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+
+    Public Function BlokReferentie(ByVal x As Double, ByVal y As Double, ByVal Bloknaam As String) As ObjectId
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim Blokken As BlockTable
+        Dim dwg = doc.Database
+
+        Dim s As BlockTableRecord
+
+
+        Dim Blokid As ObjectId
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Blokken = transactie.GetObject(dwg.BlockTableId, OpenMode.ForRead)
+                    Blokid = Blokken(Bloknaam)
+
+                    Dim objBlokReferentie As New BlockReference(New Point3d(x, y, 0), Blokid)
+
+                    s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+                    BlokReferentie = s.AppendEntity(objBlokReferentie)
+                    transactie.AddNewlyCreatedDBObject(objBlokReferentie, True)
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout, bestaat het blok wel : " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+    ''' <summary>
+    ''' Met deze functie wordt een enkel entiteit toegevoegd aan de tekening in de huidige ruimte.
+    ''' </summary>
+    ''' <param name="entiteit"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+
+
+
+    Function Element(ByVal entiteit As Entity) As ObjectId
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Dim s As BlockTableRecord
+
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+
+                Try
+                    s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+                    Element = s.AppendEntity(entiteit)
+
+                    transactie.AddNewlyCreatedDBObject(entiteit, True)
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+    ''' <summary>
+    ''' Met deze functie wordt een verzameling van objecten toegevoegd aan de tekening.
+    ''' </summary>
+    ''' <param name="coll"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+
+    Function Elementen(ByVal coll As DBObjectCollection) As ObjectIdCollection
+        Elementen = New ObjectIdCollection
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Dim s As BlockTableRecord
+        Dim id As ObjectId
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    s = transactie.GetObject(dwg.CurrentSpaceId, OpenMode.ForWrite)
+                    For Each entiteit In coll
+                        id = s.AppendEntity(entiteit)
+                        transactie.AddNewlyCreatedDBObject(entiteit, True)
+                        Elementen.Add(id)
+
+                    Next entiteit
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+
+
+    ''' <summary>
+    ''' Maakt een laag aan en maakt deze eventueel actief.
+    ''' </summary>
+    ''' <param name="LaagNaam">De naam van de nieuwe laag</param>
+    ''' <param name="Kleur">De kleur van de nieuwe laag</param>
+    ''' <param name="Actief ">True: Dan wordt de laag actief gemaakt.</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+
+    Function Laag(ByVal LaagNaam As String, ByVal Kleur As Short, ByVal Actief As Boolean) As ObjectId
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim LaagObject = New LayerTableRecord
+                    LaagObject.Name = LaagNaam
+                    LaagObject.Color = Autodesk.AutoCAD.Colors.Color.FromColorIndex(Autodesk.AutoCAD.Colors.ColorMethod.ByAci, Kleur)
+                    Dim LaagTabel As LayerTable
+                    LaagTabel = transactie.GetObject(dwg.LayerTableId, OpenMode.ForWrite)
+
+                    If LaagTabel.Has(LaagNaam) Then
+                        Laag = LaagTabel.Item(LaagNaam)
+                    Else
+                        Laag = LaagTabel.Add(LaagObject)
+                        transactie.AddNewlyCreatedDBObject(LaagObject, True)
+                    End If
+
+                    If Actief Then dwg.Clayer = Laag
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+
+
+    ''' <summary>
+    ''' Deze functie maakt een tekststijl aan en maakt deze eventueel ook actief
+    ''' </summary>
+    ''' <param name="naam"></param>
+    ''' <param name="font">font zoals Arial</param>
+    ''' <param name="Hoogte">De letterhoogte</param>
+    ''' <param name="Actief">True of false als je hem actief wilt hebben</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function Tekststijl(ByVal naam As String, ByVal font As String, Optional ByVal Hoogte As Double = 2.5, Optional ByVal Actief As Boolean = False) As ObjectId
+
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Dim TekststijlenTabel As TextStyleTable
+
+        Dim NieuweStijl As New TextStyleTableRecord
+        NieuweStijl.Name = naam
+        NieuweStijl.Font = New Autodesk.AutoCAD.GraphicsInterface.FontDescriptor(font, False, False, 1, 1)
+        NieuweStijl.TextSize = Hoogte
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+
+                Try
+                    TekststijlenTabel = transactie.GetObject(dwg.TextStyleTableId, OpenMode.ForWrite)
+                    If TekststijlenTabel.Has(naam) Then
+                        Tekststijl = TekststijlenTabel.Item(naam)
+                    Else
+
+                        Tekststijl = TekststijlenTabel.Add(NieuweStijl)
+                        transactie.AddNewlyCreatedDBObject(NieuweStijl, True)
+
+                    End If
+
+                    If Actief Then SetTekststijlCurrent(naam)
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+
+
+    End Function
+
+
+    Public Sub SetTekststijlCurrent(ByVal Naam As String)
+
+        Dim Doc As Document = Application.DocumentManager.MdiActiveDocument
+        Dim Dwg As Database = Doc.Database
+        Using Doc.LockDocument()
+            ' Start de transactie
+            Using Transactie As Transaction = Dwg.TransactionManager.StartTransaction()
+
+                Dim TextStyleManager As TextStyleTable
+                TextStyleManager = Transactie.GetObject(Dwg.TextStyleTableId, OpenMode.ForRead)
+
+                If TextStyleManager.Has(Naam) = True Then
+                    Dwg.Textstyle = TextStyleManager(Naam)
+                End If
+            End Using
+        End Using
+    End Sub
+
+    Sub Commando(ByVal macro As String)
+
+        Dim Doc As Document = Application.DocumentManager.MdiActiveDocument
+        If Not (Doc Is Nothing) Then
+            Doc.SendStringToExecute(Chr(27) & Chr(27) & macro & vbCr, False, False, False)
+        End If
+    End Sub
+
+    Sub CommandoInsert(ByVal BlokNaam As String)
+        Dim CommandoRegel = "-Insert" & vbCr & BlokNaam & vbCr & "S 1 R 0 "
+        Autodesk.AutoCAD.Internal.Utils.SetFocusToDwgView()
+        Commando(CommandoRegel)
+    End Sub
+    ''' <summary>
+    ''' Voegt een polylijn toe aan de huidige ruimte in het WCS.
+    ''' </summary>
+    ''' <param name="Gesloten">Polylijn wel/niet Closed. Let op: Bij true begin en eind niet hetzelfde </param>
+    ''' <param name="coordinaten">
+    ''' x, y, radius van alle punten bv: 0,0,2,10,0,2,10,10,2,0,10,2
+    ''' Hiermee tekent u een blokje van 10 bij 10 met alle hoek afgerond op 2 mm
+    ''' Gesloten moet true zijn voor een afronding bij eerste punt</param>
+    ''' <returns></returns>
+    Function polylijnMetAfronding(ByVal Gesloten As Boolean, ByVal ParamArray coordinaten() As Double) As ObjectId
+        Dim pl As New Polyline
+        pl.SetDatabaseDefaults()
+        Dim j As Integer = -1
+        For i = 0 To UBound(coordinaten) / 3
+            Dim ix = coordinaten(3 * i)
+            Dim iy = coordinaten(3 * i + 1)
+            Dim radius = coordinaten(3 * i + 2)
+            j = j + 1
+            If radius = 0 Then
+                pl.AddVertexAt(j, New Point2d(ix, iy), 0, 0, 0)
+            Else
+
+                Dim ixVorig, iyVorig, ixVolgend, iyVolgend As Double
+                If i <> 0 Then
+                    ixVorig = coordinaten(3 * (i - 1))
+                    iyVorig = coordinaten(3 * (i - 1) + 1)
+                Else
+                    ixVorig = coordinaten(UBound(coordinaten) - 2)
+                    iyVorig = coordinaten(UBound(coordinaten) - 1)
+                End If
+                If i < UBound(coordinaten) / 3 - 1 Then
+                    ixVolgend = coordinaten(3 * (i + 1))
+                    iyVolgend = coordinaten(3 * (i + 1) + 1)
+                Else
+                    ixVolgend = coordinaten(0)
+                    iyVolgend = coordinaten(1)
+                End If
+
+                Dim seg1 = New LineSegment2d(New Point2d(ixVorig, iyVorig), New Point2d(ix, iy))
+                Dim seg2 = New LineSegment2d(New Point2d(ix, iy), New Point2d(ixVolgend, iyVolgend))
+
+                Dim vec1 As Vector2d = seg1.StartPoint - seg1.EndPoint
+                Dim vec2 As Vector2d = seg2.EndPoint - seg2.StartPoint
+                Dim angle As Double = vec1.GetAngleTo(vec2) / 2.0
+                Dim dist As Double = radius / Math.Tan(angle)
+
+                ' past de afronding wel
+                If dist = 0.0 OrElse dist > seg1.Length OrElse dist > seg2.Length Then
+                    pl.AddVertexAt(i, New Point2d(ix, iy), 0, 0, 0)
+                Else
+
+                    Dim pt1 As Point2d = seg1.EndPoint + vec1.GetNormal() * dist
+                    Dim pt2 As Point2d = seg2.StartPoint + vec2.GetNormal() * dist
+                    Dim bulge As Double = Math.Tan((Math.PI / 2.0 - angle) / 2.0)
+                    ' wel of niet tegen de klok in
+                    If ((ix - ixVorig) * (iyVolgend - iyVorig) - (iy - iyVorig) * (ixVolgend - ix)) < 0.00000001 Then
+                        bulge = -bulge
+                    End If
+
+                    pl.AddVertexAt(j, pt1, bulge, 0, 0)
+                    pl.AddVertexAt(j + 1, pt2, 0, 0, 0)
+                    j = j + 1
+                End If
+            End If
+
+        Next i
+        pl.Closed = Gesloten
+        Return Toevoegen.Element(pl)
+    End Function
+
+    ''' <summary>
+    ''' Maakt een nieuwe entiteit aan op basis van een id en verwijdert het origineel
+    ''' </summary>
+    ''' <param name="objId"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Function TekeningElementVanuitObjectId(ByVal objId As ObjectId, Optional BewaarOrgineel As Boolean = False) As DBObject
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+
+        Using doc.LockDocument()
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim temp = transactie.GetObject(objId, OpenMode.ForWrite)
+                    TekeningElementVanuitObjectId = temp.Clone()
+                    If Not BewaarOrgineel Then temp.Erase()
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout met functie TekeningElementVanuitObjectId : " & vbCrLf & ex.Message)
+                    TekeningElementVanuitObjectId = Nothing
+                End Try
+            End Using
+        End Using
+
+    End Function
+    ''' <summary>
+    ''' Een id van een gesloten contour wordt omgezet naar een Region
+    ''' De contour moet al zijn toegevoegd aan de tekening
+    ''' </summary>
+    ''' <param name="id"></param>
+    ''' <returns></returns>
+    Function RegionVanafId(ByVal id As ObjectId) As ObjectId
+
+        Dim BuitencontourId = TekeningElementVanuitObjectId(id)
+
+        Dim coll As New DBObjectCollection
+        coll.Add(BuitencontourId)
+        Dim RegionCollectie = Region.CreateFromCurves(coll)
+        Dim objRegion As Region = RegionCollectie(0)
+
+        Return Toevoegen.Element(objRegion)
+    End Function
+    ''' <summary>
+    ''' Vanuit twee gesloten contouren wordt een region gemaakt.
+    ''' Deze kunnen gebruikt worden voor 3D commando's
+    ''' </summary>
+    ''' <param name="idBuitenContour"></param>
+    ''' <param name="idBinnenContour"></param>
+    ''' <returns></returns>
+    Function RegionVanafId(ByVal idBuitenContour As ObjectId, idBinnenContour As ObjectId) As ObjectId
+
+        Dim Buitencontour = TekeningElementVanuitObjectId(idBuitenContour)
+
+        Dim coll As New DBObjectCollection
+        coll.Add(Buitencontour)
+        Dim RegionCollectie = Region.CreateFromCurves(coll)
+        Dim objRegion As Region = RegionCollectie(0)
+
+        Dim RegionBuitenContourId = Toevoegen.Element(objRegion)
+
+
+        Dim Binnencontour = TekeningElementVanuitObjectId(idBinnenContour)
+        coll.Clear()
+        coll.Add(Binnencontour)
+        RegionCollectie = Region.CreateFromCurves(coll)
+        objRegion = RegionCollectie(0)
+        Dim RegionBinnenContourId = Toevoegen.Element(objRegion)
+
+        Return Toevoegen.CombinatieVanRegions(RegionBuitenContourId, RegionBinnenContourId, BooleanOperationType.BoolSubtract)
+
+    End Function
+    ''' <summary>
+    ''' Een id van een gesloten contour wordt omgezet naar een extrusie
+    ''' </summary>
+    ''' <param name="Lengte"></param>
+    ''' <param name="idDoorsnede"></param>
+    ''' <returns></returns>
+    Function ExtrusieVanafId(ByVal Lengte As Double, ByVal idDoorsnede As ObjectId) As ObjectId
+
+        Dim extrusie As New Solid3d
+        extrusie.SetDatabaseDefaults()
+        extrusie.RecordHistory = False
+
+        Dim optiesBouwer = New SweepOptionsBuilder
+        Dim opties = optiesBouwer.ToSweepOptions
+
+        Dim vlakId = TekeningElementVanuitObjectId(idDoorsnede)
+        extrusie.CreateExtrudedSolid(vlakId, New Vector3d(0, 0, Lengte), opties)
+
+        Return Toevoegen.Element(extrusie)
+    End Function
+
+    ''' <summary>
+    ''' Een gesloten contour en een pad worden omgezet naar een Sweep
+    ''' y richting contour wordt z-richting 3D object
+    ''' </summary>
+    ''' <param name="idDoorsnede"></param>
+    ''' <param name="idPad"></param>
+    ''' <returns></returns>
+    Function SweepVanafId(ByVal idDoorsnede As ObjectId, ByVal idPad As ObjectId) As ObjectId
+
+        Dim sweep As New Solid3d
+        sweep.SetDatabaseDefaults()
+        sweep.RecordHistory = False
+
+        Dim optiesBouwer = New SweepOptionsBuilder
+        optiesBouwer.Align = SweepOptionsAlignOption.AlignSweepEntityToPath
+        optiesBouwer.BasePoint = New Point3d(0, 0, 0)
+        Dim opties = optiesBouwer.ToSweepOptions
+
+        Dim Pad = TekeningElementVanuitObjectId(idPad)
+        Dim Doorsnede = TekeningElementVanuitObjectId(idDoorsnede)
+        sweep.CreateSweptSolid(Doorsnede, Pad, opties)
+
+        Return Toevoegen.Element(sweep)
+    End Function
+
+
+End Module

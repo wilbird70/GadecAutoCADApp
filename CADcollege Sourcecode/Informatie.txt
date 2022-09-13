@@ -1,0 +1,517 @@
+'
+' Voor deze module moet u eerst de voorgaande modules downloaden
+' Opvragen, Toevoegen en Wijzigen
+'
+' mei 2013: nieuwe functie BlokEffectieveNaam voor het opvragen van de naam van een dynamisch blok 
+'
+Imports Autodesk.AutoCAD.Runtime
+Imports Autodesk.AutoCAD.ApplicationServices
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports Autodesk.AutoCAD.Geometry
+Imports Autodesk.AutoCAD.EditorInput
+
+Public Module Informatie
+    <CommandMethod("Cursus_Informatie_test5")> Public Sub test5()
+        'maak eerst een blok met de naam b in tekening c:\a.dwg
+        Toevoegen.ExternBlok("C:\a.dwg", "b")
+        Toevoegen.BlokReferentie(0, 0, "b")
+    End Sub
+
+    <CommandMethod("Cursus_Informatie_test1")> Public Sub test1()
+
+        'Doorloop deze sub met F8
+        'voorbeeld araylist
+
+        Dim tabel4 As New ArrayList
+        tabel4.Add("abc")
+        tabel4.Add(123)
+        Dim b = tabel4.Contains("abc")
+        Dim a = tabel4.Contains("ab")
+
+        'voorbeeld List als bijzondere vorm van een arraylist
+        Dim tabel5 As New List(Of String)
+        tabel5.Add("abc")
+        tabel5.Add("123")
+
+        'voorbeeld hashtable
+        Dim ht As New Hashtable
+        ht.Add("1", "Afstand")
+        ht.Add(2, 2)
+
+        MsgBox(ht("1"))
+
+        'voorbeeld dictionarie generiek Hashtable
+        'teken een aantal rechthoeken in verschillende lagen
+
+        Dim Tabel = Informatie.OppervlakteOpvragen
+
+        For Each regel In Tabel
+            MsgBox(regel.Key() & ": " & regel.Value)
+        Next
+
+        MsgBox("Max = " & Tabel.Values.Max())
+
+        Dim tabel1 = From regel In Tabel Where regel.Value > 50000 Select regel Order By regel.Key Descending
+        Dim tabel2 = From regel In Tabel Where regel.Key = "0" Select regel Order By regel.Key Ascending
+        Dim tabel3 = From regel In Tabel Where regel.Key.StartsWith("L") Select regel Order By regel.Key Ascending
+
+
+
+    End Sub
+    <CommandMethod("Cursus_Informatie_test2")> Public Sub test2()
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Dim coll1 As New DBObjectCollection()
+        coll1.Add(New Circle(New Point3d(0, 0, 0), New Vector3d(0, 0, 1), 10))
+        coll1.Add(New AttributeDefinition(New Point3d(0, 3, 0), "1", "Nr1", "Invoer1", dwg.Textstyle))
+        coll1.Add(New AttributeDefinition(New Point3d(0, -3, 0), "2", "Nr2", "Invoer2", dwg.Textstyle))
+
+        Dim coll2 = Toevoegen.Elementen(coll1)
+        Toevoegen.BlokDefinitie("Nr", coll2)
+
+        For i = 1 To 5
+            Dim br = Toevoegen.BlokReferentie(20 * i, 0, "Nr")
+            Informatie.AttributenToevoegen(br)
+            AttributenVeranderen(br, "Nr1", i)
+            AttributenVeranderen(br, "Nr2", 2 * i)
+        Next
+
+        Dim coll3 As New ObjectIdCollection
+        Opvragen.AlleBlokken(coll3)
+        For Each BlokId In coll3
+            Dim Tabel = Informatie.AttributenOpvragen(BlokId)
+            Dim regel = Tabel.GetEnumerator
+            Dim t1 As New ArrayList
+
+            Do While regel.MoveNext()
+                MsgBox(regel.Key.ToString() & ": " & regel.Value.ToString)
+            Loop
+
+        Next
+
+    End Sub
+    <CommandMethod("Cursus_Informatie_test3")> Public Sub test3()
+
+        Dim Id = Opvragen.Element("Kies dynamische blok")
+        Informatie.DynamischeEigenschappenVeranderen(Id, "Visibility1", "Recht")
+
+        Dim coll3 As New ObjectIdCollection
+        Opvragen.AlleBlokken(coll3)
+        For Each BlokId In coll3
+
+            Dim Tabel = Informatie.DynamischeEigenschappenOpvragen(BlokId)
+            Dim regel = Tabel.GetEnumerator
+
+            Do While regel.MoveNext()
+                MsgBox(regel.Key.ToString() & ": " & regel.Value.ToString)
+            Loop
+        Next
+
+    End Sub
+    <CommandMethod("Cursus_Informatie_test4")> Public Sub test4()
+
+
+        Dim Id = Opvragen.Element("Kies element")
+
+        Informatie.xDataRegistreren("CURSUS")
+        Informatie.XDataToevoegen(Id, "CURSUS", 1000, "Testregel")
+        Dim Tabel = Informatie.xDataOpvragen(Id)
+
+
+
+        'doorloop de tabel regel voor regel methode 1
+
+        For Each r In Tabel
+            MsgBox(r.TypeCode & " : " & r.Value)
+        Next
+
+
+        'doorloop de tabel regel voor regel methode 2
+        Dim regel = Tabel.GetEnumerator
+
+        Do While regel.MoveNext()
+            MsgBox(regel.Current.TypeCode & ": " & regel.Current.Value)
+        Loop
+
+    End Sub
+
+    Sub AttributenToevoegen(ByVal BlokRefId As ObjectId)
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForWrite)
+                    Dim a = Ref.Name
+
+                    Dim BlokDefinities As BlockTable
+                    BlokDefinities = transactie.GetObject(dwg.BlockTableId, OpenMode.ForRead)
+                    Dim Blokdefid = BlokDefinities(Ref.Name)
+                    Dim BlokDefinitie As BlockTableRecord
+                    BlokDefinitie = transactie.GetObject(Blokdefid, OpenMode.ForRead)
+
+                    Dim AttRefIdColl = Ref.AttributeCollection
+
+                    For Each elementId In BlokDefinitie
+                        Dim Element As Entity
+                        Element = transactie.GetObject(elementId, OpenMode.ForRead)
+
+                        If TypeOf Element Is AttributeDefinition Then
+                            Dim attribuutdefinitie = CType(Element, AttributeDefinition)
+                            Dim attribuutreferentie As New AttributeReference
+                            attribuutreferentie.SetAttributeFromBlock(attribuutdefinitie, Ref.BlockTransform)
+                            AttRefIdColl.AppendAttribute(attribuutreferentie)
+                            transactie.AddNewlyCreatedDBObject(attribuutreferentie, True)
+                        End If
+                    Next
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Sub
+    Function AttributenVeranderen(ByVal BlokRefId As ObjectId, ByVal Tag As String, ByVal Tekst As String) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForWrite)
+
+                    Dim AttRefIdColl = Ref.AttributeCollection
+                    For Each attRefId In AttRefIdColl
+
+                        Dim AttRef As AttributeReference
+                        AttRef = transactie.GetObject(attRefId, OpenMode.ForWrite)
+                        If AttRef.Tag = Tag Then
+                            AttRef.TextString = Tekst
+                        End If
+                    Next
+
+                    transactie.Commit()
+                    AttributenVeranderen = True
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                    AttributenVeranderen = False
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+
+
+
+    Function OppervlakteOpvragen() As Dictionary(Of String, Double)
+        OppervlakteOpvragen = New Dictionary(Of String, Double)
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.lockdocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim LagenTabel As LayerTable
+                    LagenTabel = transactie.GetObject(dwg.LayerTableId, OpenMode.ForRead)
+                    For Each laagId In LagenTabel
+
+                        Dim Laag As LayerTableRecord
+                        Laag = transactie.GetObject(laagId, OpenMode.ForRead)
+
+                        Dim filter(1) As TypedValue
+                        filter(0) = New TypedValue(DxfCode.Start, "LWPOLYLINE")
+                        filter(1) = New TypedValue(DxfCode.LayerName, Laag.Name)
+
+                        Dim selectiefilter As New SelectionFilter(filter)
+                        Dim Antwoord = doc.Editor.SelectAll(selectiefilter)
+
+                        Dim oppervlakte As Double = 0
+
+                        If Antwoord.Status = PromptStatus.OK Then
+                            For Each objGeselecteerd In Antwoord.Value
+                                Dim Entiteit = transactie.GetObject(objGeselecteerd.objectid, OpenMode.ForRead)
+                                If TypeOf Entiteit Is Polyline Then
+                                    Dim Polylijn = CType(Entiteit, Polyline)
+                                    oppervlakte = oppervlakte + Polylijn.Area
+                                End If
+
+                            Next
+                        End If
+
+                        OppervlakteOpvragen.Add(Laag.Name, oppervlakte)
+                    Next
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+
+    End Function
+
+
+
+
+
+
+    Function AttributenOpvragen(ByVal BlokRefId As ObjectId) As Hashtable
+
+        AttributenOpvragen = New Hashtable()
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+
+        Using doc.lockdocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForRead)
+                    AttributenOpvragen.Add("BlokNaam", Ref.Name)
+
+                    Dim AttRefIdColl = Ref.AttributeCollection
+                    For Each attRefId In AttRefIdColl
+                        Dim AttRef As AttributeReference
+                        AttRef = transactie.GetObject(attRefId, OpenMode.ForRead)
+                        AttributenOpvragen.Add(AttRef.Tag, AttRef.TextString)
+                    Next
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+    Function DynamischeEigenschappenVeranderen(ByVal BlokRefId As ObjectId, ByVal Prop As String, ByVal Waarde As String) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForWrite)
+                    Dim DynRefColl = Ref.DynamicBlockReferencePropertyCollection
+
+
+                    Dim DynRef As DynamicBlockReferenceProperty
+                    For Each DynRef In DynRefColl
+                        If DynRef.PropertyName = Prop Then
+                            DynRef.Value = Waarde
+                        End If
+                    Next
+                    DynamischeEigenschappenVeranderen = True
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                    DynamischeEigenschappenVeranderen = False
+                End Try
+            End Using
+        End Using
+    End Function
+
+    Function DynamischeEigenschappenVeranderen(ByVal BlokRefId As ObjectId, ByVal Prop As String, ByVal Waarde As Double) As Boolean
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForWrite)
+                    Dim DynRefColl = Ref.DynamicBlockReferencePropertyCollection
+
+
+                    Dim DynRef As DynamicBlockReferenceProperty
+                    For Each DynRef In DynRefColl
+                        If DynRef.PropertyName = Prop Then
+                            DynRef.Value = Waarde
+                        End If
+                    Next
+                    DynamischeEigenschappenVeranderen = True
+                    transactie.Commit()
+                Catch ex As Exception
+                    DynamischeEigenschappenVeranderen = False
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+
+                End Try
+            End Using
+        End Using
+    End Function
+
+    Function DynamischeEigenschappenOpvragen(ByVal BlokRefId As ObjectId) As Hashtable
+
+        DynamischeEigenschappenOpvragen = New Hashtable
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForRead)
+                    If Ref.IsDynamicBlock Then
+                        Dim DynRefColl = Ref.DynamicBlockReferencePropertyCollection
+                        Dim rd = Ref.DynamicBlockTableRecord
+
+                        Dim ref1 As BlockTableRecord
+                        ref1 = transactie.GetObject(rd, OpenMode.ForRead)
+
+                        DynamischeEigenschappenOpvragen.Add("BlokNaam", ref1.Name)
+
+
+                        Dim dynref As DynamicBlockReferenceProperty
+                        For Each dynref In DynRefColl
+                            If Not DynamischeEigenschappenOpvragen.ContainsKey(dynref.PropertyName) Then
+                                DynamischeEigenschappenOpvragen.Add(dynref.PropertyName, dynref.Value)
+                            End If
+
+                        Next
+                    End If
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+    Function xDataRegistreren(ByVal ToepassingNaam As String) As Boolean
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Toepassingen As RegAppTable
+                    Toepassingen = transactie.GetObject(dwg.RegAppTableId, OpenMode.ForWrite)
+                    If Not Toepassingen.Has(ToepassingNaam) Then
+                        Dim Toepassing = New RegAppTableRecord
+                        Toepassing.Name = ToepassingNaam
+                        Toepassingen.Add(Toepassing)
+                        transactie.AddNewlyCreatedDBObject(Toepassing, True)
+                    End If
+
+                    xDataRegistreren = True
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                    xDataRegistreren = False
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+
+
+    Function XDataToevoegen(ByVal objectid As ObjectId, ByVal ToepassingNaam As String, ByVal Code As DxfCode, ByVal Waarde As Object) As Boolean
+
+        XDataToevoegen = True
+
+        Dim Xdata = New ResultBuffer
+        Xdata.Add(New TypedValue(1001, ToepassingNaam))
+        Xdata.Add(New TypedValue(1002, "{"))
+        Xdata.Add(New TypedValue(Code, Waarde))
+        Xdata.Add(New TypedValue(1002, "}"))
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Element As Entity
+                    Element = transactie.GetObject(objectid, OpenMode.ForWrite)
+
+                    Element.XData = Xdata
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                    XDataToevoegen = False
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+    Function xDataOpvragen(ByVal ObjId As ObjectId) As ResultBuffer
+
+        xDataOpvragen = New ResultBuffer
+
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+
+                    Dim Ent As Entity
+                    Ent = transactie.GetObject(ObjId, OpenMode.ForRead)
+                    xDataOpvragen = Ent.XData
+
+                    transactie.Commit()
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+    ''' <summary>
+    ''' Deze functie geeft de effectieve bloknaam 
+    ''' </summary>
+    ''' <param name="BlokRefId"></param>
+    ''' <returns>Naam van blok of dynamisch blok</returns>
+    ''' <remarks></remarks>
+
+    Function BlokEffectieveNaam(ByVal BlokRefId As ObjectId) As String
+        BlokEffectieveNaam = ""
+        Dim doc = Application.DocumentManager.MdiActiveDocument
+        Dim dwg = doc.Database
+        Using doc.LockDocument
+            Using transactie = doc.TransactionManager.StartTransaction()
+                Try
+                    Dim Ref As BlockReference
+                    Ref = transactie.GetObject(BlokRefId, OpenMode.ForRead)
+                    If Ref.IsDynamicBlock Then
+                        Dim DynBlokDef As BlockTableRecord
+                        DynBlokDef = transactie.GetObject(Ref.DynamicBlockTableRecord, OpenMode.ForRead)
+                        Return DynBlokDef.Name
+                    Else
+                        Return Ref.Name
+                    End If
+                Catch ex As Exception
+                    MsgBox("Er ging iets fout: " & vbCrLf & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Function
+
+
+
+
+
+End Module
+
