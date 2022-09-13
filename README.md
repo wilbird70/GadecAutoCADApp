@@ -1,2 +1,2 @@
 # GadecAutoCADApp
-An application which runs with AutoCAD.
+An application that runs with AutoCAD.
