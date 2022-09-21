@@ -8,9 +8,9 @@ Imports System.Windows.Forms
 ''' Provides methods for...
 ''' </summary>
 Public Class ProgressShow
-    Private _value As Long = 0
-    Private _cancelPressed As Boolean = False
+    Public Property CancelPressed As Boolean = False
 
+    Private _value As Long = 0
     Private ReadOnly _timer As Timer
 
     'form
@@ -20,7 +20,7 @@ Public Class ProgressShow
         InitializeComponent()
         ' Add any initialization after the InitializeComponent() call.
 
-        Me.Text = registerizer.GetApplicationVersion()
+        Me.Text = Registerizer.GetApplicationVersion()
         Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
 
         OutputProgressBar.Maximum = maximum * 1000
@@ -47,23 +47,17 @@ Public Class ProgressShow
 
     Private Sub Me_Click(sender As Object, e As EventArgs) Handles Me.Click
         Try
-            If _ScreenShot Then ImageHelper.GetScreenShot(Me.Location, Me.Size)
+            If _screenShot Then ImageHelper.GetScreenShot(Me.Location, Me.Size)
         Catch ex As Exception
             GadecException(ex)
         End Try
     End Sub
 
     Private Sub Me_Closed(sender As Object, e As EventArgs) Handles Me.Closed
-        _cancelPressed = True
+        _CancelPressed = True
     End Sub
 
     'functions
-
-    Function CancelPressed() As Boolean
-        Return _cancelPressed
-    End Function
-
-    'subs
 
     Sub PerformStep()
         PerformStep("$$$")
@@ -98,7 +92,7 @@ Public Class ProgressShow
     'buttons
 
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
-        _cancelPressed = True
+        _CancelPressed = True
     End Sub
 
     'eventhandlers

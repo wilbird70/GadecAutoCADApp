@@ -48,7 +48,7 @@ Public Class XrefHelper
                             Next
                             Dim prompt = ("SelectXref").Translate(btr.Name.Cut)
                             Dim dialog = New ListBoxDialog(prompt, foundFiles)
-                            If Not dialog.GetButton = vbOK Then Exit Do
+                            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Do
 
                             btr.PathName = foundFiles(dialog.GetSelectedIndex)
                             xrefsToReload.Add(objectId)

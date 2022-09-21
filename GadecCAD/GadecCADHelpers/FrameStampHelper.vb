@@ -25,7 +25,7 @@ Public Class FrameStampHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim currentFileName = document.Name
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("SignStampDrawnIni"), Registerizer.UserSetting("SignStampCheckIni"))
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim newRevisionStrings = dialog.GetRevisionTexts
         Registerizer.UserSetting("SignStampDrawnIni", newRevisionStrings("Drawn"))

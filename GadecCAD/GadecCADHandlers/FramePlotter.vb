@@ -362,7 +362,7 @@ Public Class FramePlotter
         Dim frameSizeData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Frames", "Name")
         Dim frameSizes = frameSizeData.GetStringsFromColumn("Name")
         Dim dialog = New ListBoxDialog("SelectForm".Translate, frameSizes, "", "[Thin]".Translate)
-        If Not dialog.GetButton = vbOK Then Return {}
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Return {}
 
         Dim selectedItem = frameSizes(dialog.GetSelectedIndex)
 

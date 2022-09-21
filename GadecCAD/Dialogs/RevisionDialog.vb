@@ -9,7 +9,6 @@ Imports System.Windows.Forms
 ''' </summary>
 Public Class RevisionDialog
     Private _revisionTexts As Dictionary(Of String, String)
-    Private _button As Integer = vbCancel
 
     'form
 
@@ -39,10 +38,6 @@ Public Class RevisionDialog
 
     'functions
 
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
     Function GetRevisionTexts() As Dictionary(Of String, String)
         Return _revisionTexts
     End Function
@@ -59,7 +54,6 @@ Public Class RevisionDialog
                 {"Char", ""},
                 {"KOPREV", ""}
             }
-            _button = vbOK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -68,7 +62,6 @@ Public Class RevisionDialog
 
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

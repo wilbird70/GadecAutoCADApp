@@ -17,10 +17,6 @@ Public Class OverviewDialog
     Public ReadOnly Property GroupPrefixLength As Integer
 
     ''' <summary>
-    ''' Has the value of which buton was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
-    ''' <summary>
     ''' The selected record.
     ''' </summary>
     Private _selectedRow As DataRow
@@ -203,14 +199,6 @@ Public Class OverviewDialog
     'functions
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets the selected record.
     ''' </summary>
     ''' <returns>The record.</returns>
@@ -233,7 +221,6 @@ Public Class OverviewDialog
                     Case True : _selectedRow = DirectCast(FramesDataGridView.Rows(0).DataBoundItem, DataRowView).Row
                     Case Else : _selectedRow = DirectCast(FramesDataGridView.CurrentRow.DataBoundItem, DataRowView).Row
                 End Select
-                _button = vbOK
                 Me.Hide()
             End If
         Catch ex As Exception
@@ -249,7 +236,6 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -585,7 +571,7 @@ Public Class OverviewDialog
                             If drawingList.NoSelection Then Exit Sub
 
                             Dim dialog = New CoverSheetDialog(drawingList.GetDrawinglistHeader)
-                            If Not dialog.GetButton = vbOK Then Exit Sub
+                            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
                             drawingList.Create()
                             If drawingList.CreateFailure Then Exit Sub

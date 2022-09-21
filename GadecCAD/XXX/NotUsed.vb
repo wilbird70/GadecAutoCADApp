@@ -152,17 +152,7 @@ Public Class NotUsed
     Sub ReplaceBlocksTgx2Wng(document As Document)
         'schaal voor de nieuwe symbolen vragen
         Dim db = document.Database
-        Dim scale = 1.0
-        Dim scaleTbl = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name")
-        scaleTbl(0) = scaleTbl(0).Translate
-        Dim dialog = New ListBoxDialog("SelectScale".Translate, scaleTbl, "1:{0}".Compose(SysVarHandler.GetVar("DIMSCALE")))
-        Select Case True
-            Case dialog.GetSelectedIndex = 0
-                Dim value = InputBox("Custom scale".Translate, Registerizer.GetApplicationVersion, SysVarHandler.GetVar("DIMSCALE"))
-                scale = value.ToDouble
-                If Not scale > 0 Then Beep() : scale = 1
-            Case Else : scale = scaleTbl(dialog.GetSelectedIndex).MidString(3).ToDouble
-        End Select
+        Dim scale = DesignMethods.SetDrawingScale(document)
         Dim scale3D = New Scale3d(scale)
 
         'Starten
@@ -251,17 +241,7 @@ Public Class NotUsed
     Sub ReplaceBlocksOld2Wng(document As Document)
         'schaal voor de nieuwe symbolen vragen
         Dim db = document.Database
-        Dim scale = 1.0
-        Dim scaleTbl = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name")
-        scaleTbl(0) = scaleTbl(0).Translate
-        Dim dialog = New ListBoxDialog("SelectScale".Translate, scaleTbl, "1:{0}".Compose(SysVarHandler.GetVar("DIMSCALE")))
-        Select Case True
-            Case dialog.GetSelectedIndex = 0
-                Dim value = InputBox("Custom scale".Translate, Registerizer.GetApplicationVersion, SysVarHandler.GetVar("DIMSCALE"))
-                scale = value.ToDouble
-                If Not scale > 0 Then Beep() : scale = 1
-            Case Else : scale = scaleTbl(dialog.GetSelectedIndex).MidString(3).ToDouble
-        End Select
+        Dim scale = DesignMethods.SetDrawingScale(document)
         Dim scale3D = New Scale3d(scale)
 
         'Importeren en herdefiniëren van benodigde symbolen

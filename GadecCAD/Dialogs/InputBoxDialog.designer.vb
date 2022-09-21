@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class CodingDialog
+Partial Class InputBoxDialog
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,66 +22,62 @@ Partial Class CodingDialog
     'Do not modify it using the code editor
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(CodingDialog))
-        Me.ltCancel = New System.Windows.Forms.Button()
-        Me.OptionsListBox = New System.Windows.Forms.ListBox()
-        Me.ltLoopLine = New System.Windows.Forms.CheckBox()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(InputBoxDialog))
         Me.ltOK = New System.Windows.Forms.Button()
+        Me.ltCancel = New System.Windows.Forms.Button()
+        Me.InputTextBox = New System.Windows.Forms.TextBox()
+        Me.lDescr = New System.Windows.Forms.Label()
         Me.SuspendLayout()
-        '
-        'ltCancel
-        '
-        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.ltCancel.Location = New System.Drawing.Point(282, 139)
-        Me.ltCancel.Name = "ltCancel"
-        Me.ltCancel.Size = New System.Drawing.Size(85, 23)
-        Me.ltCancel.TabIndex = 37
-        Me.ltCancel.Text = "XXX"
-        Me.ltCancel.UseVisualStyleBackColor = True
-        '
-        'OptionsListBox
-        '
-        Me.OptionsListBox.BackColor = System.Drawing.SystemColors.Window
-        Me.OptionsListBox.FormattingEnabled = True
-        Me.OptionsListBox.Location = New System.Drawing.Point(282, 12)
-        Me.OptionsListBox.Name = "OptionsListBox"
-        Me.OptionsListBox.Size = New System.Drawing.Size(85, 56)
-        Me.OptionsListBox.TabIndex = 38
-        '
-        'ltLoopLine
-        '
-        Me.ltLoopLine.AutoSize = True
-        Me.ltLoopLine.Location = New System.Drawing.Point(282, 74)
-        Me.ltLoopLine.Name = "ltLoopLine"
-        Me.ltLoopLine.Size = New System.Drawing.Size(47, 17)
-        Me.ltLoopLine.TabIndex = 39
-        Me.ltLoopLine.Text = "XXX"
-        Me.ltLoopLine.UseVisualStyleBackColor = True
         '
         'ltOK
         '
         Me.ltOK.DialogResult = System.Windows.Forms.DialogResult.OK
-        Me.ltOK.Location = New System.Drawing.Point(281, 110)
+        Me.ltOK.Location = New System.Drawing.Point(190, 51)
         Me.ltOK.Name = "ltOK"
         Me.ltOK.Size = New System.Drawing.Size(86, 23)
-        Me.ltOK.TabIndex = 36
+        Me.ltOK.TabIndex = 6
         Me.ltOK.Text = "XXX"
         Me.ltOK.UseVisualStyleBackColor = True
         '
-        'CodingDialog
+        'ltCancel
+        '
+        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.ltCancel.Location = New System.Drawing.Point(282, 51)
+        Me.ltCancel.Name = "ltCancel"
+        Me.ltCancel.Size = New System.Drawing.Size(85, 23)
+        Me.ltCancel.TabIndex = 7
+        Me.ltCancel.Text = "XXX"
+        Me.ltCancel.UseVisualStyleBackColor = True
+        '
+        'InputTextBox
+        '
+        Me.InputTextBox.Location = New System.Drawing.Point(12, 25)
+        Me.InputTextBox.Name = "InputTextBox"
+        Me.InputTextBox.Size = New System.Drawing.Size(355, 20)
+        Me.InputTextBox.TabIndex = 8
+        '
+        'lDescr
+        '
+        Me.lDescr.AutoSize = True
+        Me.lDescr.Location = New System.Drawing.Point(12, 9)
+        Me.lDescr.Name = "lDescr"
+        Me.lDescr.Size = New System.Drawing.Size(28, 13)
+        Me.lDescr.TabIndex = 9
+        Me.lDescr.Text = "XXX"
+        '
+        'InputBoxDialog
         '
         Me.AcceptButton = Me.ltOK
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.ltCancel
-        Me.ClientSize = New System.Drawing.Size(379, 174)
-        Me.Controls.Add(Me.ltLoopLine)
-        Me.Controls.Add(Me.OptionsListBox)
+        Me.ClientSize = New System.Drawing.Size(379, 88)
+        Me.Controls.Add(Me.InputTextBox)
         Me.Controls.Add(Me.ltOK)
         Me.Controls.Add(Me.ltCancel)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.Controls.Add(Me.lDescr)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Name = "CodingDialog"
+        Me.Name = "InputBoxDialog"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "XXX"
         Me.ResumeLayout(False)
@@ -90,6 +86,6 @@ Partial Class CodingDialog
     End Sub
     Friend WithEvents ltOK As System.Windows.Forms.Button
     Friend WithEvents ltCancel As System.Windows.Forms.Button
-    Friend WithEvents OptionsListBox As System.Windows.Forms.ListBox
-    Friend WithEvents ltLoopLine As System.Windows.Forms.CheckBox
+    Friend WithEvents InputTextBox As System.Windows.Forms.TextBox
+    Friend WithEvents lDescr As System.Windows.Forms.Label
 End Class

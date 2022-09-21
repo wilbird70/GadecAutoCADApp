@@ -83,7 +83,7 @@ Public Class FrameInsertHelper
     Public Shared Sub ReplaceFrames(document As Document, Optional withDialog As Boolean = False)
         If withDialog Then
             Dim dialog = New DesignDialog("DF", 1.0)
-            If Not dialog.GetButton = vbOK Then Exit Sub
+            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
         End If
         ReplaceFrames(document, document.FrameData)
         Dim frameIdCollections = FrameHelper.GetFrameIdCollections(document.FrameData(True))
@@ -140,7 +140,7 @@ Public Class FrameInsertHelper
 
             Dim items = possibleFrames.Select(Function(frame) "Frame-Scale".Translate(frame.Value.GetString("Name"), frame.Value.GetString("Scale")))
             Dim dialog = New ListBoxDialog("SelectScale".Translate, items.ToArray)
-            If Not dialog.GetButton = vbOK Then Exit Do
+            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Do
 
             Dim index = dialog.GetSelectedIndex
             Dim scale = possibleFrames(index).Key

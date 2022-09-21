@@ -26,7 +26,7 @@ Public Class ExtractMethods
 
         Dim items = "ExtractOptions".Translate.Cut
         Dim dialog = New ListBoxDialog("Select".Translate, items)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Select Case dialog.GetSelectedIndex
             Case 0 : ExtractToMZXConsysCSV(document.GetPath, symbolData)
@@ -96,7 +96,7 @@ Public Class ExtractMethods
 
         Dim items = "ExtractOptions".Translate.Cut
         Dim dialog = New ListBoxDialog("Select".Translate, items)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim folder = IO.Path.GetDirectoryName(files(0))
         Select Case dialog.GetSelectedIndex
@@ -139,14 +139,14 @@ Public Class ExtractMethods
                 Windows.Forms.Clipboard.SetText(String.Join(vbLf, clipbrdList))
                 Dim iniString = "Met aantallen=DesignCenter legenda met aantallen;Zonder aantallen=DesignCenter legenda zonder aantallen;Incl. onbekend=Legenda met aantallen van (ook) onbekende symbolen".NotYetTranslated
                 Dim buttons = iniString.Cut.ToIniDictionary
-
                 Dim dialog = New MessageBoxDialog("Maken van legenda".NotYetTranslated, clipbrdList.ToArray, buttons)
-                Dim MsgResult = dialog.Button
-                Select Case MsgResult
-                    Case 10 : InsertLegendBlock(document, referenceData, True)
-                    Case 11 : InsertLegendBlock(document, referenceData, False)
-                    Case 12 : InsertLegendBlock(document, referenceData, True, True)
-                End Select
+                If dialog.DialogResult = Windows.Forms.DialogResult.OK Then
+                    Select Case dialog.ButtonNumber
+                        Case 0 : InsertLegendBlock(document, referenceData, True)
+                        Case 1 : InsertLegendBlock(document, referenceData, False)
+                        Case 2 : InsertLegendBlock(document, referenceData, True, True)
+                    End Select
+                End If
             End If
             Autodesk.AutoCAD.Internal.Utils.PostCommandPrompt()
         End If

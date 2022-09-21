@@ -28,7 +28,7 @@ Public Class FrameHeaderHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim adaptableRow = MergingSelectedFrameRecords(frameListData, frameSelection)
         Dim dialog = New HeaderDialog(adaptableRow, document.IsNamedDrawing, _varies)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim xmlListDataSet = DataSetHelper.LoadFromXml("{0}\Drawinglist.xml".Compose(IO.Path.GetDirectoryName(document.Name)))
         Dim xmlListData = If(xmlListDataSet.Tables.Contains("Frames"), xmlListDataSet.GetTable("Frames", "Filename;Num"), Nothing)
@@ -134,7 +134,7 @@ Public Class FrameHeaderHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim currentFileName = document.Name
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim newRevisionData = dialog.GetRevisionTexts
         Registerizer.UserSetting("RevisionDrawnIni", newRevisionData("Drawn"))
@@ -269,7 +269,7 @@ Public Class FrameHeaderHelper
         Next
         adaptableRow.Table.Rows.Add(adaptableRow)
         Dim dialog = New HeaderDialog(adaptableRow, document.IsNamedDrawing, _varies)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim textToChange = New Dictionary(Of ObjectId, String)
         Dim newHdrStr = dialog.GetHeader
@@ -303,7 +303,7 @@ Public Class FrameHeaderHelper
     Public Shared Sub AddFramelessRevision(document As Document)
         Dim frameRow = FrameHelper.BuildFramelessRow(document)
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Dim revisionStrings = dialog.GetRevisionTexts
         Registerizer.UserSetting("RevisionDrawnIni", revisionStrings("Drawn"))

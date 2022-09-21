@@ -9,10 +9,6 @@ Imports GadecCAD.Extensions
 ''' </summary>
 Public Class DesignCenter
     ''' <summary>
-    ''' Has the value of which buton was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
-    ''' <summary>
     ''' The current scale of the drawing.
     ''' </summary>
     Private _insertScale As Double
@@ -264,14 +260,6 @@ Public Class DesignCenter
     End Function
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets the possibly changed scale (there is a combobox that allows the user to change it).
     ''' </summary>
     ''' <returns>The scale.</returns>
@@ -340,7 +328,7 @@ Public Class DesignCenter
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click, ItemsDataGridView.CellMouseDoubleClick
         Try
             If ItemsDataGridView.SelectedRows.Count > 0 Then
-                _button = vbOK
+                Me.DialogResult = DialogResult.OK
                 Me.Hide()
             End If
         Catch ex As Exception
@@ -356,7 +344,6 @@ Public Class DesignCenter
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

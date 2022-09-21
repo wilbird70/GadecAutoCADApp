@@ -63,7 +63,7 @@ Public Class GadecMenuHandler
     ''' <param name="editor">The present editor.</param>
     Public Sub Load(editor As Editor)
         Dim dialog = New ListBoxDialog("Toolbars...", "Zichtbaar maken;Verbergen;Locatie herstellen".NotYetTranslated.Cut)
-        Dim toolbarOption = If(dialog.GetButton = vbOK, dialog.GetSelectedIndex, -1)
+        Dim toolbarOption = If(dialog.DialogResult = Windows.Forms.DialogResult.OK, dialog.GetSelectedIndex, -1)
 
         FileSystemHelper.CreateFolder(_supportPath)
         FileSystemHelper.DeleteFile(_targetCuix)

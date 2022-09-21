@@ -277,10 +277,7 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub OverviewButton_Click(sender As Object, e As EventArgs) Handles OverviewButton.Click
         Try
-            Do
-                Dim dialog = New OverviewDialog(False)
-                If Not dialog.GetButton = vbRetry Then Exit Do
-            Loop
+            Dim dialog = New OverviewDialog(False)
             ReloadGridView()
         Catch ex As Exception
             GadecException(ex)
@@ -712,7 +709,7 @@ Public Class FramesPalette
                             If drawingList.NoSelection Then Exit Sub
 
                             Dim dialog = New CoverSheetDialog(drawingList.GetDrawinglistHeader, True, doc.GetPath)
-                            If Not dialog.GetButton = vbOK Then Exit Sub
+                            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
                             drawingList.Create(True, dialog.Attachments, dialog.OnlyAttachments)
                             If drawingList.CreateFailure Then Exit Sub
@@ -744,7 +741,7 @@ Public Class FramesPalette
                             If drawingList.NoSelection Then Exit Sub
 
                             Dim dialog = New CoverSheetDialog(drawingList.GetDrawinglistHeader)
-                            If Not dialog.GetButton = vbOK Then Exit Sub
+                            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
                             drawingList.Create()
                             If drawingList.CreateFailure Then Exit Sub
@@ -1060,7 +1057,7 @@ Public Class FramesPalette
         Dim copies = 0
         Dim items = "1;2;3;4;5;6;7;8".Cut
         Dim dialog = New ListBoxDialog("SelectCopies".Translate, items)
-        If dialog.GetButton = vbOK Then copies = items(dialog.GetSelectedIndex).ToInteger
+        If dialog.DialogResult = Windows.Forms.DialogResult.OK Then copies = items(dialog.GetSelectedIndex).ToInteger
         Return copies
     End Function
 

@@ -10,7 +10,6 @@ Imports System.Windows.Forms
 Public Class SettingsDialog
     Private ReadOnly _settings As DataTable
     Private ReadOnly _type As String
-    Private _button As Integer = vbCancel
 
     'form
 
@@ -29,18 +28,11 @@ Public Class SettingsDialog
         Me.ShowDialog()
     End Sub
 
-    'functions
-
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
     'buttons
 
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click
         Try
             MakingSettings()
-            _button = vbOK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -49,7 +41,6 @@ Public Class SettingsDialog
 
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

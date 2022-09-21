@@ -24,7 +24,7 @@ Public Class WiringDuctMethod
 
         Dim currentSelection = Registerizer.UserSetting("WiringDuct")
         Dim dialog = New ListBoxDialog("SelectDuct".Translate, items, currentSelection)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Registerizer.UserSetting("WiringDuct", items(dialog.GetSelectedIndex))
         Dim row = wiringDuctData.Rows.Find(items(dialog.GetSelectedIndex))

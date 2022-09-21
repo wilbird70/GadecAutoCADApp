@@ -6,16 +6,10 @@ Imports System.Windows.Forms
 ''' </summary>
 Public Class MessageBoxDialog
     ''' <summary>
-    ''' Has the value of which buton was clicked.
-    ''' <para>Button values are:</para>
-    ''' <para>- No button     - vbIgnore.</para>
-    ''' <para>- Cancel button - vbCancel.</para>
-    ''' <para>- First button  - 10.</para>
-    ''' <para>- Second button  - 11.</para>
-    ''' <para>- Third button  - 12.</para>
+    ''' Has the number of the button that was clicked.
     ''' </summary>
-    ''' <returns>The button value.</returns>
-    Public ReadOnly Property Button As Integer = vbIgnore
+    ''' <returns>The button number.</returns>
+    Public ReadOnly Property ButtonNumber As Integer = -1
 
     ''' <summary>
     ''' The tooltip to use on this dialogbox.
@@ -104,7 +98,6 @@ Public Class MessageBoxDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _Button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -119,7 +112,7 @@ Public Class MessageBoxDialog
     ''' <param name="e"></param>
     Private Sub Button0_Click(sender As Object, e As EventArgs) Handles Button0.Click
         Try
-            _Button = 10
+            _ButtonNumber = 0
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -134,7 +127,7 @@ Public Class MessageBoxDialog
     ''' <param name="e"></param>
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
-            _Button = 11
+            _ButtonNumber = 1
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -149,7 +142,7 @@ Public Class MessageBoxDialog
     ''' <param name="e"></param>
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Try
-            _Button = 12
+            _ButtonNumber = 2
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

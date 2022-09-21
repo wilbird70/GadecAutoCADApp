@@ -37,6 +37,7 @@ Partial Class RevisionDialog
         '
         'ltOK
         '
+        Me.ltOK.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.ltOK.Location = New System.Drawing.Point(190, 88)
         Me.ltOK.Name = "ltOK"
         Me.ltOK.Size = New System.Drawing.Size(86, 23)

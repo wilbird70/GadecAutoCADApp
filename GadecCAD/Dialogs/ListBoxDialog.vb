@@ -4,10 +4,6 @@
 ''' <para><see cref="ListBoxDialog"/> allows the user to select an option from a list.</para>
 ''' </summary>
 Public Class ListBoxDialog
-    ''' <summary>
-    ''' Has the value of which button was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
 
     'form
 
@@ -104,14 +100,6 @@ Public Class ListBoxDialog
     End Function
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets the index of the selected item.
     ''' </summary>
     ''' <returns>The index.</returns>
@@ -129,7 +117,6 @@ Public Class ListBoxDialog
     ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click, InputListBox.DoubleClick
         Try
-            _button = vbOK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -144,7 +131,6 @@ Public Class ListBoxDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

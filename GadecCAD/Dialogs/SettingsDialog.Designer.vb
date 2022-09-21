@@ -38,6 +38,7 @@ Partial Class SettingsDialog
         '
         'ltOK
         '
+        Me.ltOK.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.ltOK.Location = New System.Drawing.Point(190, 139)
         Me.ltOK.Name = "ltOK"
         Me.ltOK.Size = New System.Drawing.Size(86, 23)

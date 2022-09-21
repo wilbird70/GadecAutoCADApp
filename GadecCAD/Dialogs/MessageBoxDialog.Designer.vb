@@ -51,6 +51,7 @@ Partial Class MessageBoxDialog
         '
         'Button2
         '
+        Me.Button2.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Button2.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button2.Location = New System.Drawing.Point(192, 139)
         Me.Button2.Name = "Button2"
@@ -72,6 +73,7 @@ Partial Class MessageBoxDialog
         '
         'Button0
         '
+        Me.Button0.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Button0.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button0.Location = New System.Drawing.Point(12, 139)
         Me.Button0.Name = "Button0"
@@ -83,6 +85,7 @@ Partial Class MessageBoxDialog
         '
         'Button1
         '
+        Me.Button1.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Button1.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button1.Location = New System.Drawing.Point(102, 139)
         Me.Button1.Name = "Button1"

@@ -142,9 +142,9 @@ Public Class DrawinglistCreator
                     table.Cells(4, 3).TextString = "Scale".Translate
                     table.Cells(3, 5).TextString = "Revision".Translate
                     table.Cells(4, 5).TextString = "RevDescr".Translate
-                    If _selectedFrameList.Rows.Count > 1 Then table.InsertRows(5, 4, (_selectedFrameList.Rows.Count - 1) * 3)
-                    Dim sourceRange = CellRange.Create(table, 2, 0, 4, 6)
                     If Not onlyAttachments Then
+                        If _selectedFrameList.Rows.Count > 1 Then table.InsertRows(5, 4, (_selectedFrameList.Rows.Count - 1) * 3)
+                        Dim sourceRange = CellRange.Create(table, 2, 0, 4, 6)
                         For j = 1 To _selectedFrameList.Rows.Count - 1
                             Dim rowNumber = (j * 3) + 2
                             Dim targetRange = CellRange.Create(table, rowNumber, 0, rowNumber + 2, 6)
@@ -155,22 +155,22 @@ Public Class DrawinglistCreator
                     End If
                     table.Cells(0, 0).TextString = "DRAWINGLIST".Translate
                     If NotNothing(attachments) Then
-                        Dim row = (_selectedFrameList.Rows.Count * 3) + 2
+                        Dim rowNumber = If(onlyAttachments, 5, (_selectedFrameList.Rows.Count * 3) + 2)
                         For Each attachment In attachments
-                            table.InsertRowsAndInherit(row, 0, 1)
-                            table.UnmergeCells(table.Rows(row))
-                            table.MergeCells(CellRange.Create(table, row, 1, row, 6))
-                            table.Rows(row).Height = 12
+                            table.InsertRowsAndInherit(rowNumber, 0, 1)
+                            table.UnmergeCells(table.Rows(rowNumber))
+                            table.MergeCells(CellRange.Create(table, rowNumber, 1, rowNumber, 6))
+                            table.Rows(rowNumber).Height = 12
                             Dim name = IO.Path.GetFileNameWithoutExtension(attachment)
                             Dim pages = PdfSharpHelper.GetNumberOfPages(attachment)
-                            table.Cells(row, 0).TextString = "Attachment".Translate
+                            table.Cells(rowNumber, 0).TextString = "Attachment".Translate
                             Select Case pages
-                                Case 0 : table.Cells(row, 1).TextString = "No Page".Translate(name)
-                                Case 1 : table.Cells(row, 1).TextString = "One page".Translate(name)
-                                Case Else : table.Cells(row, 1).TextString = "Pages".Translate(name, pages)
+                                Case 0 : table.Cells(rowNumber, 1).TextString = "No Page".Translate(name)
+                                Case 1 : table.Cells(rowNumber, 1).TextString = "One page".Translate(name)
+                                Case Else : table.Cells(rowNumber, 1).TextString = "Pages".Translate(name, pages)
                             End Select
-                            table.Rows(row).TextHeight = 2.5
-                            row += 1
+                            table.Rows(rowNumber).TextHeight = 2.5
+                            rowNumber += 1
                         Next
                         If onlyAttachments Then table.DeleteRows(2, 3)
                     End If

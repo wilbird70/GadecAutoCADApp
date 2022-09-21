@@ -10,10 +10,6 @@ Imports System.Windows.Forms
 ''' </summary>
 Public Class DesignDialog
     ''' <summary>
-    ''' Has the value of which buton was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
-    ''' <summary>
     ''' The current scale of the drawing.
     ''' </summary>
     Private _insertScale As Double
@@ -117,14 +113,6 @@ Public Class DesignDialog
     'functions
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets the possibly changed scale (it can be changed when user clicks the image to change selected item).
     ''' </summary>
     ''' <returns>The scale.</returns>
@@ -191,7 +179,6 @@ Public Class DesignDialog
     ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click, ItemsListBox.DoubleClick
         Try
-            _button = vbOK
             If _userData.Rows(_selectedIndex).GetString("Name") = "Symbol" Then
                 Dim output = Strings.Join(GetArraySettings, ";")
                 Registerizer.UserSetting("SymbolArraySettings", output)
@@ -210,7 +197,6 @@ Public Class DesignDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             If _userData.Rows(_selectedIndex).GetString("Name") = "Symbol" Then
                 Dim output = Strings.Join(GetArraySettings, ";")
                 Registerizer.UserSetting("SymbolArraySettings", output)
@@ -334,7 +320,7 @@ Public Class DesignDialog
             Dim latestSession = "{0};;".Compose(Registerizer.UserSetting("DCsession{0}".Compose(_command))).Cut
             Dim dialog = New DesignCenter(latestSession, _insertScale)
             If NotNothing(dialog.GetSession) Then Registerizer.UserSetting("DCsession{0}".Compose(_command), Join(dialog.GetSession, ";"))
-            If Not dialog.GetButton = vbOK Then Exit Sub
+            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
             Dim userRow = _userData.Rows(_selectedIndex)
             Dim iniDictionary = dialog.GetDescriptions.ToIniDictionary

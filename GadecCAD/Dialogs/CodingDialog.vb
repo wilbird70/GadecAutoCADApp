@@ -55,10 +55,6 @@ Public Class CodingDialog
     ''' Keeps track of whether the option loading is busy.
     ''' </summary>
     Private _isBusy As Boolean = False
-    ''' <summary>
-    ''' Has the value of which buton was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
 
     'form
 
@@ -109,14 +105,6 @@ Public Class CodingDialog
     'functions
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets the detailed information about encoding symbols.
     ''' </summary>
     ''' <returns>A <see cref="SymbolCodeModel"/></returns>
@@ -142,10 +130,8 @@ Public Class CodingDialog
     ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click
         Try
-            _button = vbOK
             SaveSettingsToRegistry()
             Me.Hide()
-            Me.Close()
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -159,10 +145,8 @@ Public Class CodingDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             SaveSettingsToRegistry()
             Me.Hide()
-            Me.Close()
         Catch ex As Exception
             GadecException(ex)
         End Try

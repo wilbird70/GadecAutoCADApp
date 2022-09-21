@@ -18,14 +18,7 @@ Public Class ReferenceMethods
         Dim referenceIds = SelectMethods.GetSelectionOfReferences(document)
         If referenceIds.Count = 0 Then Exit Sub
 
-        Dim scales = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name")
-        scales(0) = scales(0).Translate
-        Dim dialog = New ListBoxDialog("SelectScale".Translate, scales, "1:{0}".Compose(SysVarHandler.GetVar("DIMSCALE")))
-        Dim scale = scales(dialog.GetSelectedIndex).MidString(3).ToDouble
-        If dialog.GetSelectedIndex = 0 Then
-            Dim value = InputBox("Custom scale".Translate, Registerizer.GetApplicationVersion, SysVarHandler.GetVar("DIMSCALE"))
-            scale = {value.ToDouble, 1.0}.Max
-        End If
+        Dim scale = DesignMethods.SetDrawingScale(document)
         ReferenceHelper.ChangeScale(document, referenceIds, scale)
     End Sub
 
@@ -66,7 +59,7 @@ Public Class ReferenceMethods
         Dim sessionList = "{0};;".Compose(Registerizer.UserSetting("DCsessionReplace")).Cut
         Dim dialog = New DesignCenter(sessionList, scale)
         If NotNothing(dialog.GetSession) Then Registerizer.UserSetting("DCsessionReplace", Join(dialog.GetSession, ";"))
-        If Not dialog.GetButton = vbOK Or dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Or dialog.GetBlockName = "" Then Exit Sub
 
         Using document.LockDocument
             Using tr = db.TransactionManager.StartTransaction
@@ -78,7 +71,7 @@ Public Class ReferenceMethods
                         If newDefinitionNames.Count = 1 Then replaceList.TryAdd(name, newDefinitionNames(0)) : Continue For
 
                         Dim dialog2 = New ListBoxDialog("ReplaceBlocks".Translate(name), newDefinitionNames)
-                        If dialog2.GetButton = vbOK Then replaceList.TryAdd(name, newDefinitionNames(dialog2.GetSelectedIndex))
+                        If dialog2.DialogResult = Windows.Forms.DialogResult.OK Then replaceList.TryAdd(name, newDefinitionNames(dialog2.GetSelectedIndex))
                     Next
                     Dim bt = tr.GetBlockTable(db.BlockTableId)
                     For Each referenceId In referenceIds
@@ -106,7 +99,7 @@ Public Class ReferenceMethods
         Dim previousSession = "{0};;".Compose(Registerizer.UserSetting("DCsessionRedefine")).Cut
         Dim dialog = New DesignCenter(previousSession, scale)
         If NotNothing(dialog.GetSession) Then Registerizer.UserSetting("DCsessionRedefine", Join(dialog.GetSession, ";"))
-        If Not dialog.GetButton = vbOK Or dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Or dialog.GetBlockName = "" Then Exit Sub
 
         Using import = New DefinitionsImporter("{Resources}\{0}".Compose(dialog.GetSourceFile))
             Dim definitionNames = import.ImportNestedDefinitions(document, dialog.GetBlockName)

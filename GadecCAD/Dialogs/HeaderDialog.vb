@@ -19,10 +19,6 @@ Public Class HeaderDialog
     ''' </summary>
     Private _initialsChanged As Boolean = False
     ''' <summary>
-    ''' Has the value of which button was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
-    ''' <summary>
     ''' Contains the data of a header, selected in the overviewdialog.
     ''' </summary>
     Private _copied As DataRow
@@ -115,14 +111,6 @@ Public Class HeaderDialog
     'functions
 
     ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
-    ''' <summary>
     ''' Gets a record containing the adjusted headerdata.
     ''' </summary>
     ''' <returns>The adjusted headerdata.</returns>
@@ -146,7 +134,6 @@ Public Class HeaderDialog
                     If _header.HasValue(controlName) Then _header(controlName) = control.Text
                 End If
             Next
-            _button = vbOK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -161,7 +148,6 @@ Public Class HeaderDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -198,7 +184,10 @@ Public Class HeaderDialog
             dataBuilder.AddNewlyCreatedRow()
             _previous = dataBuilder.GetDataTable.Rows(0)
             Dim dialog = New OverviewDialog(True)
-            If dialog.GetButton = vbOK Then _copied = dialog.GetSelectedRow : EnteringPasteMode()
+            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
+
+            _copied = dialog.GetSelectedRow
+            EnteringPasteMode()
         Catch ex As Exception
             GadecException(ex)
         End Try

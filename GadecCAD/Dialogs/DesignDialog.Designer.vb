@@ -41,6 +41,7 @@ Partial Class DesignDialog
         '
         'ltOK
         '
+        Me.ltOK.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.ltOK.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ltOK.Location = New System.Drawing.Point(95, 201)
         Me.ltOK.Name = "ltOK"

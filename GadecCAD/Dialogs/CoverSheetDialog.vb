@@ -25,11 +25,6 @@ Public Class CoverSheetDialog
     ''' </summary>
     Private ReadOnly _frameListRow As DataRow
 
-    ''' <summary>
-    ''' Has the value of which button was clicked.
-    ''' </summary>
-    Private _button As Integer = vbCancel
-
     'form
 
     ''' <summary>
@@ -87,16 +82,6 @@ Public Class CoverSheetDialog
         End Try
     End Sub
 
-    'functions
-
-    ''' <summary>
-    ''' Gets the value of which button was clicked.
-    ''' </summary>
-    ''' <returns>The button value.</returns>
-    Function GetButton() As Integer
-        Return _button
-    End Function
-
     'buttons
 
     ''' <summary>
@@ -128,7 +113,6 @@ Public Class CoverSheetDialog
     ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
-            _button = vbCancel
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
@@ -198,7 +182,7 @@ Public Class CoverSheetDialog
     ''' <para>It sets the buttonvalue, saves the settings in the frame record and closes the dialogbox.</para>
     ''' </summary>
     Private Sub Accept()
-        _button = vbOK
+        Me.DialogResult = DialogResult.OK
         Dim description = If(Description2TextBox.Text = "", "{0}", "{0}, {1}").Compose(SystemTextBox.Text, Description2TextBox.Text)
         Dim projectName = StrConv("{0} ({1}, {2})".Compose(_frameListRow.GetString("Client1"), StatusComboBox.Text, description), VbStrConv.ProperCase)
         _frameListRow.SetString("ProjectName", projectName)

@@ -35,10 +35,10 @@ Public Class TextMethods
             If entityIsInModelOrPaperspace Then
                 Select Case entity.GetDBObjectType
                     Case "DBText"
-                        Dim value = InputBox("DBtext".Translate, Registerizer.GetApplicationVersion, entity.CastAsDBText.TextString)
-                        If value = "" Then Continue Do
+                        Dim dialog = New InputBoxDialog("DBtext".Translate, entity.CastAsDBText.TextString)
+                        If dialog.InputText = "" Then Continue Do
 
-                        Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, value}}
+                        Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                         TextHelper.ChangeTextStrings(document, textToChange)
                         Continue Do
                     Case "MText", "AttributeDefinition"
@@ -52,10 +52,10 @@ Public Class TextMethods
             Select Case entity.GetDBObjectType
                 Case "AttributeReference"
                     Dim attribute = entity.CastAsAttributeReference
-                    Dim value = InputBox("Attribute".Translate(attribute.Tag), Registerizer.GetApplicationVersion, attribute.TextString)
-                    If value = "" Then Continue Do
+                    Dim dialog = New InputBoxDialog("Attribute".Translate(attribute.Tag), attribute.TextString)
+                    If dialog.InputText = "" Then Continue Do
 
-                    Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, value}}
+                    Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                     TextHelper.ChangeTextStrings(document, textToChange)
                     'voor als dit attribuut onderdeel is van een kader,
                     'wordt de wijziging direct doorgevoerd i.p.v. na afsluiten commando
@@ -295,8 +295,10 @@ Public Class TextMethods
         End Select
         Dim value = ""
         If Not prompt = "" Then
-            value = InputBox(prompt.Translate, Registerizer.GetApplicationVersion, "")
-            If value = "" Then Exit Sub
+            Dim dialog = New InputBoxDialog(prompt.Translate, "")
+            If dialog.InputText = "" Then Exit Sub
+
+            value = dialog.InputText
         End If
         Dim textToChange = New Dictionary(Of ObjectId, String)
         Dim result = ""

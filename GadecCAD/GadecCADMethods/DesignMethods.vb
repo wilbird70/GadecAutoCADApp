@@ -19,25 +19,29 @@ Public Class DesignMethods
     'subs
 
     ''' <summary>
-    ''' A method that allows the user to drawing scale.
+    ''' A method that allows the user to change the drawing scale.
     ''' </summary>
     ''' <param name="document">The present document.</param>
-    Public Shared Sub SetDrawingScale(document As Document)
+    Public Shared Function SetDrawingScale(document As Document) As Double
+        Dim output = CDbl(SysVarHandler.GetVar("DIMSCALE"))
         Dim scales = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name")
         scales(0) = scales(0).Translate
-        Dim dialog = New ListBoxDialog("SelectScale".Translate, scales, "1:{0}".Compose(SysVarHandler.GetVar("DIMSCALE")))
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        Dim dialog = New ListBoxDialog("SelectScale".Translate, scales, "1:{0}".Compose(output))
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Return output
 
-        Select Case dialog.GetSelectedIndex = 0
-            Case True
-                Dim value = InputBox("Custom scale".Translate, Registerizer.GetApplicationVersion, SysVarHandler.GetVar("DIMSCALE"))
-                Dim scale = {value.ToDouble, 1.0}.Max
-                SysVarHandler.SetVar(document, "DIMSCALE", scale)
-            Case Else
-                Dim scale = scales(dialog.GetSelectedIndex).MidString(3).ToDouble
-                SysVarHandler.SetVar(document, "DIMSCALE", scale)
-        End Select
-    End Sub
+        If dialog.GetSelectedIndex > 0 Then
+            output = scales(dialog.GetSelectedIndex).MidString(3).ToDouble
+            SysVarHandler.SetVar(document, "DIMSCALE", output)
+            Return output
+        End If
+
+        Dim dialog2 = New InputBoxDialog("Custom scale".Translate, output)
+        If dialog2.InputText = "" Then Return output
+
+        output = {dialog2.InputText.ToDouble, 1.0}.Max
+        SysVarHandler.SetVar(document, "DIMSCALE", output)
+        Return output
+    End Function
 
     ''' <summary>
     ''' A method that allows the user to select and insert a symbol or (parts of) a drawing from a dialog.
@@ -52,7 +56,7 @@ Public Class DesignMethods
         Dim sessionSettings = "{0};;".Compose(Registerizer.UserSetting(session)).Cut
         Dim dialog = New DesignCenter(sessionSettings, scale)
         If NotNothing(dialog.GetSession) Then Registerizer.UserSetting(session, Join(dialog.GetSession, ";"))
-        If Not dialog.GetButton = vbOK Or dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Or dialog.GetBlockName = "" Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = If(dialog.GetAllowScale, dialog.GetInsertScale, 1.0)
@@ -84,7 +88,7 @@ Public Class DesignMethods
         Dim ed = document.Editor
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim dialog = New DesignDialog("DA", scale)
-        If Not dialog.GetButton = vbOK OrElse dialog.GetSourceFile = "" OrElse dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK OrElse dialog.GetSourceFile = "" OrElse dialog.GetBlockName = "" Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -149,7 +153,7 @@ Public Class DesignMethods
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim detectorData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Detectors", "Name")
         Dim dialog = New DesignDialog("DD", scale)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -172,7 +176,7 @@ Public Class DesignMethods
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim wallmountData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Wallmounts", "Name")
         Dim dialog = New DesignDialog("DW", scale)
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -195,7 +199,7 @@ Public Class DesignMethods
         Dim choices = radiusData.GetStringsFromColumn(Translator.Selected)
         Dim previousChoice = {Registerizer.UserSetting("DetectorRadiusCheckSelected").ToInteger, choices.Count - 1}.Min
         Dim dialog = New ListBoxDialog("CheckRadius".Translate, choices, choices(previousChoice))
-        If Not dialog.GetButton = vbOK Then Exit Sub
+        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
         Registerizer.UserSetting("DetectorRadiusCheckSelected", dialog.GetSelectedIndex)
         Dim row = radiusData.Rows(dialog.GetSelectedIndex)
@@ -276,7 +280,7 @@ Public Class DesignMethods
                 minimumDetectors += 1
             Loop
             Dim dialog = New ListBoxDialog("Select".Translate, solutions.Values.ToArray)
-            If Not dialog.GetButton = vbOK Then Continue Do
+            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK = vbOK Then Continue Do
 
             Dim selectedSolutionId = solutions.Keys(dialog.GetSelectedIndex)
             Dim distanceX = lengthX / numberOnX(selectedSolutionId) * 1000

@@ -22,12 +22,12 @@ Public Module RibbonTabTexts
     <CommandMethod("CODETEXT")>
     Public Sub commandCodeText()
         Try
-            Dim value = InputBox("CodingText".Translate, Registerizer.GetApplicationVersion, Registerizer.UserSetting("CodeAttributeCodeText"))
-            If value = "" Then Exit Sub
+            Dim dialog = New InputBoxDialog("CodingText".Translate, Registerizer.UserSetting("CodeAttributeCodeText"))
+            If dialog.InputText = "" Then Exit Sub
 
-            Registerizer.UserSetting("CodeAttributeCodeText", value)
+            Registerizer.UserSetting("CodeAttributeCodeText", dialog.InputText)
             Dim encoder = New TextEncoder(ActiveDocument)
-            encoder.Start(value)
+            encoder.Start(dialog.InputText)
         Catch ex As System.Exception
             GadecException(ex)
         End Try

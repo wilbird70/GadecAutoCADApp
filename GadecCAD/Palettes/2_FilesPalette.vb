@@ -392,11 +392,15 @@ Public Class FilesPalette
                 Case tag = "Rename"
                     If selectedFiles.Count > 0 Then
                         Dim file = selectedFiles.First
-                        Dim msgRlt = InputBox("RenameFile".Translate, DefaultResponse:=IO.Path.GetFileName(file))
-                        msgRlt = FileSystemHelper.RemoveInvalidFileNameCharacters(msgRlt.Trim(" ", "."))
-                        If msgRlt = "" Or msgRlt.Contains("\") Then Exit Select
-                        If Not msgRlt.EndsWith(IO.Path.GetExtension(file)) Then msgRlt &= IO.Path.GetExtension(file)
-                        FileSystemHelper.RenameFile(file, "{0}\{1}".Compose(IO.Path.GetDirectoryName(file), msgRlt))
+
+                        Dim dialog = New InputBoxDialog("RenameFile".Translate, IO.Path.GetFileName(file))
+                        If dialog.InputText = "" Then Exit Sub
+
+                        Dim newName = FileSystemHelper.RemoveInvalidFileNameCharacters(dialog.InputText.Trim(" ", "."))
+                        If newName = "" Or newName.Contains("\") Then Exit Select
+
+                        If Not newName.EndsWith(IO.Path.GetExtension(file)) Then newName &= IO.Path.GetExtension(file)
+                        FileSystemHelper.RenameFile(file, "{0}\{1}".Compose(IO.Path.GetDirectoryName(file), newName))
                         PaletteHelper.ReloadFrameList()
                     End If
                 Case tag = "Delete"
