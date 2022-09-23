@@ -36,7 +36,7 @@ Public Class TextMethods
                 Select Case entity.GetDBObjectType
                     Case "DBText"
                         Dim dialog = New InputBoxDialog("DBtext".Translate, entity.CastAsDBText.TextString)
-                        If dialog.InputText = "" Then Continue Do
+                        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
 
                         Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                         TextHelper.ChangeTextStrings(document, textToChange)
@@ -53,7 +53,7 @@ Public Class TextMethods
                 Case "AttributeReference"
                     Dim attribute = entity.CastAsAttributeReference
                     Dim dialog = New InputBoxDialog("Attribute".Translate(attribute.Tag), attribute.TextString)
-                    If dialog.InputText = "" Then Continue Do
+                    If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
 
                     Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                     TextHelper.ChangeTextStrings(document, textToChange)

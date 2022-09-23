@@ -27,13 +27,13 @@ Public Class FrameStampHelper
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("SignStampDrawnIni"), Registerizer.UserSetting("SignStampCheckIni"))
         If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
-        Dim newRevisionStrings = dialog.GetRevisionTexts
-        Registerizer.UserSetting("SignStampDrawnIni", newRevisionStrings("Drawn"))
-        Registerizer.UserSetting("SignStampCheckIni", newRevisionStrings("Check"))
-        If Not IsDate(newRevisionStrings("Date")) Then Exit Sub
+        Dim revisionData = dialog.GetRevisionData.ToIniDictionary
+        Registerizer.UserSetting("SignStampDrawnIni", revisionData("Drawn"))
+        Registerizer.UserSetting("SignStampCheckIni", revisionData("Check"))
+        If Not IsDate(revisionData("Date")) Then Exit Sub
 
-        newRevisionStrings.TryAdd("Date1", newRevisionStrings("Date"))
-        newRevisionStrings.TryAdd("Date2", newRevisionStrings("Date"))
+        revisionData.TryAdd("Date1", revisionData("Date"))
+        revisionData.TryAdd("Date2", revisionData("Date"))
         Try
             If frameSelection.Count > 5 Then _progressbar = New ProgressShow("ProcessingDocuments".Translate, frameSelection.Count)
             Dim filesFailedToSave = New List(Of String)
@@ -91,29 +91,29 @@ Public Class FrameStampHelper
                                     ReferenceHelper.ChangeRotation(db, New ObjectIdCollection({stampId}), 3)
                                     stampIdCollections.TryAdd(number, New ObjectIdCollection({stampId}))
                             End Select
-                            Select Case newRevisionStrings("Descr").Trim = ""
+                            Select Case revisionData("Descr").Trim = ""
                                 Case True
                                     ReferenceVisibilityHelper.SetProperty(db, stampId, "Invisible")
-                                    newRevisionStrings("Drawn") = ""
-                                    newRevisionStrings("Date1") = ""
-                                    newRevisionStrings("Check") = ""
-                                    newRevisionStrings("Date2") = ""
+                                    revisionData("Drawn") = ""
+                                    revisionData("Date1") = ""
+                                    revisionData("Check") = ""
+                                    revisionData("Date2") = ""
                                 Case Else
                                     ReferenceVisibilityHelper.SetProperty(db, stampId, "Visible")
                                     DrawOrderHelper.BringToFront(db, spaceId, stampId)
-                                    If newRevisionStrings("Drawn").Trim = "" Then newRevisionStrings("Date1") = ""
-                                    If newRevisionStrings("Check").Trim = "" Then newRevisionStrings("Date2") = ""
+                                    If revisionData("Drawn").Trim = "" Then revisionData("Date1") = ""
+                                    If revisionData("Check").Trim = "" Then revisionData("Date2") = ""
                             End Select
                             Dim referenceData = ReferenceHelper.GetReferenceData(db, stampId)
                             If NotNothing(referenceData) Then
                                 textToChange.TryAdd(referenceData.GetAttributeId("NAME"), "NAME".Translate)
                                 textToChange.TryAdd(referenceData.GetAttributeId("DATE"), "DATE...".Translate)
                                 textToChange.TryAdd(referenceData.GetAttributeId("PARAPH"), "PARAPH".Translate)
-                                textToChange.TryAdd(referenceData.GetAttributeId("NAME1"), newRevisionStrings("Drawn"))
-                                textToChange.TryAdd(referenceData.GetAttributeId("DATE1"), newRevisionStrings("Date1"))
-                                textToChange.TryAdd(referenceData.GetAttributeId("NAME2"), newRevisionStrings("Check"))
-                                textToChange.TryAdd(referenceData.GetAttributeId("DATE2"), newRevisionStrings("Date2"))
-                                textToChange.TryAdd(referenceData.GetAttributeId("REVTEXTS"), newRevisionStrings("Descr"))
+                                textToChange.TryAdd(referenceData.GetAttributeId("NAME1"), revisionData("Drawn"))
+                                textToChange.TryAdd(referenceData.GetAttributeId("DATE1"), revisionData("Date1"))
+                                textToChange.TryAdd(referenceData.GetAttributeId("NAME2"), revisionData("Check"))
+                                textToChange.TryAdd(referenceData.GetAttributeId("DATE2"), revisionData("Date2"))
+                                textToChange.TryAdd(referenceData.GetAttributeId("REVTEXTS"), revisionData("Descr"))
                             End If
                         Next
                     End Using
@@ -143,13 +143,13 @@ Public Class FrameStampHelper
                             Catch ex As Autodesk.AutoCAD.Runtime.Exception
                                 filesFailedToSave.Add(fileName)
                             Catch ex As System.Exception
-                                ex.ReThrow
+                                ex.Rethrow
                             End Try
                         Case Not file = document.Name : documents(file).EditorNeedsRegen(True)
                     End Select
 
                 Catch ex As System.Exception
-                    ex.ReThrow
+                    ex.Rethrow
                 Finally
                     lock?.Dispose()
                     db?.Dispose()
@@ -158,7 +158,7 @@ Public Class FrameStampHelper
             If document.IsNamedDrawing Then frameListData.DataSet.WriteXml("{0}\Drawinglist.xml".Compose(IO.Path.GetDirectoryName(currentFileName)))
             If filesFailedToSave.Count > 0 Then MsgBox("NotSavedFiles".Translate(String.Join(vbLf, filesFailedToSave)), MsgBoxStyle.Exclamation)
         Catch ex As System.Exception
-            ex.AddData($"StatusData: {String.Join(", ", newRevisionStrings)}")
+            ex.AddData($"StatusData: {String.Join(", ", revisionData)}")
             ex.ReThrow
         Finally
             _progressbar?.Dispose()

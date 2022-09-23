@@ -96,7 +96,7 @@ Public Class PaletteHelper
     ''' Gets the index of the selected system.
     ''' </summary>
     ''' <returns>The index of the selected system.</returns>
-    Public Shared Function GetSelectedSystemIndex() As Integer
+    Public Shared Function GetSelectedGroupIndex() As Integer
         Return _paletteFrames.SelectedGroupIndex
     End Function
 

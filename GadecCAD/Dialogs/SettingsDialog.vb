@@ -2,26 +2,35 @@
 Imports System.Windows.Forms
 
 ''' <summary>
-'''  
-''' ///NotYetFullyDocumented\\\
-''' 
-''' Provides methods for...
+''' <para><see cref="SettingsDialog"/> allows the user to reset some settings to factory defaults.</para>
 ''' </summary>
 Public Class SettingsDialog
-    Private ReadOnly _settings As DataTable
+    ''' <summary>
+    ''' Contains all (selectable) factory settings.
+    ''' </summary>
+    Private ReadOnly _settingsData As DataTable
+    ''' <summary>
+    ''' Contains the type of setting.
+    ''' </summary>
     Private ReadOnly _type As String
 
     'form
 
-    Sub New(settings As DataTable, Optional type As String = "")
+    ''' <summary>
+    ''' Initializes a new instance of <see cref="SettingsDialog"/> with the specified data.
+    ''' <para><see cref="SettingsDialog"/> allows the user to reset some settings to factory defaults.</para>
+    ''' </summary>
+    ''' <param name="settingsData">All (selectable) factory settings.</param>
+    ''' <param name="type">Optional the type of setting.</param>
+    Sub New(settingsData As DataTable, Optional type As String = "")
         ' This call is required by the designer.
         InitializeComponent()
         ' Add any initialization after the InitializeComponent() call.
 
-        Me.Text = registerizer.GetApplicationVersion()
+        Me.Text = Registerizer.GetApplicationVersion()
         Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
 
-        _settings = settings
+        _settingsData = settingsData
         _type = type
         WireUpDialog()
 
@@ -30,15 +39,27 @@ Public Class SettingsDialog
 
     'buttons
 
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the user clicks the OK button.
+    ''' <para>It copies the selected factory defaults to the registry, sets the buttonvalue and closes the dialogbox.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click
         Try
-            MakingSettings()
+            ResettingFactoryDefaults()
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)
         End Try
     End Sub
 
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the user clicks the Cancel button.
+    ''' <para>It sets the buttonvalue and closes the dialogbox.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub CancelButton_Click(sender As Object, e As EventArgs) Handles ltCancel.Click
         Try
             Me.Hide()
@@ -49,22 +70,25 @@ Public Class SettingsDialog
 
     'private subs
 
+    ''' <summary>
+    ''' Wires up the dialogbox.
+    ''' </summary>
     Sub WireUpDialog()
-        _settings.AssignPrimaryKey("Page")
+        _settingsData.AssignPrimaryKey("Page")
         Dim row = 0
         Dim top = 0
-        Dim types = _settings.GetUniqueStringsFromColumn("Type")
+        Dim types = _settingsData.GetUniqueStringsFromColumn("Type")
         For Each type In types
-            Dim choices = _settings.Select("Type='{0}'".compose(type), "Page")
+            Dim choices = _settingsData.Select("Type='{0}'".Compose(type), "Page")
             Dim choiceNames = choices.CopyToDataTable.GetStringsFromColumn(Translator.Selected)
-            Dim previousChoice = _settings.Rows.Find(registerizer.UserSetting("{0}-SelectedPage".compose(type)))
+            Dim previousChoice = _settingsData.Rows.Find(Registerizer.UserSetting("{0}-SelectedPage".Compose(type)))
             If IsNothing(previousChoice) Then previousChoice = choices.FirstOrDefault
             Dim previousString = previousChoice.GetString(Translator.Selected)
 
             Dim checked = _type = "" Or _type = type
             top = row * 24 + 36
-            AddCheckBox(top, "CheckBox_{0}".compose(type), checked)
-            AddComboBox(top, "ComboBox_{0}".compose(type), choiceNames, previousString)
+            AddCheckBox(top, "CheckBox_{0}".Compose(type), checked)
+            AddComboBox(top, "ComboBox_{0}".Compose(type), choiceNames, previousString)
             row += 1
         Next
         Me.Height = top + 108
@@ -72,6 +96,12 @@ Public Class SettingsDialog
         ltCancel.Top = top + 36
     End Sub
 
+    ''' <summary>
+    ''' Adds a checkbox to the dialogbox.
+    ''' </summary>
+    ''' <param name="top">Top value of the checkbox.</param>
+    ''' <param name="name">The name of the checkbox</param>
+    ''' <param name="checked">Determines whether the checkbox should be checked.</param>
     Private Sub AddCheckBox(top As Integer, name As String, checked As Boolean)
         Dim checkBox = New CheckBox With {
                 .Name = name,
@@ -85,7 +115,14 @@ Public Class SettingsDialog
         Me.Controls.Add(checkBox)
     End Sub
 
-    Private Sub AddComboBox(top As Integer, name As String, choices As String(), previous As String)
+    ''' <summary>
+    ''' Adds a combobox to the dialogbox.
+    ''' </summary>
+    ''' <param name="top">Top value of the checkbox.</param>
+    ''' <param name="name">The name of the checkbox</param>
+    ''' <param name="items">A list of items for the combobox.</param>
+    ''' <param name="previous">The previous choice.</param>
+    Private Sub AddComboBox(top As Integer, name As String, items As String(), previous As String)
         Dim comboBox = New ComboBox With {
                 .Name = name,
                 .Tag = name,
@@ -95,29 +132,32 @@ Public Class SettingsDialog
                 .Left = 36,
                 .DropDownStyle = ComboBoxStyle.DropDownList
             }
-        comboBox.Items.AddRange(choices)
+        comboBox.Items.AddRange(items)
         comboBox.SelectedItem = previous
         Me.Controls.Add(comboBox)
     End Sub
 
-    Private Sub MakingSettings()
-        _settings.AssignPrimaryKey(Translator.Selected)
+    ''' <summary>
+    ''' Copies the selected factory defaults to the registry.
+    ''' </summary>
+    Private Sub ResettingFactoryDefaults()
+        _settingsData.AssignPrimaryKey(Translator.Selected)
 
-        Dim types = _settings.GetUniqueStringsFromColumn("Type")
+        Dim types = _settingsData.GetUniqueStringsFromColumn("Type")
         For Each type In types
-            Dim checkBox = DirectCast(Me.Controls("CheckBox_{0}".compose(type)), CheckBox)
-            Dim comboBox = DirectCast(Me.Controls("ComboBox_{0}".compose(type)), ComboBox)
+            Dim checkBox = DirectCast(Me.Controls("CheckBox_{0}".Compose(type)), CheckBox)
+            Dim comboBox = DirectCast(Me.Controls("ComboBox_{0}".Compose(type)), ComboBox)
             If Not checkBox.Checked Then Continue For
 
-            Dim selected = _settings.Rows.Find(comboBox.SelectedItem)
+            Dim selected = _settingsData.Rows.Find(comboBox.SelectedItem)
             If IsNothing(selected) Then Continue For
 
-            registerizer.UserSetting("{0}-SelectedPage".compose(type), selected.GetString("Page"))
-            Dim pageData = _settings.GetTable("Blocks").Select("Page='{0}'".compose(selected.GetString("Page"))).CopyToDataTable
-            Dim parameterData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".compose).GetTable(type, "Name")
+            Registerizer.UserSetting("{0}-SelectedPage".Compose(type), selected.GetString("Page"))
+            Dim pageData = _settingsData.GetTable("Blocks").Select("Page='{0}'".Compose(selected.GetString("Page"))).CopyToDataTable
+            Dim parameterData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable(type, "Name")
             pageData.AssignPrimaryKey("Name")
             pageData.Merge(parameterData)
-            registerizer.UserData("{0}-DataTable".compose(type), pageData)
+            Registerizer.UserData("{0}-DataTable".Compose(type), pageData)
         Next
     End Sub
 

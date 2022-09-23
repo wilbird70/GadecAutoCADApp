@@ -30,7 +30,7 @@ Public Class HeaderDialog
     'form
 
     ''' <summary>
-    ''' Initializes a new instance of <see cref="HeaderDialog"/>.
+    ''' Initializes a new instance of <see cref="HeaderDialog"/> with the specified data.
     ''' <para><see cref="HeaderDialog"/> allows the user to adjust the data in the header of the selected frame(s).</para>
     ''' </summary>
     ''' <param name="header">A record containing the combined data of the headers.</param>
@@ -124,7 +124,8 @@ Public Class HeaderDialog
     ''' EventHandler for the event that occurs when the user clicks the OK button.
     ''' <para>It stores the adjusted headerdata, sets the buttonvalue and closes the dialogbox.</para>
     ''' </summary>
-    ''' <returns></returns>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click
         Try
             If _initialsChanged Then Registerizer.UserSetting("UserIni", tDrawn.Text)

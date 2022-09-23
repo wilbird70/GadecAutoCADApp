@@ -63,10 +63,10 @@ Public Module Main
     ''' </summary>
     ''' <param name="type">The type of setting. If none is specified, all settings are shown.</param>
     Public Sub SetGadecFactorySettings(Optional type As String = "")
-        Dim factorySettingsData = DataSetHelper.LoadFromXml("{Support}\SetDesignCenter.xml".Compose).GetTable("FactorySettings")
-        If IsNothing(factorySettingsData) Then Exit Sub
+        Dim settingsData = DataSetHelper.LoadFromXml("{Support}\SetDesignCenter.xml".Compose).GetTable("FactorySettings")
+        If IsNothing(settingsData) Then Exit Sub
 
-        Dim dialog = New SettingsDialog(factorySettingsData, type)
+        Dim dialog = New SettingsDialog(settingsData, type)
     End Sub
 
     ''' <summary>

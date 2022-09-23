@@ -24,7 +24,7 @@ Partial Class ProgressShow
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ProgressShow))
         Me.OutputProgressBar = New System.Windows.Forms.ProgressBar()
-        Me.ActionLabel = New System.Windows.Forms.Label()
+        Me.PromptLabel = New System.Windows.Forms.Label()
         Me.ValueLabel = New System.Windows.Forms.Label()
         Me.MaxLabel = New System.Windows.Forms.Label()
         Me.ltCancel = New System.Windows.Forms.Button()
@@ -37,14 +37,14 @@ Partial Class ProgressShow
         Me.OutputProgressBar.Size = New System.Drawing.Size(355, 18)
         Me.OutputProgressBar.TabIndex = 0
         '
-        'ActionLabel
+        'PromptLabel
         '
-        Me.ActionLabel.Font = New System.Drawing.Font("Arial Narrow", 8.5!)
-        Me.ActionLabel.Location = New System.Drawing.Point(12, 15)
-        Me.ActionLabel.Name = "ActionLabel"
-        Me.ActionLabel.Size = New System.Drawing.Size(355, 19)
-        Me.ActionLabel.TabIndex = 1
-        Me.ActionLabel.Text = "XXX"
+        Me.PromptLabel.Font = New System.Drawing.Font("Arial Narrow", 8.5!)
+        Me.PromptLabel.Location = New System.Drawing.Point(12, 15)
+        Me.PromptLabel.Name = "PromptLabel"
+        Me.PromptLabel.Size = New System.Drawing.Size(355, 19)
+        Me.PromptLabel.TabIndex = 1
+        Me.PromptLabel.Text = "XXX"
         '
         'ValueLabel
         '
@@ -84,7 +84,7 @@ Partial Class ProgressShow
         Me.Controls.Add(Me.ltCancel)
         Me.Controls.Add(Me.MaxLabel)
         Me.Controls.Add(Me.ValueLabel)
-        Me.Controls.Add(Me.ActionLabel)
+        Me.Controls.Add(Me.PromptLabel)
         Me.Controls.Add(Me.OutputProgressBar)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -94,7 +94,7 @@ Partial Class ProgressShow
 
     End Sub
     Friend WithEvents OutputProgressBar As System.Windows.Forms.ProgressBar
-    Friend WithEvents ActionLabel As System.Windows.Forms.Label
+    Friend WithEvents PromptLabel As System.Windows.Forms.Label
     Friend WithEvents ValueLabel As System.Windows.Forms.Label
     Friend WithEvents MaxLabel As System.Windows.Forms.Label
     Friend WithEvents ltCancel As Windows.Forms.Button

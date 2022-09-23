@@ -3,9 +3,6 @@ Imports System.Windows.Forms
 Imports GadecCAD.Extensions
 
 ''' <summary>
-'''  
-''' ///NotYetFullyDocumented\\\
-''' 
 ''' <para><see cref="OverviewDialog"/> provides an overview of all the frames in the current project (folder).</para>
 ''' <para>The overview is like the <see cref="FramesPalette"/>, but with all header data available to view.</para>
 ''' </summary>
@@ -20,21 +17,50 @@ Public Class OverviewDialog
     ''' The selected record.
     ''' </summary>
     Private _selectedRow As DataRow
-    Private _systemKeys As List(Of String)
+    ''' <summary>
+    ''' The index of the selected record.
+    ''' </summary>
+    Private _selectedRowIndex As Integer = -1
+    ''' <summary>
+    ''' Contains a list of keys of the groups.
+    ''' </summary>
+    Private _groupKeys As List(Of String)
     ''' <summary>
     ''' The present framelist database.
     ''' </summary>
     Private _frameListData As DataTable
+    ''' <summary>
+    ''' Contains a list of associate xml-files.
+    ''' </summary>
     Private _xmlFiles As New List(Of String)
-    Private _rowIndex As Integer = -1
-    Private _timer As Timer
+    ''' <summary>
+    ''' A timer to delay the display of the image/text balloon.
+    ''' </summary>
+    Private _mouseHoverTimer As Timer
+    ''' <summary>
+    ''' Contains the current/previous height of the dialogbox.
+    ''' </summary>
     Private _formHeight As Integer
+    ''' <summary>
+    ''' Contains the current/previous width of the dialogbox.
+    ''' </summary>
     Private _formWidth As Integer
-    Private _isLoading As Boolean = True
+    ''' <summary>
+    ''' Determines if this dialogbox is fully (re-)loaded.
+    ''' </summary>
+    Private _dialogLoaded As Boolean = False
 
+    ''' <summary>
+    ''' The present folder.
+    ''' </summary>
     Private ReadOnly _folder As String
-    Private ReadOnly _toolTip As New ToolTip
-    Private ReadOnly _selectedSystem As String
+    ''' <summary>
+    ''' The tooltip to use on this palette.
+    ''' </summary>
+    Private ReadOnly _toolTip As New ToolTip With {.AutomaticDelay = 200}
+    ''' <summary>
+    ''' Determines if this dialogbox is started from the <see cref="HeaderDialog"/>.
+    ''' </summary>
     Private ReadOnly _fromEditHeader As Boolean
 
     'form
@@ -60,10 +86,9 @@ Public Class OverviewDialog
         _frameListData = frameSetController.UpdatedFrameListData
         _fromEditHeader = fromHeaderDialog
         _GroupPrefixLength = {PaletteHelper.GetPrefixLength, 0}.Max
-        _selectedSystem = PaletteHelper.GetPrefixLength
         _formHeight = Me.Height
         _formWidth = Me.Width
-        _isLoading = False
+        _dialogLoaded = True
 
         _toolTip.SetToolTip(ViewDescriptionButton, "ltDescr".Translate)
         _toolTip.SetToolTip(ViewClientButton, "ltClient".Translate)
@@ -127,7 +152,7 @@ Public Class OverviewDialog
                     FramesDataGridView.ContextMenuStrip = contextMenuStrip
                     ltSelectAll.ContextMenuStrip = contextMenuStrip
             End Select
-            _isLoading = False
+            _dialogLoaded = True
 
             Dim files = IO.Directory.GetFiles(_folder, "*.dwl2")
             Dim message = ""
@@ -152,7 +177,7 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub Me_SizeChanged(sender As Object, e As EventArgs) Handles Me.SizeChanged
         Try
-            If _isLoading Then Exit Sub
+            If Not _dialogLoaded Then Exit Sub
 
             Me.Height = {Me.Height, 320}.Max
             Me.Width = {Me.Width, 600}.Max
@@ -367,7 +392,7 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub AssociateFoldersListBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles AssociateFoldersListBox.SelectedIndexChanged
         Try
-            If _isLoading OrElse AssociateFoldersListBox.SelectedIndex = -1 Then Exit Sub
+            If Not _dialogLoaded OrElse AssociateFoldersListBox.SelectedIndex = -1 Then Exit Sub
 
             If AssociateFoldersListBox.SelectedIndex < _xmlFiles.Count Then
                 Dim frameListData = DataSetHelper.LoadFromXml(_xmlFiles(AssociateFoldersListBox.SelectedIndex)).GetTable("Frames", "Filename;Num")
@@ -450,16 +475,16 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub FramesDataGridView_CellMouseEnter(sender As Object, e As DataGridViewCellEventArgs) Handles FramesDataGridView.CellMouseEnter
         Try
-            If NotNothing(_timer) Then _timer.Dispose() : _timer = Nothing
+            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Dispose() : _mouseHoverTimer = Nothing
             Select Case True
                 Case Registerizer.UserSetting("HidePreviews") = "True"
                 Case e.RowIndex < 0
                 Case Else
-                    _rowIndex = e.RowIndex
-                    _timer = New Timer
-                    AddHandler _timer.Tick, AddressOf TimerTickEventHandler
-                    _timer.Interval = 350
-                    _timer.Enabled = True
+                    _selectedRowIndex = e.RowIndex
+                    _mouseHoverTimer = New Timer
+                    AddHandler _mouseHoverTimer.Tick, AddressOf TimerTickEventHandler
+                    _mouseHoverTimer.Interval = 350
+                    _mouseHoverTimer.Enabled = True
                     FramesDataGridView.Rows(e.RowIndex).HighlightRow(True)
             End Select
         Catch ex As Exception
@@ -475,7 +500,7 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub FramesDataGridView_CellMouseLeave(sender As Object, e As DataGridViewCellEventArgs) Handles FramesDataGridView.CellMouseLeave
         Try
-            If NotNothing(_timer) Then _timer.Enabled = False
+            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Enabled = False
             Select Case True
                 Case Registerizer.UserSetting("HidePreviews") = "True"
                 Case e.RowIndex < 0
@@ -510,10 +535,10 @@ Public Class OverviewDialog
     ''' </summary>
     Private Sub TimerTickEventHandler()
         Try
-            _timer.Enabled = False
-            If _rowIndex = -1 Or Not _rowIndex < FramesDataGridView.Rows.Count Then Exit Sub
+            _mouseHoverTimer.Enabled = False
+            If _selectedRowIndex = -1 Or Not _selectedRowIndex < FramesDataGridView.Rows.Count Then Exit Sub
 
-            Dim rowRectangle = FramesDataGridView.GetRowDisplayRectangle(_rowIndex, True)
+            Dim rowRectangle = FramesDataGridView.GetRowDisplayRectangle(_selectedRowIndex, True)
             Dim pointX = 0
             Dim pointY = rowRectangle.Y + FramesDataGridView.Top + (rowRectangle.Height / 2)
             Dim alignment As HorizontalAlignment = PaletteHelper.GetTitlebarLocation
@@ -522,7 +547,7 @@ Public Class OverviewDialog
                 Case Else : pointX = rowRectangle.X + FramesDataGridView.Left - 10
             End Select
             Dim displayPoint = PointToScreen(New Drawing.Point(pointX, pointY))
-            If FramesDataGridView.Columns.Contains("Num") Then BalloonHelper.ShowFramePreview(FramesDataGridView.Rows(_rowIndex), displayPoint, alignment)
+            If FramesDataGridView.Columns.Contains("Num") Then BalloonHelper.ShowFramePreview(FramesDataGridView.Rows(_selectedRowIndex), displayPoint, alignment)
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -623,7 +648,7 @@ Public Class OverviewDialog
     End Sub
 
     ''' <summary>
-    ''' Wires up the associated folders, i.e. the subfolders of the parent folder of the current folder.
+    ''' Wires up the associated folders, i.e. the subfolders of the root of the current folder.
     ''' </summary>
     Private Sub WireUpAssociateFolders()
         Dim searchFolder = IO.Path.GetDirectoryName(_folder)
@@ -638,10 +663,10 @@ Public Class OverviewDialog
             fileList.Add("..{0}   ({1})".Compose(file.EraseStart(searchFolderLength).EraseEnd(16), rowCount))
             If file = "{0}\Drawinglist.xml".Compose(_folder) Then preSelect = i
         Next
-        _isLoading = True
+        _dialogLoaded = False
         AssociateFoldersListBox.Items.AddRange(fileList.ToArray)
         AssociateFoldersListBox.SetSelected(preSelect, True)
-        _isLoading = False
+        _dialogLoaded = True
     End Sub
 
     ''' <summary>
@@ -653,7 +678,7 @@ Public Class OverviewDialog
         GroupingLabel.Refresh()
         Select Case True
             Case _GroupPrefixLength = 0
-                _systemKeys = {"*"}.ToList
+                _groupKeys = {"*"}.ToList
                 systems.Add("*", _frameListData.Rows.Count)
             Case Else
                 For i = 0 To _frameListData.Rows.Count - 1
@@ -665,14 +690,14 @@ Public Class OverviewDialog
                         Case Else : systems.Add(system, 1)
                     End Select
                 Next
-                _systemKeys = systems.Keys.ToSortedList
+                _groupKeys = systems.Keys.ToSortedList
         End Select
 
-        Dim texts = _systemKeys.Select(Function(key) "{0}   ({1})".Compose(key, systems(key)))
+        Dim texts = _groupKeys.Select(Function(key) "{0}   ({1})".Compose(key, systems(key)))
         GroupsListBox.Items.Clear()
         GroupsListBox.Items.AddRange(texts.ToArray)
-        Select Case GroupsListBox.Items.Count > PaletteHelper.GetSelectedSystemIndex
-            Case True : GroupsListBox.SetSelected(PaletteHelper.GetSelectedSystemIndex, True)
+        Select Case GroupsListBox.Items.Count > PaletteHelper.GetSelectedGroupIndex
+            Case True : GroupsListBox.SetSelected(PaletteHelper.GetSelectedGroupIndex, True)
             Case Else : FramesDataGridView.Columns.Clear()
         End Select
     End Sub
@@ -701,8 +726,8 @@ Public Class OverviewDialog
         FramesDataGridView.DefaultCellStyle.Font = Font
         FramesDataGridView.ScrollBars = ScrollBars.Vertical
         'data toewijzen
-        _isLoading = True
-        Dim data = New DataView(_frameListData, "Drawing LIKE '{0}'".Compose(_systemKeys(GroupsListBox.SelectedIndex)), "Drawing,Sheet", DataViewRowState.CurrentRows).ToTable
+        _dialogLoaded = False
+        Dim data = New DataView(_frameListData, "Drawing LIKE '{0}'".Compose(_groupKeys(GroupsListBox.SelectedIndex)), "Drawing,Sheet", DataViewRowState.CurrentRows).ToTable
         FramesDataGridView.DataSource = Nothing
         FramesDataGridView.DataSource = data
         'kolombreedten toewijzen
@@ -716,7 +741,7 @@ Public Class OverviewDialog
         End Select
         FramesDataGridView.SetColumnWidths(settings.Cut.ToIniDictionary)
         FramesDataGridView.AllowUserToResizeColumns = True
-        _isLoading = False
+        _dialogLoaded = True
     End Sub
 
 End Class

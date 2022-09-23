@@ -23,7 +23,7 @@ Partial Class ProgressSmall
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.OutputProgessBar = New System.Windows.Forms.ProgressBar()
-        Me.ActionLabel = New System.Windows.Forms.Label()
+        Me.PromptLabel = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'OutputProgessBar
@@ -34,21 +34,21 @@ Partial Class ProgressSmall
         Me.OutputProgessBar.Size = New System.Drawing.Size(300, 10)
         Me.OutputProgessBar.TabIndex = 34
         '
-        'ActionLabel
+        'PromptLabel
         '
-        Me.ActionLabel.Font = New System.Drawing.Font("Arial Narrow", 8.5!)
-        Me.ActionLabel.Location = New System.Drawing.Point(12, 9)
-        Me.ActionLabel.Name = "ActionLabel"
-        Me.ActionLabel.Size = New System.Drawing.Size(300, 20)
-        Me.ActionLabel.TabIndex = 35
-        Me.ActionLabel.Text = "XXX"
+        Me.PromptLabel.Font = New System.Drawing.Font("Arial Narrow", 8.5!)
+        Me.PromptLabel.Location = New System.Drawing.Point(12, 9)
+        Me.PromptLabel.Name = "PromptLabel"
+        Me.PromptLabel.Size = New System.Drawing.Size(300, 20)
+        Me.PromptLabel.TabIndex = 35
+        Me.PromptLabel.Text = "XXX"
         '
         'ProgressSmall
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(326, 53)
-        Me.Controls.Add(Me.ActionLabel)
+        Me.Controls.Add(Me.PromptLabel)
         Me.Controls.Add(Me.OutputProgessBar)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Name = "ProgressSmall"
@@ -57,5 +57,5 @@ Partial Class ProgressSmall
 
     End Sub
     Friend WithEvents OutputProgessBar As System.Windows.Forms.ProgressBar
-    Friend WithEvents ActionLabel As System.Windows.Forms.Label
+    Friend WithEvents PromptLabel As System.Windows.Forms.Label
 End Class

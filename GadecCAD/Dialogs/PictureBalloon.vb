@@ -3,26 +3,65 @@ Imports System.Windows.Forms
 Imports System.Drawing
 
 ''' <summary>
-'''  
-''' ///NotYetFullyDocumented\\\
-''' 
-''' Provides methods for...
+''' <para><see cref="PictureBalloon"/> provides an image balloon.</para>
+''' <para>It is used to show an image of a frame (eg. framepalette), drawing (eg. filepalette) or symbol (eg. designcenter).</para>
 ''' </summary>
 Public Class PictureBalloon
-    Private _timerFadeIn As Timer
-    Private _position As Point
-
+    ''' <summary>
+    ''' Contains a timer that ticks (20 ms) to slide in the image.
+    ''' </summary>
+    Private ReadOnly _slideInTimer As New Timer
+    ''' <summary>
+    ''' Contains the image to show.
+    ''' </summary>
     Private ReadOnly _bitmap As Bitmap
+    ''' <summary>
+    ''' Contains the color for the border.
+    ''' </summary>
     Private ReadOnly _borderColor As Color
+    ''' <summary>
+    ''' Contains the desired height of the balloon.
+    ''' </summary>
     Private ReadOnly _height As Integer
+    ''' <summary>
+    ''' Contains the top-left or top-right (depending on the alignment) position of the balloon.
+    ''' </summary>
+    Private ReadOnly _position As Point
+    ''' <summary>
+    ''' Determine to which side of the position the image will slide in.
+    ''' </summary>
     Private ReadOnly _alignment As HorizontalAlignment
+    ''' <summary>
+    ''' Contains the text to display in the balloon.
+    ''' </summary>
     Private ReadOnly _text As String
+    ''' <summary>
+    ''' Contains the desired height of the text.
+    ''' </summary>
     Private ReadOnly _textHeight As Integer
+    ''' <summary>
+    ''' Contains the width of the preview image. The initial value is for an invalid image.
+    ''' </summary>
     Private ReadOnly _previewWidth As Integer = 88
+    ''' <summary>
+    ''' Controls the insertion speed, which is the number of units per tick.
+    ''' </summary>
     Private ReadOnly _speed As Integer
 
     'form
 
+    ''' <summary>
+    ''' Initializes a new instance of <see cref="PictureBalloon"/> with the specified properties.
+    ''' <para><see cref="PictureBalloon"/> provides an image balloon.</para>
+    ''' <para>It is used to show an image of a frame (eg. framepalette), drawing (eg. filepalette) or symbol (eg. designcenter).</para>
+    ''' </summary>
+    ''' <param name="bitmap">The image to slide in.</param>
+    ''' <param name="position">The starting point (appendix) of the balloon.</param>
+    ''' <param name="alignment">Side where the image should be displayed.</param>
+    ''' <param name="borderColor">The color for the border.</param>
+    ''' <param name="height">The desired height of the balloon.</param>
+    ''' <param name="text">The text to display in the balloon.</param>
+    ''' <param name="textHeight">The desired height of the text.</param>
     Sub New(bitmap As Bitmap, position As Point, alignment As HorizontalAlignment, borderColor As Color, height As Integer, text As String, textHeight As Integer)
         ' This call is required by the designer.
         InitializeComponent()
@@ -50,6 +89,12 @@ Public Class PictureBalloon
         Me.Show()
     End Sub
 
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the dialogbox is loading.
+    ''' <para>It changes the size and position of controls depending on the alignment.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub Me_Load(sender As Object, e As EventArgs) Handles Me.Load
         Try
             Select Case True
@@ -71,15 +116,20 @@ Public Class PictureBalloon
                     PreviewPictureBox.Image = _bitmap
                     PreviewPictureBox.BringToFront()
             End Select
-            _timerFadeIn = New Timer
-            AddHandler _timerFadeIn.Tick, AddressOf TimerTickFadeInEventHandler
-            _timerFadeIn.Interval = 20
-            _timerFadeIn.Enabled = True
+            AddHandler _slideInTimer.Tick, AddressOf TimerTickSlideInEventHandler
+            _slideInTimer.Interval = 20
+            _slideInTimer.Enabled = True
         Catch ex As Exception
             GadecException(ex)
         End Try
     End Sub
 
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the dialog is painted.
+    ''' <para>It redraws the border and arrow of the balloon.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub Me_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
         Try
             Select Case _alignment
@@ -99,7 +149,12 @@ Public Class PictureBalloon
         End Try
     End Sub
 
-
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the user hovers the mouse over the dialog.
+    ''' <para>It hides (disposes) the dialog.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub Me_MouseMove(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
         Try
             Me.Dispose()
@@ -110,6 +165,12 @@ Public Class PictureBalloon
 
     'pictureboxes
 
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the user hovers the mouse over the preview.
+    ''' <para>It hides (disposes) the dialog.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub PreviewPictureBox_MouseMove(sender As Object, e As MouseEventArgs) Handles PreviewPictureBox.MouseMove
         Try
             Me.Dispose()
@@ -118,11 +179,17 @@ Public Class PictureBalloon
         End Try
     End Sub
 
-    'eventhandlers
+    'private eventhandlers
 
-    Private Sub TimerTickFadeInEventHandler(ByVal sender As Object, ByVal e As EventArgs)
+    ''' <summary>
+    ''' EventHandler for the event that occurs when the timer ticks.
+    ''' <para>It changes the width of the dialog with the speed value until the preview is fully displayed.</para>
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Private Sub TimerTickSlideInEventHandler(ByVal sender As Object, ByVal e As EventArgs)
         Try
-            If Me.IsDisposed Then _timerFadeIn.Enabled = False
+            If Me.IsDisposed Then _slideInTimer.Enabled = False
             Dim newWidth = Me.Width + _speed
             Select Case _alignment
                 Case 0
@@ -135,8 +202,8 @@ Public Class PictureBalloon
                             PreviewPictureBox.Left = 10
                             BackPictureBox.Left = 5
                             Me.Width = _previewWidth + 14
-                            If Not _text = "" Then CreateCustumLabel()
-                            _timerFadeIn.Enabled = False
+                            If Not _text = "" Then ShowLabel(_text, _textHeight)
+                            _slideInTimer.Enabled = False
                     End Select
                 Case 1
                     Select Case newWidth < _previewWidth + 14
@@ -146,37 +213,47 @@ Public Class PictureBalloon
                         Case Else
                             Me.Width = _previewWidth + 14
                             Me.SetDesktopLocation(_position.X - Me.Width, _position.Y)
-                            If Not _text = "" Then CreateCustumLabel()
-                            _timerFadeIn.Enabled = False
+                            If Not _text = "" Then ShowLabel(_text, _textHeight)
+                            _slideInTimer.Enabled = False
                     End Select
             End Select
             Me.Refresh()
         Catch ex As Exception
-            _timerFadeIn.Enabled = False
+            _slideInTimer.Enabled = False
         End Try
     End Sub
 
     'private subs
 
-    Private Sub CreateCustumLabel()
-        Dim customLabel = New OutlinedLabel(Color.Gray, 2) With {
-            .Font = FontHelper.SansSerifBold(_textHeight),
+    ''' <summary>
+    ''' Shows an outlined label with the specified text and text height.
+    ''' </summary>
+    ''' <param name="text">The text to display.</param>
+    ''' <param name="textHeight">The height of the text.</param>
+    Private Sub ShowLabel(text As String, textHeight As Integer)
+        Dim label = New OutlinedLabel(Color.Gray, 2) With {
+            .Text = IO.Path.GetFileName(text),
+            .Font = FontHelper.SansSerifBold(textHeight),
             .AutoSize = True,
             .ForeColor = Color.White,
             .BackColor = Color.Transparent,
-            .Text = IO.Path.GetFileName(_text),
             .Left = 0,
             .Top = 0
         }
-        Me.Controls.Add(customLabel)
-        customLabel.Parent = PreviewPictureBox
-        customLabel.BringToFront()
+        Me.Controls.Add(label)
+        label.Parent = PreviewPictureBox
+        label.BringToFront()
     End Sub
 
     'private functions
 
-    Private Function PointArray(ParamArray points As (x As Integer, y As Integer)()) As Point()
-        Return points.Select(Function(x) New Point(x.x, x.y)).ToArray
+    ''' <summary>
+    ''' Turns a list of tuples (with X and Y values) into a list of points.
+    ''' </summary>
+    ''' <param name="points">The list of tuples (with X and Y values).</param>
+    ''' <returns>The list of points.</returns>
+    Private Function PointArray(ParamArray points As (X As Integer, Y As Integer)()) As Point()
+        Return points.Select(Function(point) New Point(point.X, point.Y)).ToArray
     End Function
 
 End Class

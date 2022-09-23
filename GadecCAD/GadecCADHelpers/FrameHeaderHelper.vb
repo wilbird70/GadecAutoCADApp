@@ -136,10 +136,10 @@ Public Class FrameHeaderHelper
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
         If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
-        Dim newRevisionData = dialog.GetRevisionTexts
-        Registerizer.UserSetting("RevisionDrawnIni", newRevisionData("Drawn"))
-        Registerizer.UserSetting("RevisionCheckIni", newRevisionData("Check"))
-        If Not IsDate(newRevisionData("Date")) Then Exit Sub
+        Dim revisionData = dialog.GetRevisionData.ToIniDictionary
+        Registerizer.UserSetting("RevisionDrawnIni", revisionData("Drawn"))
+        Registerizer.UserSetting("RevisionCheckIni", revisionData("Check"))
+        If Not IsDate(revisionData("Date")) Then Exit Sub
 
         Dim xmlListDataSet = DataSetHelper.LoadFromXml("{0}\Drawinglist.xml".Compose(IO.Path.GetDirectoryName(document.Name)))
         Dim xmlListData = If(xmlListDataSet.Tables.Contains("Frames"), xmlListDataSet.GetTable("Frames", "Filename;Num"), Nothing)
@@ -179,7 +179,7 @@ Public Class FrameHeaderHelper
                         If IsNothing(frameRow) Then Continue For
 
                         Dim sortedRevisions = SortRevisions(frameRow)
-                        Dim addedRevision = AddRevision(frameRow, newRevisionData)
+                        Dim addedRevision = AddRevision(frameRow, revisionData)
                         sortToChange = sortToChange.Union(sortedRevisions).ToDictionary(Function(d) d.Key, Function(d) d.Value)
                         textToChange = textToChange.Union(addedRevision).ToDictionary(Function(d) d.Key, Function(d) d.Value)
                         If documents.ContainsKey(file) Then Continue For
@@ -187,11 +187,11 @@ Public Class FrameHeaderHelper
                         Dim frameListRow = xmlListData?.Rows.Find({fileName, number})
                         If IsNothing(frameListRow) Then Continue For
 
-                        frameListRow.SetString("LastRev_Date", newRevisionData("Date"))
-                        frameListRow.SetString("LastRev_Char", newRevisionData("Char"))
-                        frameListRow.SetString("LastRev_Drawn", newRevisionData("Drawn"))
-                        frameListRow.SetString("LastRev_Descr", newRevisionData("Descr"))
-                        frameListRow.SetString("LastRev_Check", newRevisionData("Check"))
+                        frameListRow.SetString("LastRev_Date", revisionData("Date"))
+                        frameListRow.SetString("LastRev_Char", revisionData("Char"))
+                        frameListRow.SetString("LastRev_Drawn", revisionData("Drawn"))
+                        frameListRow.SetString("LastRev_Descr", revisionData("Descr"))
+                        frameListRow.SetString("LastRev_Check", revisionData("Check"))
                     Next
                     If textToChange.Count = 0 And sortToChange.Count = 0 Then Continue For
 
@@ -224,7 +224,7 @@ Public Class FrameHeaderHelper
             If document.IsNamedDrawing Then xmlListData?.DataSet.WriteXml("{0}\Drawinglist.xml".Compose(IO.Path.GetDirectoryName(document.Name)))
             If filesFailedToSave.Count > 0 Then MsgBox("NotSavedFiles".Translate(String.Join(vbLf, filesFailedToSave)), MsgBoxStyle.Exclamation)
         Catch ex As System.Exception
-            ex.AddData($"RevisionData: {String.Join(", ", newRevisionData)}")
+            ex.AddData($"RevisionData: {String.Join(", ", revisionData)}")
             ex.Rethrow
         Finally
             _progressbar?.Dispose()
@@ -305,13 +305,13 @@ Public Class FrameHeaderHelper
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
         If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
 
-        Dim revisionStrings = dialog.GetRevisionTexts
-        Registerizer.UserSetting("RevisionDrawnIni", revisionStrings("Drawn"))
-        Registerizer.UserSetting("RevisionCheckIni", revisionStrings("Check"))
-        If Not IsDate(revisionStrings("Date")) Then Exit Sub
+        Dim revisionData = dialog.GetRevisionData.ToIniDictionary
+        Registerizer.UserSetting("RevisionDrawnIni", revisionData("Drawn"))
+        Registerizer.UserSetting("RevisionCheckIni", revisionData("Check"))
+        If Not IsDate(revisionData("Date")) Then Exit Sub
 
         Dim sortedRevisions = SortRevisions(frameRow)
-        Dim addedRevision = AddRevision(frameRow, revisionStrings)
+        Dim addedRevision = AddRevision(frameRow, revisionData)
         Dim sortToChange = New Dictionary(Of ObjectId, String)
         Dim textToChange = New Dictionary(Of ObjectId, String)
         sortToChange = sortToChange.Union(sortedRevisions).ToDictionary(Function(d) d.Key, Function(d) d.Value)

@@ -83,7 +83,7 @@ Public Class DesignCenter
     ''' <summary>
     ''' Determines if this dialogbox is fully loaded.
     ''' </summary>
-    Private ReadOnly _dialogLoaded As Boolean
+    Private ReadOnly _dialogLoaded As Boolean = False
     ''' <summary>
     ''' An ini-string to show the selected language in the lists and page.
     ''' </summary>

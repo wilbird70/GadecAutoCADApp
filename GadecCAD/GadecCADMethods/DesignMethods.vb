@@ -332,40 +332,42 @@ Public Class DesignMethods
                 Dim nestedEntityResult = ed.GetNestedEntity(promptNestedEntityOptions)
                 If Not nestedEntityResult.Status = PromptStatus.OK Then Continue Do
 
-                Using tr = db.TransactionManager.StartTransaction
-                    Dim entity = tr.GetEntity(nestedEntityResult.ObjectId)
-                    Select Case entity.GetDBObjectType
-                        Case "Line" : angle = entity.CastAsLine.Angle
-                        Case "Polyline"
-                            Dim polyline = entity.CastAsPolyline
-                            Dim segmentPoint3d = polyline.GetClosestPointTo(nestedEntityResult.PickedPoint, False)
-                            Dim segmentPoint2d = segmentPoint3d.Add(polyline.StartPoint.GetAsVector()).Convert2d(polyline.GetPlane)
-                            Dim vertex = 0
-                            For i = 0 To polyline.NumberOfVertices - 1
-                                If polyline.OnSegmentAt(i, segmentPoint2d, 0.0) Then vertex = i : Exit For
-                            Next
-                            Dim lineSegment = polyline.GetLineSegmentAt(vertex)
-                            angle = lineSegment.EndPoint.GetVectorTo(lineSegment.StartPoint).AngleOnPlane(polyline.GetPlane)
-                        Case Else : Beep()
-                    End Select
-                    Dim promptAngleOptions = New PromptAngleOptions("Sel Wall Side:".Translate) With {.BasePoint = pickedPoint, .UseBasePoint = True, .AllowNone = True}
-                    sysVar.Set("ORTHOMODE", 1)
-                    sysVar.Set("SNAPANG", angle)
-                    Dim selectAngleResult = ed.GetAngle(promptAngleOptions)
-                    sysVar.Reset()
-                    If Not selectAngleResult.Status = PromptStatus.OK Then Continue Do
+                Using document.LockDocument
+                    Using tr = db.TransactionManager.StartTransaction
+                        Dim entity = tr.GetEntity(nestedEntityResult.ObjectId)
+                        Select Case entity.GetDBObjectType
+                            Case "Line" : angle = entity.CastAsLine.Angle
+                            Case "Polyline"
+                                Dim polyline = entity.CastAsPolyline
+                                Dim segmentPoint3d = polyline.GetClosestPointTo(nestedEntityResult.PickedPoint, False)
+                                Dim segmentPoint2d = segmentPoint3d.Add(polyline.StartPoint.GetAsVector()).Convert2d(polyline.GetPlane)
+                                Dim vertex = 0
+                                For i = 0 To polyline.NumberOfVertices - 1
+                                    If polyline.OnSegmentAt(i, segmentPoint2d, 0.0) Then vertex = i : Exit For
+                                Next
+                                Dim lineSegment = polyline.GetLineSegmentAt(vertex)
+                                angle = lineSegment.EndPoint.GetVectorTo(lineSegment.StartPoint).AngleOnPlane(polyline.GetPlane)
+                            Case Else : Beep()
+                        End Select
+                        Dim promptAngleOptions = New PromptAngleOptions("Sel Wall Side:".Translate) With {.BasePoint = pickedPoint, .UseBasePoint = True, .AllowNone = True}
+                        sysVar.Set("ORTHOMODE", 1)
+                        sysVar.Set("SNAPANG", angle)
+                        Dim selectAngleResult = ed.GetAngle(promptAngleOptions)
+                        sysVar.Reset()
+                        If Not selectAngleResult.Status = PromptStatus.OK Then Continue Do
 
-                    Autodesk.AutoCAD.Internal.Utils.SetUndoMark(True)
-                    sysVar.Set("OSMODE", 0)
-                    Dim basePoint = pickedPoint.GetPolarPoint(selectAngleResult.Value, 3.5 * scale)
-                    Dim rotation = selectAngleResult.Value + (((correctionRotation - 90) / 180) * Math.PI)
-                    Dim referenceId = ReferenceHelper.InsertReference(db, db.CurrentSpaceId, db.Clayer, definitionId, basePoint, scale, rotation)
-                    If referenceId = ObjectId.Null Then Continue Do
+                        Autodesk.AutoCAD.Internal.Utils.SetUndoMark(True)
+                        sysVar.Set("OSMODE", 0)
+                        Dim basePoint = pickedPoint.GetPolarPoint(selectAngleResult.Value, 3.5 * scale)
+                        Dim rotation = selectAngleResult.Value + (((correctionRotation - 90) / 180) * Math.PI)
+                        Dim referenceId = ReferenceHelper.InsertReference(db, db.CurrentSpaceId, db.Clayer, definitionId, basePoint, scale, rotation)
+                        If referenceId = ObjectId.Null Then Continue Do
 
+                        tr.Commit()
+                    End Using
                     Dim entities = ReferenceHelper.CommandExplodeLast(document)
                     AttributesUpright(db, entities)
                     Autodesk.AutoCAD.Internal.Utils.SetUndoMark(False)
-                    tr.Commit()
                 End Using
             End Using
         Loop
