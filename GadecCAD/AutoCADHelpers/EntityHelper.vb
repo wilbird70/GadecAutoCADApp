@@ -162,4 +162,34 @@ Public Class EntityHelper
         End Try
     End Function
 
+    Public Shared Function Hide(database As Database, entityId As ObjectId) As Boolean
+        Try
+            Using tr = database.TransactionManager.StartTransaction()
+                Dim entity = tr.GetEntity(entityId, OpenMode.ForWrite, True)
+                If NotNothing(entity) Then entity.Visible = False
+                tr.Commit()
+            End Using
+            Return True
+        Catch ex As Exception
+            ex.AddData($"ObjectIds: {entityId.ToString}")
+            ex.Rethrow
+            Return False
+        End Try
+    End Function
+
+    Public Shared Function Show(database As Database, entityId As ObjectId) As Boolean
+        Try
+            Using tr = database.TransactionManager.StartTransaction()
+                Dim entity = tr.GetEntity(entityId, OpenMode.ForWrite, True)
+                If NotNothing(entity) Then entity.Visible = True
+                tr.Commit()
+            End Using
+            Return True
+        Catch ex As Exception
+            ex.AddData($"ObjectIds: {entityId.ToString}")
+            ex.Rethrow
+            Return False
+        End Try
+    End Function
+
 End Class

@@ -2,6 +2,7 @@
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
+Imports Autodesk.AutoCAD.Geometry
 Imports GadecCAD.Extensions
 
 ''' <summary>
@@ -198,12 +199,23 @@ Public Class TextMethods
     Private Shared Sub Edit(document As Document, swapOrJoin As SwapsOrJoins)
         Dim db = document.Database
         Dim ed = document.Editor
-
+        Dim rollBackStack = New Stack(Of RollBackModel)   'to rollback steps when Undo is used within the method.
         Dim textObjects = New Dictionary(Of ObjectId, String)
         Dim promptNestedEntityOptions = New PromptNestedEntityOptions("") With {.AllowNone = True}
+        promptNestedEntityOptions.Keywords.Add("Undo")
         Do
             promptNestedEntityOptions.Message = If(textObjects.Count = 0, "Sel First Text:", "Sel Second Text:").Translate
             Dim nestedEntityResult = ed.GetNestedEntity(promptNestedEntityOptions)
+            If nestedEntityResult.Status = PromptStatus.Keyword AndAlso nestedEntityResult.StringResult = "Undo" Then
+                If rollBackStack.Count < 1 Then Beep() : Continue Do
+
+                Dim rollBackSession = rollBackStack.Pop
+                TextHelper.ChangeTextStrings(document, rollBackSession.Strings)
+                If NotNothing(rollBackSession.ObjectId) Then EntityHelper.Show(db, rollBackSession.ObjectId)
+                textObjects = New Dictionary(Of ObjectId, String)
+                Continue Do
+            End If
+
             If Not nestedEntityResult.Status = PromptStatus.OK Then Exit Do
 
             Dim entityId = nestedEntityResult.ObjectId
@@ -212,6 +224,7 @@ Public Class TextMethods
             Dim lastWasDBText As Boolean
             Using tr = db.TransactionManager.StartTransaction
                 Dim entity = tr.GetEntity(entityId)
+
                 Select Case entity.GetDBObjectType
                     Case "AttributeReference"
                         lastWasDBText = False
@@ -229,15 +242,21 @@ Public Class TextMethods
                 Case SwapsOrJoins.Swap
                     textToChange.TryAdd(textObjects.Keys(0), textObjects.Values(1))
                     textToChange.TryAdd(textObjects.Keys(1), textObjects.Values(0))
+                    rollBackStack.Push(New RollBackModel(textObjects))
                 Case SwapsOrJoins.Join
                     textToChange.TryAdd(textObjects.Keys(0), "{0} {1}".Compose(textObjects.Values(0), textObjects.Values(1)))
                     Select Case lastWasDBText
-                        Case True : EntityHelper.Delete(document, textObjects.Keys(1))
+                        Case True : EntityHelper.Hide(db, textObjects.Keys(1))
                         Case Else : textToChange.TryAdd(textObjects.Keys(1), "")
                     End Select
+                    rollBackStack.Push(New RollBackModel(textObjects, If(lastWasDBText, textObjects.Keys(1), Nothing)))
             End Select
             TextHelper.ChangeTextStrings(document, textToChange)
-            textObjects.Clear()
+            textObjects = New Dictionary(Of ObjectId, String)
+        Loop
+        Do While rollBackStack.Count > 0
+            Dim rollBackSession = rollBackStack.Pop
+            If NotNothing(rollBackSession.ObjectId) Then EntityHelper.Delete(document, rollBackSession.ObjectId)
         Loop
     End Sub
 

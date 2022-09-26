@@ -2,7 +2,6 @@
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
-Imports Autodesk.AutoCAD.Geometry
 Imports GadecCAD.Extensions
 
 ''' <summary>
@@ -28,11 +27,22 @@ Public Class TextEncoder
     Public Sub Start(code As String)
         Dim db = _document.Database
         Dim ed = _document.Editor
+        Dim rollBackStack = New Stack(Of RollBackModel) 'to rollback steps when Undo is used within the method.
         Dim promptEntityOptions = New PromptEntityOptions("X")
+        promptEntityOptions.Keywords.Add("Undo")
         Do
             Dim textToChange = New Dictionary(Of ObjectId, String)
             promptEntityOptions.Message = "Sel Element:".Translate(code)
             Dim selectionResult = ed.GetEntity(promptEntityOptions)
+            If selectionResult.Status = PromptStatus.Keyword AndAlso selectionResult.StringResult = "Undo" Then
+                If rollBackStack.Count < 1 Then Beep() : Continue Do
+
+                Dim rollBackSession = rollBackStack.Pop
+                TextHelper.ChangeTextStrings(_document, rollBackSession.Strings)
+                code = code.AddNumber(-1)
+                Continue Do
+            End If
+
             If Not selectionResult.Status = PromptStatus.OK Then Exit Do
 
             Using tr = db.TransactionManager.StartTransaction
@@ -40,6 +50,8 @@ Public Class TextEncoder
                 If Not entity.GetDBObjectType = "DBText" Then Continue Do
 
                 textToChange.TryAdd(entity.ObjectId, code)
+                Dim previousStrings = New Dictionary(Of ObjectId, String) From {{entity.ObjectId, entity.CastAsDBText.TextString}}
+                rollBackStack.Push(New RollBackModel(previousStrings))
                 tr.Commit()
             End Using
             TextHelper.ChangeTextStrings(_document, textToChange)

@@ -33,42 +33,46 @@ Public Class LineMethods
                     Case LineAlignment.vertical : verticalLines.TryAdd(line, line.StartPoint.X)
                 End Select
             Next
-            If horizontalLines.Count > 1 Then
-                Dim lines = (From pair As KeyValuePair(Of Line, Double) In horizontalLines Order By pair.Value Ascending Select pair.Key).ToList
-                Dim firstPointY = horizontalLines(lines(0))
-                For i = 1 To lines.Count - 1
-                    Dim secondPointY = horizontalLines(lines(i))
-                    If firstPointY.IsEqual(secondPointY) Then
-                        If lines(i).StartPoint.X > lines(i - 1).StartPoint.X Then
-                            lines(i).StartPoint = lines(i - 1).StartPoint
-                        End If
-                        If lines(i).EndPoint.X < lines(i - 1).EndPoint.X Then
-                            lines(i).EndPoint = lines(i - 1).EndPoint
-                        End If
-                        lines(i - 1).Erase()
-                    End If
-                    firstPointY = secondPointY
-                Next
-            End If
-            If verticalLines.Count > 1 Then
-                Dim verticalKeys = (From tPair As KeyValuePair(Of Line, Double) In verticalLines Order By tPair.Value Ascending Select tPair.Key).ToList
-                Dim firstPointX = verticalLines(verticalKeys(0))
-                For i = 1 To verticalKeys.Count - 1
-                    Dim secondPointX = verticalLines(verticalKeys(i))
-                    If firstPointX.IsEqual(secondPointX) Then
-                        If verticalKeys(i).StartPoint.Y > verticalKeys(i - 1).StartPoint.Y Then
-                            verticalKeys(i).StartPoint = verticalKeys(i - 1).StartPoint
-                        End If
-                        If verticalKeys(i).EndPoint.Y < verticalKeys(i - 1).EndPoint.Y Then
-                            verticalKeys(i).EndPoint = verticalKeys(i - 1).EndPoint
-                        End If
-                        verticalKeys(i - 1).Erase()
-                    End If
-                    firstPointX = secondPointX
-                Next
-            End If
+            If horizontalLines.Count > 1 Then JoinHorizontal(horizontalLines)
+            If verticalLines.Count > 1 Then JoinVertical(verticalLines)
             tr.Commit()
         End Using
+    End Sub
+
+    Private Shared Sub JoinHorizontal(horizontalLines As Dictionary(Of Line, Double))
+        Dim lines = (From pair As KeyValuePair(Of Line, Double) In horizontalLines Order By pair.Value Ascending Select pair.Key).ToList
+        Dim prevPointY = horizontalLines(lines(0))
+        For i = 1 To lines.Count - 1
+            Dim nextPointY = horizontalLines(lines(i))
+            If prevPointY.IsEqual(nextPointY) Then
+                If lines(i).StartPoint.X > lines(i - 1).StartPoint.X Then
+                    lines(i).StartPoint = lines(i - 1).StartPoint
+                End If
+                If lines(i).EndPoint.X < lines(i - 1).EndPoint.X Then
+                    lines(i).EndPoint = lines(i - 1).EndPoint
+                End If
+                lines(i - 1).Erase()
+            End If
+            prevPointY = nextPointY
+        Next
+    End Sub
+
+    Private Shared Sub JoinVertical(verticalLines As Dictionary(Of Line, Double))
+        Dim verticalKeys = (From tPair As KeyValuePair(Of Line, Double) In verticalLines Order By tPair.Value Ascending Select tPair.Key).ToList
+        Dim prevPointX = verticalLines(verticalKeys(0))
+        For i = 1 To verticalKeys.Count - 1
+            Dim nextPointX = verticalLines(verticalKeys(i))
+            If prevPointX.IsEqual(nextPointX) Then
+                If verticalKeys(i).StartPoint.Y > verticalKeys(i - 1).StartPoint.Y Then
+                    verticalKeys(i).StartPoint = verticalKeys(i - 1).StartPoint
+                End If
+                If verticalKeys(i).EndPoint.Y < verticalKeys(i - 1).EndPoint.Y Then
+                    verticalKeys(i).EndPoint = verticalKeys(i - 1).EndPoint
+                End If
+                verticalKeys(i - 1).Erase()
+            End If
+            prevPointX = nextPointX
+        Next
     End Sub
 
 End Class

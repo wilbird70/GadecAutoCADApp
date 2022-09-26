@@ -27,6 +27,11 @@ Public Class XlinksHandler
     Private ReadOnly _linkPages As Dictionary(Of String, Extents3d)
 
     ''' <summary>
+    ''' Contains a stack of sessions to rollback if Undo is used within the method.
+    ''' </summary>
+    Private ReadOnly _rollBackStack As New Stack(Of RollBackModel)
+
+    ''' <summary>
     ''' Initializes a new instance of <see cref="XlinksHandler"/>.
     ''' <para><see cref="XlinksHandler"/> allows the user to check and modify the reference links.</para>
     ''' </summary>
@@ -42,7 +47,9 @@ Public Class XlinksHandler
     ''' Runs the reference-links commmand. lc49g95tssuxen
     ''' </summary>
     Public Sub Start()
-        'first loop.
+        Dim linkData = New Dictionary(Of ObjectId, DataRow)
+        Dim promptEntityOptions = New PromptEntityOptions("XXX")
+        promptEntityOptions.Keywords.Add("Undo")
         Do
             Using transient = New TransientHandler
                 Dim links = GetXlinkBubbles()
@@ -54,26 +61,40 @@ Public Class XlinksHandler
                         transient.ShowArc(transientpoints(i), transientpoints(i + 1), transientpoints.Count > 2)
                     Next
                 Next
-                Dim selectionResult = _editor.GetEntity(New PromptEntityOptions("Sel First Block".Translate))
+                promptEntityOptions.Message = If(linkData.Count = 0, "Sel First Block", "Sel Next Block").Translate
+                Dim selectionResult = _editor.GetEntity(promptEntityOptions)
+                If selectionResult.Status = PromptStatus.Keyword AndAlso selectionResult.StringResult = "Undo" Then
+                    If _rollBackStack.Count < 1 Then Beep() : Continue Do
+
+                    Dim rollBackSession = _rollBackStack.Pop
+                    TextHelper.ChangeTextStrings(_document, rollBackSession.Strings)
+                    Continue Do
+                End If
+
                 If Not selectionResult.Status = PromptStatus.OK Then Exit Do
 
-                Dim referenceData = ReferenceHelper.GetReferenceData(_database, selectionResult.ObjectId)
-                If referenceData?.GetString("BlockName") = "W_XLINKS" Then
-                    'second loop.
-                    Do
-                        Dim secondResult = _editor.GetEntity(New PromptEntityOptions("Sel Next Block".Translate))
-                        If Not secondResult.Status = PromptStatus.OK Then Exit Do
+                Dim referenceId = selectionResult.ObjectId
+                If linkData.ContainsKey(referenceId) Then Continue Do
 
-                        Dim secondData = ReferenceHelper.GetReferenceData(_database, secondResult.ObjectId)
-                        If selectionResult.ObjectId = secondResult.ObjectId Then Continue Do
+                Dim referenceData = ReferenceHelper.GetReferenceData(_database, referenceId)
+                If Not referenceData?.GetString("BlockName") = "W_XLINKS" Then Continue Do
 
-                        If secondData?.GetString("BlockName") = "W_XLINKS" Then
-                            Dim linkIds = New ObjectIdCollection({selectionResult.ObjectId, secondResult.ObjectId})
-                            SetNewLinkCode(linkIds)
-                            Exit Do
-                        End If
-                    Loop
-                End If
+                linkData.Add(referenceId, referenceData)
+                If Not linkData.Count = 2 Then Continue Do
+
+                Dim session = New Dictionary(Of ObjectId, String)
+                session.Add(linkData.Values(0).GetAttributeId("LINKCODE"), linkData.Values(0).GetString("LINKCODE"))
+                session.Add(linkData.Values(1).GetAttributeId("LINKCODE"), linkData.Values(1).GetString("LINKCODE"))
+                session.Add(linkData.Values(0).GetAttributeId("SY"), linkData.Values(0).GetString("SY"))
+                session.Add(linkData.Values(1).GetAttributeId("SY"), linkData.Values(1).GetString("SY"))
+                _rollBackStack.Push(New RollBackModel(session))
+
+                Dim textToChange = New Dictionary(Of ObjectId, String)
+                Dim linkCode = Randomizer.GetString(16)
+                textToChange.TryAdd(linkData.Values(0).GetAttributeId("LINKCODE"), linkCode)
+                textToChange.TryAdd(linkData.Values(1).GetAttributeId("LINKCODE"), linkCode)
+                TextHelper.ChangeTextStrings(_document, textToChange)
+                linkData = New Dictionary(Of ObjectId, DataRow)
             End Using
         Loop
     End Sub
@@ -85,13 +106,6 @@ Public Class XlinksHandler
     ''' </summary>
     ''' <param name="objectIds">List of objectids of bubbles linked together.</param>
     Private Sub SetNewLinkCode(objectIds As ObjectIdCollection)
-        Dim textToChange = New Dictionary(Of ObjectId, String)
-        Dim linkCollection = GetLinkCollection(objectIds)
-        Dim linkCode = Randomizer.GetString(16)
-        For Each link In linkCollection
-            textToChange.TryAdd(link.Value.GetAttributeId("LINKCODE"), linkCode)
-        Next
-        TextHelper.ChangeTextStrings(_document, textToChange)
     End Sub
 
     ''' <summary>

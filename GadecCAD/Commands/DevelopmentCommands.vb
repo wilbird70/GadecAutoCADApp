@@ -42,4 +42,16 @@ Public Module DevelopmentCommands
         End Try
     End Sub
 
+    ''' <summary>
+    ''' Developers command to clear a drawing.
+    ''' </summary>
+    <CommandMethod("TOWNG")>
+    Public Sub commandToWng()
+        Try
+            NotUsed.ReplaceBlocksOld2Wng(ActiveDocument)
+        Catch ex As System.Exception
+            GadecException(ex)
+        End Try
+    End Sub
+
 End Module

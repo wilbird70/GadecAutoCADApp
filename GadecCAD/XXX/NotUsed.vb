@@ -17,7 +17,7 @@ Public Class NotUsed
     ''' <param name="font">The used font.</param>
     ''' <param name="maxLength">The maximum length of text.</param>
     ''' <returns></returns>
-    Function MaximizeLengthOfText(text As String, font As Drawing.Font, maxLength As Integer) As String
+    Public Shared Function MaximizeLengthOfText(text As String, font As Drawing.Font, maxLength As Integer) As String
         Dim output = text
         If Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength Then
             Do While Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength - 20
@@ -32,7 +32,7 @@ Public Class NotUsed
     ''' Gets the current version of AutoCAD.
     ''' </summary>
     ''' <returns>The official version name.</returns>
-    Function AutoCADVersion() As String
+    Public Shared Function AutoCADVersion() As String
         Dim output = ""
         Select Case Left(Application.GetSystemVariable("acadver"), 4)
             Case "24.2" : output = "AutoCAD 2023"
@@ -68,7 +68,7 @@ Public Class NotUsed
     ''' <param name="database">The present drawing.</param>
     ''' <param name="layerId">The objectid of the layer.</param>
     ''' <returns>Layername.</returns>
-    Function GetLayerName(database As Database, layerId As ObjectId) As String
+    Public Shared Function GetLayerName(database As Database, layerId As ObjectId) As String
         Dim layNam = ""
         Using tr = database.TransactionManager.StartTransaction
             Dim ltr = tr.GetLayerTableRecord(layerId)
@@ -85,7 +85,7 @@ Public Class NotUsed
     ''' <param name="oldLayoutName">The current layoutname.</param>
     ''' <param name="newLayoutName">The new layoutname.</param>
     ''' <returns>True if layout is renamed.</returns>
-    Function RenameLayout(document As Document, oldLayoutName As String, newLayoutName As String) As Boolean
+    Public Shared Function RenameLayout(document As Document, oldLayoutName As String, newLayoutName As String) As Boolean
         Dim db = document.Database
         Dim ed = document.Editor
         Dim output = False
@@ -109,7 +109,7 @@ Public Class NotUsed
     ''' </summary>
     ''' <param name="document"></param>
     ''' <returns>The <see cref="ObjectId"/> of the tablestyle.</returns>
-    Function CreateSomeTableStyle(document As Document) As ObjectId
+    Public Shared Function CreateSomeTableStyle(document As Document) As ObjectId
         Dim db = document.Database
         Dim output = ObjectId.Null
         Dim styleName = "Gadec Table Style"
@@ -149,7 +149,7 @@ Public Class NotUsed
     ''' <para>Note: This code needs to be thought through again.</para>
     ''' </summary>
     ''' <param name="document">The present document.</param>
-    Sub ReplaceBlocksTgx2Wng(document As Document)
+    Public Shared Sub ReplaceBlocksTgx2Wng(document As Document)
         'schaal voor de nieuwe symbolen vragen
         Dim db = document.Database
         Dim scale = DesignMethods.SetDrawingScale(document)
@@ -184,8 +184,8 @@ Public Class NotUsed
                 Using import = New DefinitionsImporter("{Resources}\SymbolsTgx2Wng.dwg".Compose)
                     '////////// Deze functie bestaat niet meer. Moet alle definities uit de bron importeren en een lijst van bloknamen teruggeven.
                     'Dim blkDefNms = import.ImportDefinitions(db)
-                    '////////// Deze functie is tegenwoordig private in de blockhandler class.
-                    'BlockHandler.RedefineReferences(document, blkDefNms)
+                    '////////// Deze functie is tegenwoordig private in de ReferenceMethods class.
+                    'ReferenceMethods.RedefineReferences(document, blkDefNms)
 
                     'Seleceteren van alle blokken in modelspace
                     Dim blkRefIDs = SelectHelper.GetAllReferencesInModelspace(document)
@@ -204,8 +204,8 @@ Public Class NotUsed
                             If bt.Has(newBlkNam) Then
                                 blkRef.ScaleFactors = scale3D
                                 blkRef.BlockTableRecord = bt(newBlkNam)
-                                '////////// Deze functie is tegenwoordig private in de blockhandler class.
-                                'BlockHandler.ReplaceAttributes(tr, blkRef, document.Database)
+                                '////////// Deze functie is tegenwoordig private in de ReferenceMethods class.
+                                'ReferenceMethods.ReplaceAttributes(tr, blkRef, document.Database)
 
                                 Dim row = ReferenceHelper.GetReferenceData(db, id)
                                 If NotNothing(row) Then
@@ -238,7 +238,7 @@ Public Class NotUsed
     ''' <para>Note: This code especially made for the Claus centrale te Maasbracht.</para>
     ''' </summary>
     ''' <param name="document">The present document.</param>
-    Sub ReplaceBlocksOld2Wng(document As Document)
+    Public Shared Sub ReplaceBlocksOld2Wng(document As Document)
         'schaal voor de nieuwe symbolen vragen
         Dim db = document.Database
         Dim scale = DesignMethods.SetDrawingScale(document)
@@ -252,7 +252,7 @@ Public Class NotUsed
             Using import = New DefinitionsImporter("{Resources}\DC_MZX_Symbols.dwg".Compose)
                 Dim blkDefNms = import.ImportNestedDefinitions(document, "_" & replaceList(key).Cut("\").ElementAt(0))
                 '////////// Deze functie is tegenwoordig private in de blockhandler class.
-                'BlockHandler.RedefineReferences(document, blkDefNms)
+                ReferenceMethods.RedefineReferences(document, blkDefNms)
             End Using
         Next
 
@@ -284,8 +284,8 @@ Public Class NotUsed
                             If bt.Has(newBlkNam) Then
                                 blkRef.ScaleFactors = scale3D
                                 blkRef.BlockTableRecord = bt(newBlkNam)
-                                '////////// Deze functie is tegenwoordig private in de blockhandler class.
-                                'BlockHandler.ReplaceAttributes(tr, blkRef, document.Database)
+                                '////////// Deze functie is tegenwoordig private in de ReferenceMethods class.
+                                ReferenceMethods.ReplaceAttributes(tr, blkRef, document.Database)
                                 Dim pnr = row.GetString("HARDWARE").LeftString(3)
                                 Dim lnr = row.GetString("HARDWARE").MidString(5, 1)
                                 Dim anr = row.GetString("HARDWARE").MidString(6)

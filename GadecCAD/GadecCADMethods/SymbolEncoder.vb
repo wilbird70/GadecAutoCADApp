@@ -71,9 +71,9 @@ Public Class SymbolEncoder
         Dim codeData = _code.Texts.ToIniDictionary
         codeData.TryAdd(_code.LocationTag, "")
         Dim locationPrefix = codeData(_code.LocationTag)
-        Dim bringToFrontSymbolIds = New ObjectIdCollection
-        Dim setInvisibleLocationIds = New List(Of ObjectId)
-        Dim rollBackSessions = New List(Of RollBackModel)
+        Dim symbolIds = New ObjectIdCollection              'to bring symbols to front when closing method.
+        Dim locationIds = New List(Of ObjectId)             'to make location attribute invisible when closing method.
+        Dim rollBackStack = New Stack(Of RollBackModel)     'to rollback steps when Undo is used within the method.
         Dim lastPoint As Point3d
 
         Dim promptEntityOptions = New PromptEntityOptions("X")
@@ -86,26 +86,23 @@ Public Class SymbolEncoder
                 Case Else : promptEntityOptions.Message = "Sel Element:".Translate("{0}, {1}".Compose(codeData(_code.CounterTag), codeData(_code.LocationTag)))
             End Select
             Dim selectionResult = ed.GetEntity(promptEntityOptions)
-            If selectionResult.Status = PromptStatus.Cancel Or selectionResult.Status = PromptStatus.Error Then Exit Do
-
             If selectionResult.Status = PromptStatus.Keyword Then
                 Select Case selectionResult.StringResult
                     Case "Remove" : If codeData.ContainsKey(_code.LocationTag) Then codeData(_code.LocationTag) = locationPrefix
                     Case "LLoopline" : _code.drawLoopLine = Not _code.drawLoopLine
                     Case "Undo"
-                        If rollBackSessions.Count = 0 Then Continue Do
+                        If rollBackStack.Count < 1 Then Beep() : Continue Do
 
-                        Dim rollBackSession = rollBackSessions.First
-                        TextHelper.ChangeTextStrings(_document, rollBackSession.Texts)
-                        codeData(_code.CounterTag) = codeData(_code.CounterTag).AddNumber(-_code.CounterStep * rollBackSession.NumberOfSymbols)
-                        If rollBackSessions.Count > 1 Then EntityHelper.Delete(_document, rollBackSession.LineId)
-                        lastPoint = rollBackSession.Point
-                        rollBackSessions.RemoveAt(0)
+                        Dim rollBackSession = rollBackStack.Pop
+                        TextHelper.ChangeTextStrings(_document, rollBackSession.Strings)
+                        codeData(_code.CounterTag) = codeData(_code.CounterTag).AddNumber(-_code.CounterStep * rollBackSession.Number)
+                        If rollBackStack.Count > 0 Then EntityHelper.Delete(_document, rollBackSession.ObjectId)
+                        lastPoint = rollBackSession.Point3d
                 End Select
                 Continue Do
             End If
 
-            If Not selectionResult.Status = PromptStatus.OK Then Continue Do
+            If Not selectionResult.Status = PromptStatus.OK Then Exit Do
 
             If Not selectionResult.ObjectId.ObjectClass.DxfName.ToLower = "insert" Then
                 Dim text = GetTextString(selectionResult.ObjectId)
@@ -124,7 +121,7 @@ Public Class SymbolEncoder
             Dim endNumber = If(_code.CounterStep = -1, 0, referenceRows.Count - 1)
             For i = startNumber To endNumber Step _code.CounterStep
                 Dim row = referenceRows(i)
-                If Not bringToFrontSymbolIds.Contains(row.GetValue("ObjectID")) Then bringToFrontSymbolIds.Add(row.GetValue("ObjectID"))
+                If Not symbolIds.Contains(row.GetValue("ObjectID")) Then symbolIds.Add(row.GetValue("ObjectID"))
                 Dim counterId = New ObjectId
                 Dim locationId = New ObjectId
                 Dim coding = CodeSymbol(row, codeData, counterId, locationId)
@@ -147,13 +144,13 @@ Public Class SymbolEncoder
 
             Dim previousTexts = TextHelper.ChangeTextStrings(_document, textToChange.ToArray)
             AttributeHelper.SetVisibility(db, setVisibleLocationIds, True)
-            setInvisibleLocationIds.AddRange(setVisibleLocationIds.ToArray)
-            Dim lineId = If(_code.drawLoopLine And rollBackSessions.Count > 0, LoopLineHelper.CreateLoopLine(_document, lastPoint, newPoint, _code.LoopLineLayerId), ObjectId.Null)
-            rollBackSessions.Insert(0, New RollBackModel(previousTexts, numberOfSymbols, lineId, lastPoint))
+            locationIds.AddRange(setVisibleLocationIds.ToArray)
+            Dim lineId = If(_code.drawLoopLine And rollBackStack.Count > 0, LoopLineHelper.CreateLoopLine(_document, lastPoint, newPoint, _code.LoopLineLayerId), ObjectId.Null)
+            rollBackStack.Push(New RollBackModel(previousTexts, lineId, lastPoint, numberOfSymbols))
             lastPoint = newPoint
         Loop
-        DrawOrderHelper.BringToFront(_document, bringToFrontSymbolIds)
-        If setInvisibleLocationIds.Count > 0 Then AttributeHelper.SetVisibility(db, New ObjectIdCollection(setInvisibleLocationIds.ToArray), False)
+        DrawOrderHelper.BringToFront(_document, symbolIds)
+        If locationIds.Count > 0 Then AttributeHelper.SetVisibility(db, New ObjectIdCollection(locationIds.ToArray), False)
     End Sub
 
     'Private functions

@@ -280,7 +280,7 @@ Public Class DesignMethods
                 minimumDetectors += 1
             Loop
             Dim dialog = New ListBoxDialog("Select".Translate, solutions.Values.ToArray)
-            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK = vbOK Then Continue Do
+            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
 
             Dim selectedSolutionId = solutions.Keys(dialog.GetSelectedIndex)
             Dim distanceX = lengthX / numberOnX(selectedSolutionId) * 1000

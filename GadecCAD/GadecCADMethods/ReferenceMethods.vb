@@ -107,14 +107,12 @@ Public Class ReferenceMethods
         End Using
     End Sub
 
-    'private subs
-
     ''' <summary>
     ''' Redefines the blockreferences with the specified blocknames.
     ''' </summary>
     ''' <param name="document">The present document.</param>
     ''' <param name="blockNames">List of blocknames.</param>
-    Private Shared Sub RedefineReferences(document As Document, blockNames As String())
+    Public Shared Sub RedefineReferences(document As Document, blockNames As String())
         Dim db = document.Database
         Dim referenceIds = SelectHelper.GetAllReferencesInModelspace(document)
         If referenceIds.Count = 0 Then Exit Sub
@@ -134,7 +132,7 @@ Public Class ReferenceMethods
                         ReferenceVisibilityHelper.SetProperty(reference, visibility)
                         RedefineAttributes(tr, reference, db)
                     Catch ex As System.Exception
-                        'proceed by exception 
+                        'do nothing 
                     End Try
                 Next
                 tr.Commit()
@@ -143,46 +141,12 @@ Public Class ReferenceMethods
     End Sub
 
     ''' <summary>
-    ''' Redefines the attributes of the specified blockreference.
-    ''' </summary>
-    ''' <param name="transaction">The current transaction.</param>
-    ''' <param name="reference">The blockreference.</param>
-    ''' <param name="alternateDatabaseToUse">The alternate drawing.</param>
-    Private Shared Sub RedefineAttributes(transaction As Transaction, reference As BlockReference, alternateDatabaseToUse As Database)
-        Dim definition = transaction.GetBlockTableRecord(reference.BlockTableRecord)
-        If Not definition.HasAttributeDefinitions Then Exit Sub
-
-        Dim attributes = reference.AttributeCollection
-        Dim tags = New List(Of String)
-        For i = 0 To attributes.Count - 1
-            Dim attribute = transaction.GetAttributeReference(attributes(i))
-            If Not tags.Contains(attribute.Tag) Then tags.Add(attribute.Tag)
-        Next
-        For Each entityId In definition
-            Dim attributeDefinition = transaction.GetAttributeDefinition(entityId)
-            If IsNothing(attributeDefinition) OrElse tags.Contains(attributeDefinition.Tag) Then Continue For
-
-            Dim attribute As New AttributeReference()
-            attribute.SetDatabaseDefaults()
-            'optional
-            attribute.Tag = attributeDefinition.Tag
-            If attribute.Tag = "TYPE" AndAlso attribute.HasFields Then attribute.RemoveField()
-            attribute.TextString = attributeDefinition.TextString
-            attribute.SetAttributeFromBlock(attributeDefinition, reference.BlockTransform)
-            attribute.Position = attributeDefinition.Position.TransformBy(reference.BlockTransform)
-            attribute.AdjustAlignment(alternateDatabaseToUse)
-            attributes.AppendAttribute(attribute)
-            transaction.AddNewlyCreatedDBObject(attribute, True)
-        Next
-    End Sub
-
-    ''' <summary>
     ''' Replaces the attributes of the specified blockreference.
     ''' </summary>
     ''' <param name="transaction">The current transaction.</param>
     ''' <param name="reference">The blockreference.</param>
     ''' <param name="alternateDatabaseToUse">The alternate drawing.</param>
-    Private Shared Sub ReplaceAttributes(transaction As Transaction, reference As BlockReference, alternateDatabaseToUse As Database)
+    Public Shared Sub ReplaceAttributes(transaction As Transaction, reference As BlockReference, alternateDatabaseToUse As Database)
         Dim definition = transaction.GetBlockTableRecord(reference.BlockTableRecord)
         If Not definition.HasAttributeDefinitions Then Exit Sub
 
@@ -215,6 +179,42 @@ Public Class ReferenceMethods
                     transaction.AddNewlyCreatedDBObject(attribute, True)
             End Select
             TextHelper.ChangeTextStrings(alternateDatabaseToUse, textToChange)
+        Next
+    End Sub
+
+    'private subs
+
+    ''' <summary>
+    ''' Redefines the attributes of the specified blockreference.
+    ''' </summary>
+    ''' <param name="transaction">The current transaction.</param>
+    ''' <param name="reference">The blockreference.</param>
+    ''' <param name="alternateDatabaseToUse">The alternate drawing.</param>
+    Private Shared Sub RedefineAttributes(transaction As Transaction, reference As BlockReference, alternateDatabaseToUse As Database)
+        Dim definition = transaction.GetBlockTableRecord(reference.BlockTableRecord)
+        If Not definition.HasAttributeDefinitions Then Exit Sub
+
+        Dim attributes = reference.AttributeCollection
+        Dim tags = New List(Of String)
+        For i = 0 To attributes.Count - 1
+            Dim attribute = transaction.GetAttributeReference(attributes(i))
+            If Not tags.Contains(attribute.Tag) Then tags.Add(attribute.Tag)
+        Next
+        For Each entityId In definition
+            Dim attributeDefinition = transaction.GetAttributeDefinition(entityId)
+            If IsNothing(attributeDefinition) OrElse tags.Contains(attributeDefinition.Tag) Then Continue For
+
+            Dim attribute As New AttributeReference()
+            attribute.SetDatabaseDefaults()
+            'optional
+            attribute.Tag = attributeDefinition.Tag
+            If attribute.Tag = "TYPE" AndAlso attribute.HasFields Then attribute.RemoveField()
+            attribute.TextString = attributeDefinition.TextString
+            attribute.SetAttributeFromBlock(attributeDefinition, reference.BlockTransform)
+            attribute.Position = attributeDefinition.Position.TransformBy(reference.BlockTransform)
+            attribute.AdjustAlignment(alternateDatabaseToUse)
+            attributes.AppendAttribute(attribute)
+            transaction.AddNewlyCreatedDBObject(attribute, True)
         Next
     End Sub
 
