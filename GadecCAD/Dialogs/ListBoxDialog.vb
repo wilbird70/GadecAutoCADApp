@@ -117,6 +117,7 @@ Public Class ListBoxDialog
     ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click, InputListBox.DoubleClick
         Try
+            Me.DialogResult = Windows.Forms.DialogResult.OK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

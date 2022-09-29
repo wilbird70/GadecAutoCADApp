@@ -183,6 +183,7 @@ Public Class DesignDialog
                 Dim output = Strings.Join(GetArraySettings, ";")
                 Registerizer.UserSetting("SymbolArraySettings", output)
             End If
+            Me.DialogResult = DialogResult.OK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

@@ -458,6 +458,7 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub FramesDataGridView_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles FramesDataGridView.CellDoubleClick
         Try
+            Me.DialogResult = DialogResult.OK
             Select Case _fromEditHeader
                 Case True : AcceptButton_Click(Nothing, Nothing)
                 Case Else : OpenDocument()

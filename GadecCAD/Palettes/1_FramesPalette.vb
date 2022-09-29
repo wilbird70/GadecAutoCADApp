@@ -763,16 +763,17 @@ Public Class FramesPalette
                                 Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetFileNameWithoutExtension)
                             End Select
                         End If
-                        Dim file = FileSystemHelper.FileSaveAs(initialFile)
-                        If Not file = "" Then
+                        Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
+                        If Not fileName = "" Then
                             Dim framePlotter = New FramePlotter(frameSelection, tag)
                             Dim files = framePlotter.PlotMultiFrame(1)
                             If files.Count > 0 Then
                                 Using pdfDocument = PdfSharpHelper.MergePdfFiles(files)
-                                    pdfDocument.Save(file)
+                                    pdfDocument.Save(fileName)
                                 End Using
                             End If
                         End If
+                        Dim start = New ProcessWithEvents(fileName)
                         DocumentsHelper.Open(doc.Name)
                     Case "SetLayout"
                         DocumentEvents.DocumentEventsEnabled = False
