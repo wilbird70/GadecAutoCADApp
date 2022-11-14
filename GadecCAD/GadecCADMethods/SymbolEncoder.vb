@@ -213,6 +213,7 @@ Public Class SymbolEncoder
                 End Select
             End If
         Next
+        If symbolRow.HasValue("DOT") Then textToChange.TryAdd(symbolRow.GetAttributeId("DOT"), "/")
         Return textToChange
     End Function
 

@@ -5,13 +5,14 @@ Imports PdfSharp.Pdf.Advanced
 Imports PdfSharp.Pdf.Annotations
 
 ''' <summary>
-''' Represents a digital signature field in a pdf document.
+''' <para><see cref="PdfSignatureField"/> represents a digital signature field in a pdf document.</para>
 ''' </summary>
 Friend NotInheritable Class PdfSignatureField
     Inherits PdfAnnotation
 
     ''' <summary>
-    ''' Creates a digital signature field in a pdf document.
+    ''' Initializes a new instance of <see cref="PdfSignatureField"/> for the specified document.
+    ''' <para><see cref="PdfSignatureField"/> represents a digital signature field in a pdf document.</para>
     ''' </summary>
     ''' <param name="document">The pdf document.</param>
     ''' <param name="page">The zero-based pagenumber to insert the signature field.</param>
@@ -26,7 +27,7 @@ Friend NotInheritable Class PdfSignatureField
         Elements.Add("/DR", New PdfDictionary())
         Elements.Add(Keys.Subtype, New PdfName("/Widget"))
         Elements.Add("/P", document.Pages(page))
-        Dim signatureDictionary As PdfDictionary = New PdfDictionary(document)
+        Dim signatureDictionary = New PdfDictionary(document)
         signatureDictionary.Elements.Add(Keys.Type, New PdfName("/Sig"))
         signatureDictionary.Elements.Add("/Filter", New PdfName("/Adobe.PPKLite"))
         signatureDictionary.Elements.Add("/SubFilter", New PdfName("/adbe.pkcs7.detached"))

@@ -61,7 +61,7 @@ Public Class DesignDialog
         ' Add any initialization after the InitializeComponent() call.
 
         Me.Text = Registerizer.GetApplicationVersion()
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
 
         _command = command
         _insertScale = insertScale
@@ -408,7 +408,12 @@ Public Class DesignDialog
         ItemsListBox.Items.Clear()
         If IsNothing(_userData) Then Exit Sub
 
-        _userData.Select.ToList.ForEach(Sub(row) ItemsListBox.Items.Add(row.GetString("Name").Translate))
+        If _command = "DW" Then
+            _userData.Select.ToList.ForEach(Sub(row) ItemsListBox.Items.Add(row.GetTranslation))
+        Else
+            _userData.Select.ToList.ForEach(Sub(row) ItemsListBox.Items.Add(row.GetString("Name").Translate))
+        End If
+
         _selectedIndex = Registerizer.UserSetting("DDselected{0}".Compose(_command)).ToInteger
         If ItemsListBox.Items.Count = 0 Then Exit Sub
 

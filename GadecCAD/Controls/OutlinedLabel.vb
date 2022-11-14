@@ -4,22 +4,23 @@ Imports System.Drawing.Drawing2D
 Imports System.Windows.Forms
 
 ''' <summary>
-''' Represents a standaard Windows label with outlined font.
+''' <para><see cref="OutlinedLabel"/> represents a standaard Windows label with outlined font.</para>
 ''' </summary>
 Public Class OutlinedLabel
     Inherits Label
 
     ''' <summary>
-    ''' The color of the outline border.
+    ''' Contains the color of the outline border.
     ''' </summary>
     Private ReadOnly _outlineColor As Color
     ''' <summary>
-    ''' The thickness of the outline border.
+    ''' Contains the thickness of the outline border.
     ''' </summary>
     Private ReadOnly _outlineThickness As Integer
 
     ''' <summary>
-    ''' Creates a standaard Windows label with outlined font.
+    ''' Initializes a new instance of <see cref="OutlinedLabel"/>.
+    ''' <para><see cref="OutlinedLabel"/> represents a standaard Windows label with outlined font.</para>
     ''' </summary>
     ''' <param name="outlineColor">The color of the outline border.</param>
     ''' <param name="outlineThickness">The thickness of the outline border.</param>

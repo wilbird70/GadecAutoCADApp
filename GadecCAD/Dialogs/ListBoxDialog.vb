@@ -21,7 +21,7 @@ Public Class ListBoxDialog
         ' Add any initialization after the InitializeComponent() call.
 
         Me.Text = Registerizer.GetApplicationVersion()
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
 
         lDescr.Text = prompt
         Dim preSel = 0

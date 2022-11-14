@@ -24,7 +24,7 @@ Public Class InputBoxDialog
         ' Add any initialization after the InitializeComponent() call.
 
         Me.Text = Registerizer.GetApplicationVersion()
-        Translator.TranslateControles(Me)
+        Translator.TranslateControls(Me)
 
         lDescr.Text = prompt
         InputTextBox.Text = defaultResponse

@@ -608,14 +608,14 @@ Public Class FramesPalette
     'eventHandlers
 
     ''' <summary>
-    ''' EventHandler for the event that occurs when the user changes the language.
-    ''' <para>It will translate the texts on this palette.</para>
+    ''' EventHandler for the event that occurs when the language has changed.
+    ''' <para>It translates this palette.</para>
     ''' </summary>
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Private Sub LanguageChangedEventHandler(sender As Object, e As LanguageChangedEventArgs)
         _toolTip.SetToolTip(OpenFolderButton, "")
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
 
         _toolTip.SetToolTip(OverviewButton, "cDrawinglist".Translate)
         _toolTip.SetToolTip(ZoomExtentsButton, "cZoomExtents".Translate)
@@ -720,10 +720,14 @@ Public Class FramesPalette
 
                             Dim files = New List(Of String)
                             Dim framePlotter = New FramePlotter(drawingList.Selection, "ToPDF")
-                            Using layerVisiblizer = New LayerVisiblizer(doc)
-                                files.AddRange(framePlotter.PlotExternalDrawing(drawingList.GetDatabase, doc.GetPath))
+                            Using sysVar = New SysVarHandler(doc)
+                                sysVar.Set("PDFSHX", 0)
+                                Using layerVisiblizer = New LayerVisiblizer(doc)
+                                    files.AddRange(framePlotter.PlotExternalDrawing(drawingList.GetDatabase, doc.GetPath))
+                                End Using
+                                If Not dialog.OnlyAttachments Then files.AddRange(framePlotter.PlotMultiFrame(1))
                             End Using
-                            If Not dialog.OnlyAttachments Then files.AddRange(framePlotter.PlotMultiFrame(1))
+
                             If files.Count > 0 Then
                                 Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
                                     If dialog.Attachments.Count > 0 Then PdfSharpHelper.AddPdfFiles(pdfDocument, dialog.Attachments)
@@ -760,20 +764,23 @@ Public Class FramesPalette
                         If doc.IsNamedDrawing Then
                             Select Case frameSelection.Count > 1
                                 Case True : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetPath.InStrRevResult("\"))
-                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetFileNameWithoutExtension)
+                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
                             End Select
                         End If
                         Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
                         If Not fileName = "" Then
-                            Dim framePlotter = New FramePlotter(frameSelection, tag)
-                            Dim files = framePlotter.PlotMultiFrame(1)
-                            If files.Count > 0 Then
-                                Using pdfDocument = PdfSharpHelper.MergePdfFiles(files)
-                                    pdfDocument.Save(fileName)
-                                End Using
-                            End If
+                            Using sysVar = New SysVarHandler(doc)
+                                sysVar.Set("PDFSHX", 0)
+                                Dim framePlotter = New FramePlotter(frameSelection, tag)
+                                Dim files = framePlotter.PlotMultiFrame(1)
+                                If files.Count > 0 Then
+                                    Using pdfDocument = PdfSharpHelper.MergePdfFiles(files)
+                                        pdfDocument.Save(fileName)
+                                    End Using
+                                    Dim start = New ProcessWithEvents(fileName)
+                                End If
+                            End Using
                         End If
-                        Dim start = New ProcessWithEvents(fileName)
                         DocumentsHelper.Open(doc.Name)
                     Case "SetLayout"
                         DocumentEvents.DocumentEventsEnabled = False
@@ -816,18 +823,21 @@ Public Class FramesPalette
                         If doc.IsNamedDrawing Then
                             Select Case frameSelection.Count > 1
                                 Case True : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetPath.InStrRevResult("\"))
-                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetFileNameWithoutExtension)
+                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
                             End Select
                         End If
                         Dim file = FileSystemHelper.FileSaveAs(initialFile)
                         If Not file = "" Then
-                            Dim framePlotter = New FramePlotter(frameSelection, tag)
-                            Dim files = framePlotter.PlotFramelessDrawings
-                            If files.Count > 0 Then
-                                Dim pdfDocument = PdfSharpHelper.MergePdfFiles(files)
-                                If pdfDocument.PageCount > 0 Then pdfDocument.Save(file)
-                                pdfDocument.Close()
-                            End If
+                            Using sysVar = New SysVarHandler(doc)
+                                sysVar.Set("PDFSHX", 0)
+                                Dim framePlotter = New FramePlotter(frameSelection, tag)
+                                Dim files = framePlotter.PlotFramelessDrawings
+                                If files.Count > 0 Then
+                                    Dim pdfDocument = PdfSharpHelper.MergePdfFiles(files)
+                                    If pdfDocument.PageCount > 0 Then pdfDocument.Save(file)
+                                    pdfDocument.Close()
+                                End If
+                            End Using
                         End If
                         DocumentsHelper.Open(doc.Name)
                     Case "EditH_NF"

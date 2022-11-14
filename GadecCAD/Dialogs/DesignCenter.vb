@@ -129,7 +129,8 @@ Public Class DesignCenter
         ' Add any initialization after the InitializeComponent() call.
 
         Me.Text = Registerizer.GetApplicationVersion()
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
+
         _itemsDataGridViewStringFormat.SetTabStops(0F, {100.0F, 100.0F, 100.0F})
 
         _currentModule = session(0)
@@ -155,7 +156,7 @@ Public Class DesignCenter
         Try
             ScaleComboBox.Text = "1:{0}".Compose(Format(_insertScale, "0.##"))
             Dim scales = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name").ToList
-            scales.RemoveAt(0)
+            If scales.Count > 0 Then scales.RemoveAt(0)
             ScaleComboBox.Items.AddRange(scales.ToArray)
 
             _moduleData = DataSetHelper.LoadFromXml("{Support}\SetDesignCenter.xml".Compose).GetTable("Modules", "Name")

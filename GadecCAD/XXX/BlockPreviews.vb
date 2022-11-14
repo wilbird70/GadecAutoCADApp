@@ -59,8 +59,8 @@ Public Class BlockPreviews
         Dim width = extents.MaxPoint.X - extents.MinPoint.X
         Dim height = extents.MaxPoint.Y - extents.MinPoint.Y
         Dim center = New Point2d(extents.MinPoint.X + (width / 2), extents.MinPoint.Y + (height / 2))
-        width = {35.0, width * 3.2}.Max
-        height = {35.0, height * 2.8}.Max
+        width = {28, width * 3.2}.Max
+        height = {28, height * 2.8}.Max
         ViewHelper.SetToArea(document, layoutId, center, width, height)
         Dim bitmap = document.CapturePreviewImage(256, 256)
         Dim output = ImageHelper.CropImage(bitmap, 96, 64)

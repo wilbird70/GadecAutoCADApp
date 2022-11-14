@@ -261,7 +261,7 @@ Public Class SettingsPalette
 
     ''' <summary>
     ''' EventHandler for the event that occurs when the user changes the selected language.
-    ''' <para>It changes the language setting and starts translating (by raising an event).</para>
+    ''' <para>It sets the new language and raises the LanguageChanged event.</para>
     ''' </summary>
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
@@ -324,8 +324,8 @@ Public Class SettingsPalette
     'eventHandlers
 
     ''' <summary>
-    ''' EventHandler for the event that occurs when the user changes the language.
-    ''' <para>It will translate the texts on this palette.</para>
+    ''' EventHandler for the event that occurs when the language has changed.
+    ''' <para>It translates this palette.</para>
     ''' </summary>
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
@@ -347,7 +347,7 @@ Public Class SettingsPalette
         End If
         _translationIsBusy = False
         'tekst voor knoppen en labels
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
         'lijst met disciplines
         Dim layerData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Layers", "Name;Type")
         Dim disciplines = layerData.DefaultView.ToTable(True, "Name").GetStringsFromColumn("Name")

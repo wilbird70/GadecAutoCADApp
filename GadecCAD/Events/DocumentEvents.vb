@@ -113,8 +113,9 @@ Public Class DocumentEvents
                                 Case symbolRow.GetString("Visibility") = symbolRow.GetString("TYPE")
                                 Case Not symbolRow.GetString("Visibility") = "" : textToChange.TryAdd(symbolRow.GetAttributeId("TYPE"), symbolRow.GetString("Visibility"))
                             End Select
-                            symbolRow("WNGD") = "{0}.{1}{2}".Compose(symbolRow.GetString("PNR"), symbolRow.GetString("LS"), symbolRow.GetString("ADR"))
-                            If Not symbolRow("WNGD") = "." Then textToChange.TryAdd(symbolRow.GetAttributeId("WNGD"), symbolRow.GetString("WNGD"))
+                            Dim winguard = "{0}.{1}{2}".Compose(symbolRow.GetString("PNR"), symbolRow.GetString("LS"), symbolRow.GetString("ADR"))
+                            textToChange.TryAdd(symbolRow.GetAttributeId("WNGD"), If(winguard = ".", "", winguard))
+                            If symbolRow.HasValue("DOT") Then textToChange.TryAdd(symbolRow.GetAttributeId("DOT"), If(winguard = ".", "", "/"))
                     End Select
                 Case symbolRow.HasValue("ZONENR")
                     Select Case True
@@ -122,8 +123,8 @@ Public Class DocumentEvents
                         Case Not symbolRow.HasValue("WINKEL")
                         Case Not symbolRow.HasValue("POSTCODE")
                         Case Else
-                            symbolRow("WNGD") = "{0}.{1}.{2}.{3}".Compose(symbolRow.GetString("LAND"), symbolRow.GetString("WINKEL"), symbolRow.GetString("POSTCODE"), symbolRow.GetString("ZONENR"))
-                            If Not symbolRow("WNGD") = "..." Then textToChange.TryAdd(symbolRow.GetAttributeId("WNGD"), symbolRow.GetString("WNGD"))
+                            Dim winguard = "{0}.{1}.{2}.{3}".Compose(symbolRow.GetString("LAND"), symbolRow.GetString("WINKEL"), symbolRow.GetString("POSTCODE"), symbolRow.GetString("ZONENR"))
+                            textToChange.TryAdd(symbolRow.GetAttributeId("WNGD"), If(winguard = "...", "", winguard))
                     End Select
             End Select
         Next

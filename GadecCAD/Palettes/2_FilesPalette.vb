@@ -315,13 +315,13 @@ Public Class FilesPalette
     'eventHandlers
 
     ''' <summary>
-    ''' EventHandler for the event that occurs when the user changes the language.
-    ''' <para>It will translate the texts on this palette.</para>
+    ''' EventHandler for the event that occurs when the language has changed.
+    ''' <para>It translates this palette.</para>
     ''' </summary>
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     Sub LanguageChangedEventHandler(sender As Object, e As LanguageChangedEventArgs)
-        Me.Controls.ToList.ForEach(Sub(c) If c.Name.StartsWith("lt") Then c.Text = c.Name.Translate)
+        Translator.TranslateControls(Me)
         ReloadGridView()
     End Sub
 

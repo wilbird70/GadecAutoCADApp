@@ -4,13 +4,14 @@ Imports System.Drawing.Drawing2D
 Imports System.Windows.Forms
 
 ''' <summary>
-''' Represents a rounded button.
+''' <para><see cref="RoundedButton"/> represents a rounded button control.</para>
 ''' </summary>
 Public Class RoundedButton
     Inherits Button
 
     ''' <summary>
-    ''' Creates a round button.
+    ''' Initializes a new instance of <see cref="RoundedButton"/>.
+    ''' <para><see cref="RoundedButton"/> represents a rounded button control.</para>
     ''' </summary>
     Public Sub New()
         MyBase.New
