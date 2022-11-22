@@ -272,19 +272,20 @@ Public Class FilesPalette
     ''' <param name="e"></param>
     Private Sub FilesDataGridView_CellMouseEnter(sender As Object, e As DataGridViewCellEventArgs) Handles FilesDataGridView.CellMouseEnter
         Try
-            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Dispose() : _mouseHoverTimer = Nothing
-            Select Case True
-                Case Registerizer.UserSetting("HidePreviews") = "True"
-                Case e.RowIndex < 0
-                Case Not PaletteHelper.FilesPageHasFocus
-                Case Else
-                    _mouseHoverRowIndex = e.RowIndex
-                    _mouseHoverTimer = New Timer
-                    AddHandler _mouseHoverTimer.Tick, AddressOf TimerTickEventHandler
-                    _mouseHoverTimer.Interval = 250
-                    _mouseHoverTimer.Enabled = True
-                    FilesDataGridView.Rows(e.RowIndex).HighlightRow(True)
-            End Select
+            If NotNothing(_mouseHoverTimer) Then
+                _mouseHoverTimer.Dispose()
+                _mouseHoverTimer = Nothing
+            End If
+            If e.RowIndex < 0 OrElse Not PaletteHelper.FilesPageHasFocus Then Exit Sub
+
+            FilesDataGridView.Rows(e.RowIndex).HighlightRow(True)
+            If Registerizer.UserSetting("HidePreviews") = "True" Then Exit Sub
+
+            _mouseHoverRowIndex = e.RowIndex
+            _mouseHoverTimer = New Timer
+            AddHandler _mouseHoverTimer.Tick, AddressOf TimerTickEventHandler
+            _mouseHoverTimer.Interval = 250
+            _mouseHoverTimer.Enabled = True
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -298,15 +299,17 @@ Public Class FilesPalette
     ''' <param name="e"></param>
     Private Sub FilesDataGridView_CellMouseLeave(sender As Object, e As DataGridViewCellEventArgs) Handles FilesDataGridView.CellMouseLeave
         Try
-            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Enabled = False
-            Select Case True
-                Case Registerizer.UserSetting("HidePreviews") = "True"
-                Case e.RowIndex < 0
-                Case Not PaletteHelper.FilesPageHasFocus
-                Case FilesDataGridView.Columns.Contains("Filename")
-                    BalloonHelper.ShowDocumentPreview(Nothing, Nothing, Nothing)
-                    FilesDataGridView.Rows(e.RowIndex).HighlightRow(False)
-            End Select
+            If NotNothing(_mouseHoverTimer) Then
+                _mouseHoverTimer.Enabled = False
+            End If
+            If e.RowIndex < 0 OrElse Not PaletteHelper.FilesPageHasFocus Then Exit Sub
+
+            FilesDataGridView.Rows(e.RowIndex).HighlightRow(False)
+            If Registerizer.UserSetting("HidePreviews") = "True" Then Exit Sub
+
+            If FilesDataGridView.Columns.Contains("Filename") Then
+                BalloonHelper.ShowDocumentPreview(Nothing, Nothing, Nothing)
+            End If
         Catch ex As Exception
             GadecException(ex)
         End Try

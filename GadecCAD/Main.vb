@@ -38,7 +38,8 @@ Public Module Main
             {"AppDir", Registerizer.MainSetting("AppDir")},
             {"Support", Registerizer.MainSetting("AppDir") & "\Support"},
             {"Resources", Registerizer.MainSetting("AppDir") & "\Resources"},
-            {"AppDataFolder", "{AppData}\{0}\{1}".Compose(companyName, appName)}
+            {"AppDataFolder", "{AppData}\{0}\{1}".Compose(companyName, appName)},
+            {"TempFolder", "{AppData}\{0}\{1}\Temp".Compose(companyName, appName)}
         }
         Composer.SetCustumCodes(customCodes)
 

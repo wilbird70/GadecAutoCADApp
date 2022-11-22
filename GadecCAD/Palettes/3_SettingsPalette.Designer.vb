@@ -38,6 +38,8 @@ Partial Class SettingsPalette
         Me.PreviewCheckBox = New System.Windows.Forms.CheckBox()
         Me.ltPreview = New System.Windows.Forms.Label()
         Me.LinkToPlotFolderLabel = New System.Windows.Forms.Label()
+        Me.OpenPdfCheckBox = New System.Windows.Forms.CheckBox()
+        Me.ltOpenPdf = New System.Windows.Forms.Label()
         CType(Me.LanguagePictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -100,7 +102,7 @@ Partial Class SettingsPalette
         '
         Me.ltManual.Image = Global.GadecCAD.My.Resources.Resources.Boek
         Me.ltManual.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.ltManual.Location = New System.Drawing.Point(3, 383)
+        Me.ltManual.Location = New System.Drawing.Point(3, 403)
         Me.ltManual.Name = "ltManual"
         Me.ltManual.Size = New System.Drawing.Size(171, 24)
         Me.ltManual.TabIndex = 52
@@ -121,7 +123,7 @@ Partial Class SettingsPalette
         '
         Me.ltChangelog.Image = Global.GadecCAD.My.Resources.Resources.Changelog
         Me.ltChangelog.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.ltChangelog.Location = New System.Drawing.Point(3, 353)
+        Me.ltChangelog.Location = New System.Drawing.Point(3, 373)
         Me.ltChangelog.Name = "ltChangelog"
         Me.ltChangelog.Size = New System.Drawing.Size(171, 24)
         Me.ltChangelog.TabIndex = 46
@@ -133,7 +135,7 @@ Partial Class SettingsPalette
         '
         Me.ltReloadMenu.Image = Global.GadecCAD.My.Resources.Resources.bmpMOD
         Me.ltReloadMenu.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.ltReloadMenu.Location = New System.Drawing.Point(3, 323)
+        Me.ltReloadMenu.Location = New System.Drawing.Point(3, 343)
         Me.ltReloadMenu.Name = "ltReloadMenu"
         Me.ltReloadMenu.Size = New System.Drawing.Size(171, 24)
         Me.ltReloadMenu.TabIndex = 35
@@ -145,7 +147,7 @@ Partial Class SettingsPalette
         '
         Me.ltFeedback.Image = Global.GadecCAD.My.Resources.Resources.send_16
         Me.ltFeedback.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me.ltFeedback.Location = New System.Drawing.Point(3, 413)
+        Me.ltFeedback.Location = New System.Drawing.Point(3, 433)
         Me.ltFeedback.Name = "ltFeedback"
         Me.ltFeedback.Size = New System.Drawing.Size(171, 24)
         Me.ltFeedback.TabIndex = 21
@@ -174,7 +176,7 @@ Partial Class SettingsPalette
         'PreviewCheckBox
         '
         Me.PreviewCheckBox.AutoSize = True
-        Me.PreviewCheckBox.Location = New System.Drawing.Point(158, 303)
+        Me.PreviewCheckBox.Location = New System.Drawing.Point(158, 323)
         Me.PreviewCheckBox.Name = "PreviewCheckBox"
         Me.PreviewCheckBox.Size = New System.Drawing.Size(15, 14)
         Me.PreviewCheckBox.TabIndex = 55
@@ -184,7 +186,7 @@ Partial Class SettingsPalette
         '
         Me.ltPreview.AutoSize = True
         Me.ltPreview.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ltPreview.Location = New System.Drawing.Point(3, 304)
+        Me.ltPreview.Location = New System.Drawing.Point(3, 323)
         Me.ltPreview.Name = "ltPreview"
         Me.ltPreview.Size = New System.Drawing.Size(28, 13)
         Me.ltPreview.TabIndex = 56
@@ -201,10 +203,31 @@ Partial Class SettingsPalette
         Me.LinkToPlotFolderLabel.Text = "Plotfolder"
         Me.LinkToPlotFolderLabel.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
-        'Palette3
+        'OpenPdfCheckBox
+        '
+        Me.OpenPdfCheckBox.AutoSize = True
+        Me.OpenPdfCheckBox.Location = New System.Drawing.Point(158, 303)
+        Me.OpenPdfCheckBox.Name = "OpenPdfCheckBox"
+        Me.OpenPdfCheckBox.Size = New System.Drawing.Size(15, 14)
+        Me.OpenPdfCheckBox.TabIndex = 58
+        Me.OpenPdfCheckBox.UseVisualStyleBackColor = True
+        '
+        'ltOpenPdf
+        '
+        Me.ltOpenPdf.AutoSize = True
+        Me.ltOpenPdf.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ltOpenPdf.Location = New System.Drawing.Point(3, 303)
+        Me.ltOpenPdf.Name = "ltOpenPdf"
+        Me.ltOpenPdf.Size = New System.Drawing.Size(28, 13)
+        Me.ltOpenPdf.TabIndex = 59
+        Me.ltOpenPdf.Text = "XXX"
+        '
+        'SettingsPalette
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.Controls.Add(Me.OpenPdfCheckBox)
+        Me.Controls.Add(Me.ltOpenPdf)
         Me.Controls.Add(Me.LinkToPlotFolderLabel)
         Me.Controls.Add(Me.PreviewCheckBox)
         Me.Controls.Add(Me.ltPreview)
@@ -221,8 +244,8 @@ Partial Class SettingsPalette
         Me.Controls.Add(Me.ltReloadMenu)
         Me.Controls.Add(Me.ltFeedback)
         Me.Controls.Add(Me.LanguageComboBox)
-        Me.Name = "Palette3"
-        Me.Size = New System.Drawing.Size(174, 470)
+        Me.Name = "SettingsPalette"
+        Me.Size = New System.Drawing.Size(174, 466)
         CType(Me.LanguagePictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -244,4 +267,6 @@ Partial Class SettingsPalette
     Friend WithEvents PreviewCheckBox As System.Windows.Forms.CheckBox
     Friend WithEvents ltPreview As System.Windows.Forms.Label
     Friend WithEvents LinkToPlotFolderLabel As Windows.Forms.Label
+    Friend WithEvents OpenPdfCheckBox As Windows.Forms.CheckBox
+    Friend WithEvents ltOpenPdf As Windows.Forms.Label
 End Class

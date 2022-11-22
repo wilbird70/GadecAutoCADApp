@@ -562,19 +562,20 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub FramesDataGridView_CellMouseEnter(sender As Object, e As DataGridViewCellEventArgs) Handles FramesDataGridView.CellMouseEnter
         Try
-            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Dispose() : _mouseHoverTimer = Nothing
-            Select Case True
-                Case Registerizer.UserSetting("HidePreviews") = "True"
-                Case e.RowIndex < 0
-                Case Not PaletteHelper.FramePageHasFocus
-                Case Else
-                    _mouseHoverRowIndex = e.RowIndex
-                    _mouseHoverTimer = New Timer
-                    AddHandler _mouseHoverTimer.Tick, AddressOf TimerTickEventHandler
-                    _mouseHoverTimer.Interval = 350
-                    _mouseHoverTimer.Enabled = True
-                    FramesDataGridView.Rows(e.RowIndex).HighlightRow(True)
-            End Select
+            If NotNothing(_mouseHoverTimer) Then
+                _mouseHoverTimer.Dispose()
+                _mouseHoverTimer = Nothing
+            End If
+            If e.RowIndex < 0 OrElse Not PaletteHelper.FramePageHasFocus Then Exit Sub
+
+            FramesDataGridView.Rows(e.RowIndex).HighlightRow(True)
+            If Registerizer.UserSetting("HidePreviews") = "True" Then Exit Sub
+
+            _mouseHoverRowIndex = e.RowIndex
+            _mouseHoverTimer = New Timer
+            AddHandler _mouseHoverTimer.Tick, AddressOf TimerTickEventHandler
+            _mouseHoverTimer.Interval = 350
+            _mouseHoverTimer.Enabled = True
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -588,18 +589,19 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub FramesDataGridView_CellMouseLeave(sender As Object, e As DataGridViewCellEventArgs) Handles FramesDataGridView.CellMouseLeave
         Try
-            If NotNothing(_mouseHoverTimer) Then _mouseHoverTimer.Enabled = False
-            Select Case True
-                Case Registerizer.UserSetting("HidePreviews") = "True"
-                Case e.RowIndex < 0
-                Case Not PaletteHelper.FramePageHasFocus
-                Case FramesDataGridView.Columns.Contains("Num")
-                    BalloonHelper.ShowFramePreview(Nothing, Nothing, Nothing)
-                    FramesDataGridView.Rows(e.RowIndex).HighlightRow(False)
-                Case FramesDataGridView.Columns.Contains("Filename")
-                    BalloonHelper.ShowDocumentPreview(Nothing, Nothing, Nothing)
-                    FramesDataGridView.Rows(e.RowIndex).HighlightRow(False)
-            End Select
+            If NotNothing(_mouseHoverTimer) Then
+                _mouseHoverTimer.Enabled = False
+            End If
+            If e.RowIndex < 0 OrElse Not PaletteHelper.FramePageHasFocus Then Exit Sub
+
+            FramesDataGridView.Rows(e.RowIndex).HighlightRow(False)
+            If Registerizer.UserSetting("HidePreviews") = "True" Then Exit Sub
+
+            If FramesDataGridView.Columns.Contains("Num") Then
+                BalloonHelper.ShowFramePreview(Nothing, Nothing, Nothing)
+            ElseIf FramesDataGridView.Columns.Contains("Filename") Then
+                BalloonHelper.ShowDocumentPreview(Nothing, Nothing, Nothing)
+            End If
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -686,25 +688,45 @@ Public Class FramesPalette
 
             Try
                 Select Case tag
-                    'kader opties:
+
+                    '//Frames options:
                     Case "ToA3", "ToA4"
-                        DocumentEvents.DocumentEventsEnabled = False
                         Dim copies = GetNumberOfCopies()
-                        If copies > 0 Then
-                            Dim framePlotter = New FramePlotter(frameSelection, tag)
-                            framePlotter.PlotMultiPage(copies)
-                        End If
-                        DocumentsHelper.Open(doc.Name)
+                        If copies < 1 Then Exit Sub
+
+                        DocumentEvents.DocumentEventsEnabled = False
+                        Dim framePlotter = New FramePlotter(frameSelection, tag)
+                        framePlotter.PlotMultiPage(copies)
                     Case "ToPLT"
-                        DocumentEvents.DocumentEventsEnabled = False
                         Dim copies = GetNumberOfCopies()
-                        If copies > 0 Then
-                            Dim framePlotter = New FramePlotter(frameSelection, tag)
-                            framePlotter.PlotMultiFrame(copies)
-                        End If
-                        DocumentsHelper.Open(doc.Name)
-                    Case "ToPDFset"
+                        If copies < 1 Then Exit Sub
+
                         DocumentEvents.DocumentEventsEnabled = False
+                        Dim framePlotter = New FramePlotter(frameSelection, tag)
+                        framePlotter.PlotMultiFrame(copies)
+                    Case "ToPDF"
+                        Dim projectName = If(frameSelection.Count > 1, doc.GetPath.InStrRevResult("\"), IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
+                        Dim initialFile = If(doc.IsNamedDrawing, "{0}\{1}.pdf", "\{1}.pdf").Compose(doc.GetPath, projectName)
+                        Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
+                        If fileName = "" Then Exit Sub
+
+                        DocumentEvents.DocumentEventsEnabled = False
+                        FileSystemHelper.DeleteAllFiles("{TempFolder}".Compose)
+                        Dim files = New List(Of String)
+                        Using sysVar = New SysVarHandler(doc)
+                            sysVar.Set("PDFSHX", 0)
+                            Dim framePlotter = New FramePlotter(frameSelection, tag)
+                            files.AddRange(framePlotter.PlotMultiFrame(1))
+                        End Using
+                        If files.Count = 0 Then Exit Sub
+
+                        Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
+                            pdfDocument.Save(fileName)
+                        End Using
+                        If Registerizer.UserSetting("OpenPdf") = "True" Then
+                            Dim start = New ProcessWithEvents(fileName)
+                        End If
+                    Case "ToPDFset"
                         Using drawingList = New DrawinglistCreator(frameSelection, _frameListData, _GroupPrefixLength)
                             If drawingList.NoSelection Then Exit Sub
 
@@ -718,28 +740,30 @@ Public Class FramesPalette
                             Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
                             If fileName = "" Then Exit Sub
 
+                            DocumentEvents.DocumentEventsEnabled = False
+                            FileSystemHelper.DeleteAllFiles("{TempFolder}".Compose)
                             Dim files = New List(Of String)
                             Dim framePlotter = New FramePlotter(drawingList.Selection, "ToPDF")
                             Using sysVar = New SysVarHandler(doc)
                                 sysVar.Set("PDFSHX", 0)
                                 Using layerVisiblizer = New LayerVisiblizer(doc)
-                                    files.AddRange(framePlotter.PlotExternalDrawing(drawingList.GetDatabase, doc.GetPath))
+                                    files.AddRange(framePlotter.PlotExternalDrawing(drawingList.GetDatabase))
                                 End Using
                                 If Not dialog.OnlyAttachments Then files.AddRange(framePlotter.PlotMultiFrame(1))
                             End Using
+                            If files.Count = 0 Then Exit Sub
 
-                            If files.Count > 0 Then
-                                Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
-                                    If dialog.Attachments.Count > 0 Then PdfSharpHelper.AddPdfFiles(pdfDocument, dialog.Attachments)
-                                    Dim rects = {New Windows.Rect(120.0, 195.0, 37.4, 13.75), New Windows.Rect(157.5, 195.0, 37.4, 13.75)}
-                                    PdfSharpHelper.AddSignFields(pdfDocument, 0, rects, drawingList.ProjectName)
-                                    pdfDocument.Save(fileName)
-                                    pdfDocument.Close()
-                                End Using
-                                Dim start = New ProcessWithEvents(fileName)
-                            End If
+                            Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
+                                If dialog.Attachments.Count > 0 Then PdfSharpHelper.AddPdfFiles(pdfDocument, dialog.Attachments)
+                                Dim rects = {New Windows.Rect(120.0, 195.0, 37.4, 13.75), New Windows.Rect(157.5, 195.0, 37.4, 13.75)}
+                                PdfSharpHelper.AddSignFields(pdfDocument, 0, rects, drawingList.ProjectName)
+                                pdfDocument.Save(fileName)
+                                pdfDocument.Close()
+                            End Using
+                            Dim start = New ProcessWithEvents(fileName)
                         End Using
                     Case "DwgList"
+                        DocumentEvents.DocumentEventsEnabled = True
                         Dim fileName As String
                         Using drawingList = New DrawinglistCreator(frameSelection, _frameListData, _GroupPrefixLength)
                             If drawingList.NoSelection Then Exit Sub
@@ -758,88 +782,58 @@ Public Class FramesPalette
                         End Using
                         Dim newDocument = DocumentsHelper.Open(fileName)
                         newDocument.ZoomExtents
-                    Case "ToPDF"
-                        DocumentEvents.DocumentEventsEnabled = False
-                        Dim initialFile = "\{0}.pdf".Compose(doc.GetFileNameWithoutExtension)
-                        If doc.IsNamedDrawing Then
-                            Select Case frameSelection.Count > 1
-                                Case True : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetPath.InStrRevResult("\"))
-                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
-                            End Select
-                        End If
-                        Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
-                        If Not fileName = "" Then
-                            Using sysVar = New SysVarHandler(doc)
-                                sysVar.Set("PDFSHX", 0)
-                                Dim framePlotter = New FramePlotter(frameSelection, tag)
-                                Dim files = framePlotter.PlotMultiFrame(1)
-                                If files.Count > 0 Then
-                                    Using pdfDocument = PdfSharpHelper.MergePdfFiles(files)
-                                        pdfDocument.Save(fileName)
-                                    End Using
-                                    Dim start = New ProcessWithEvents(fileName)
-                                End If
-                            End Using
-                        End If
-                        DocumentsHelper.Open(doc.Name)
                     Case "SetLayout"
                         DocumentEvents.DocumentEventsEnabled = False
                         Dim framePlotter = New FramePlotter(frameSelection, "ToPDF")
                         framePlotter.SetPlotLayout()
-                        DocumentsHelper.Open(doc.Name)
                     Case "EditH"
                         DocumentEvents.DocumentEventsEnabled = doc.NotNamedDrawing
                         FrameHeaderHelper.EditHeader(doc, frameSelection, _frameListData)
-                        DocumentsHelper.Open(doc.Name)
                     Case "AddRev"
                         DocumentEvents.DocumentEventsEnabled = doc.NotNamedDrawing
                         FrameHeaderHelper.AddRevision(doc, frameSelection)
-                        DocumentsHelper.Open(doc.Name)
                     Case "UpdateStatus"
                         DocumentEvents.DocumentEventsEnabled = False
                         FrameStampHelper.UpdateStatus(doc, frameSelection, _frameListData)
-                        DocumentsHelper.Open(doc.Name)
                     Case "Preview"
                         DocumentEvents.DocumentEventsEnabled = False
                         Dim framePlotter = New FramePlotter(frameSelection, "ToPDF")
                         Dim plotStatus = framePlotter.PlotPreview()
-                        If plotStatus = Autodesk.AutoCAD.PlottingServices.PreviewEndPlotStatus.Plot Then
-                            Dim copies = GetNumberOfCopies()
-                            If copies > 0 Then
-                                framePlotter = New FramePlotter(frameSelection, "ToPLT")
-                                framePlotter.PlotMultiFrame(copies)
-                            End If
-                        End If
-                        DocumentsHelper.Open(doc.Name)
+                        If Not plotStatus = Autodesk.AutoCAD.PlottingServices.PreviewEndPlotStatus.Plot Then Exit Sub
 
-                        'kadersloze opties:
+                        Dim copies = GetNumberOfCopies()
+                        If copies < 1 Then Exit Sub
+
+                        framePlotter = New FramePlotter(frameSelection, "ToPLT")
+                        framePlotter.PlotMultiFrame(copies)
+
+                        '//frameless options:
                     Case "NormalToPLT"
                         DocumentEvents.DocumentEventsEnabled = False
                         Dim framePlotter = New FramePlotter(frameSelection, tag)
                         framePlotter.PlotFramelessDrawings()
                     Case "NormalToPDF"
+                        Dim projectName = If(frameSelection.Count > 1, doc.GetPath.InStrRevResult("\"), IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
+                        Dim initialFile = If(doc.IsNamedDrawing, "{0}\{1}.pdf", "\{1}.pdf").Compose(doc.GetPath, projectName)
+                        Dim fileName = FileSystemHelper.FileSaveAs(initialFile)
+                        If fileName = "" Then Exit Sub
+
                         DocumentEvents.DocumentEventsEnabled = False
-                        Dim initialFile = "\{0}.pdf".Compose(doc.GetFileNameWithoutExtension)
-                        If doc.IsNamedDrawing Then
-                            Select Case frameSelection.Count > 1
-                                Case True : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, doc.GetPath.InStrRevResult("\"))
-                                Case Else : initialFile = "{0}\{1}.pdf".Compose(doc.GetPath, IO.Path.GetFileNameWithoutExtension(frameSelection.First.Key))
-                            End Select
+                        FileSystemHelper.DeleteAllFiles("{TempFolder}".Compose)
+                        Dim files = New List(Of String)
+                        Using sysVar = New SysVarHandler(doc)
+                            sysVar.Set("PDFSHX", 0)
+                            Dim framePlotter = New FramePlotter(frameSelection, tag)
+                            files.AddRange(framePlotter.PlotFramelessDrawings)
+                        End Using
+                        If files.Count = 0 Then Exit Sub
+
+                        Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
+                            If pdfDocument.PageCount > 0 Then pdfDocument.Save(fileName)
+                        End Using
+                        If Registerizer.UserSetting("OpenPdf") = "True" Then
+                            Dim start = New ProcessWithEvents(fileName)
                         End If
-                        Dim file = FileSystemHelper.FileSaveAs(initialFile)
-                        If Not file = "" Then
-                            Using sysVar = New SysVarHandler(doc)
-                                sysVar.Set("PDFSHX", 0)
-                                Dim framePlotter = New FramePlotter(frameSelection, tag)
-                                Dim files = framePlotter.PlotFramelessDrawings
-                                If files.Count > 0 Then
-                                    Dim pdfDocument = PdfSharpHelper.MergePdfFiles(files)
-                                    If pdfDocument.PageCount > 0 Then pdfDocument.Save(file)
-                                    pdfDocument.Close()
-                                End If
-                            End Using
-                        End If
-                        DocumentsHelper.Open(doc.Name)
                     Case "EditH_NF"
                         DocumentEvents.DocumentEventsEnabled = False
                         Dim files = frameSelection.Keys.ToList
@@ -848,7 +842,6 @@ Public Class FramesPalette
                             If NotNothing(editHeaderDoc) Then FrameHeaderHelper.EditFramelessHeader(editHeaderDoc)
                             If editHeaderDoc.WasClosed Then DocumentsHelper.Close({editHeaderDoc}, True)
                         Next
-                        DocumentsHelper.Open(doc.Name)
                     Case "AddRev_NF"
                         DocumentEvents.DocumentEventsEnabled = False
                         Dim files = frameSelection.Keys.ToList
@@ -857,18 +850,20 @@ Public Class FramesPalette
                             If NotNothing(addRevisionDoc) Then FrameHeaderHelper.AddFramelessRevision(addRevisionDoc)
                             If addRevisionDoc.WasClosed Then DocumentsHelper.Close({addRevisionDoc}, True)
                         Next
-                        DocumentsHelper.Open(doc.Name)
                     Case "FrameSearch"
                         DocumentEvents.DocumentEventsEnabled = False
                         FrameFindHelper.SearchThroughDocuments(frameSelection.Keys.ToArray)
-                        'de doorlopen bestanden worden opnieuw gelezen, omdat de datum van bestanden is gewijzigd.
-                        DocumentsHelper.Open(doc.Name)
+                        '//Note: The examined files are read in again because the date of the files has changed.
+
                 End Select
-                ReloadGridView()
             Catch ex As Exception
                 If Not ex.Message = "ePageCancelled" Then ex.Rethrow
             Finally
-                DocumentEvents.DocumentEventsEnabled = True
+                If Not DocumentEvents.DocumentEventsEnabled Then
+                    DocumentsHelper.Open(doc.Name)
+                    DocumentEvents.DocumentEventsEnabled = True
+                    ReloadGridView()
+                End If
             End Try
         Catch ex As Exception
             GadecException(ex)

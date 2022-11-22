@@ -76,6 +76,7 @@ Public Class SettingsPalette
             LinkToPlotFolderLabel.Left += widthDifference
             LanguagePictureBox.Left += widthDifference
             PreviewCheckBox.Left += widthDifference
+            OpenPdfCheckBox.Left += widthDifference
             ltReloadMenu.Width += widthDifference
             ltChangelog.Width += widthDifference
             ltManual.Width += widthDifference
@@ -185,6 +186,17 @@ Public Class SettingsPalette
             Select Case PreviewCheckBox.Checked
                 Case True : Registerizer.UserSetting("HidePreviews", "True")
                 Case Else : Registerizer.UserSetting("HidePreviews", "False")
+            End Select
+        Catch ex As Exception
+            GadecException(ex)
+        End Try
+    End Sub
+
+    Private Sub OpenPdfCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles OpenPdfCheckBox.CheckedChanged
+        Try
+            Select Case OpenPdfCheckBox.Checked
+                Case True : Registerizer.UserSetting("OpenPdf", "True")
+                Case Else : Registerizer.UserSetting("OpenPdf", "False")
             End Select
         Catch ex As Exception
             GadecException(ex)
@@ -370,6 +382,7 @@ Public Class SettingsPalette
             If dpmKeys(i) = currentDepartment Then count2 = i
         Next
         DepartmentsComboBox.SelectedIndex = count2
+        OpenPdfCheckBox.Checked = (Registerizer.UserSetting("OpenPdf") = "True")
         PreviewCheckBox.Checked = (Registerizer.UserSetting("HidePreviews") = "True")
         SelectedLayer()
     End Sub

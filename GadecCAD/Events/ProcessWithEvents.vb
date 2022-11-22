@@ -19,6 +19,10 @@ Public Class ProcessWithEvents
     ''' </summary>
     ''' <param name="fileName">The fullname of the document to open.</param>
     Public Sub New(fileName As String)
+        Dim criterion = Function() IO.File.Exists(fileName)
+        Dim dialog = New WaitUntilDialog(criterion, 5)
+        If Not dialog.Successfully Then Exit Sub
+
         _fileName = fileName
         _lastWriteTime = IO.File.GetLastWriteTime(fileName)
         Dim process = ProcessHelper.StartDocument(fileName)

@@ -65,9 +65,10 @@ Public Class FramePlotter
     ''' <param name="database">The drawing that contains the frames to plot.</param>
     ''' <param name="folder">The folder for temporary files.</param>
     ''' <returns>An array of fullnames of temporary files.</returns>
-    Public Function PlotExternalDrawing(database As Database, folder As String) As String()
+    Public Function PlotExternalDrawing(database As Database) As String()
         If Not PlotFactory.ProcessPlotState = ProcessPlotState.NotPlotting Then MessageBoxInfo("Another plot".Translate) : Return {}
 
+        FileSystemHelper.CreateFolder("{TempFolder}".Compose)
         Dim output = New List(Of String)
         Dim errorMessage = New List(Of String)
         Dim frameIdCollections = XRecordObjectIdsHelper.Load(database, "{Company}".Compose, "FrameWorkIDs")
@@ -94,7 +95,8 @@ Public Class FramePlotter
                             InitializePlotProgressDialog(plotProgressDialog, plotSession.Count)
                             plotEngine.BeginPlot(plotProgressDialog, Nothing)
                         End If
-                        Dim fileName = "{0}\_{1}".Compose(If(folder = "", "{Desktop}".Compose, folder), Randomizer.GetString(12))
+
+                        Dim fileName = "{TempFolder}\_{0}".Compose(Randomizer.GetString(12))
                         plotEngine.BeginDocument(plotInfo, "CoverAndIndex", Nothing, 1, _plotToFile, fileName)
                         output.Add("{0}.pdf".Compose(fileName))
 
@@ -109,7 +111,7 @@ Public Class FramePlotter
             End Using
         Catch ex As System.Exception
             ex.AddData("Number of frames = {0}".NotYetTranslated(frameData.Rows.Count))
-            ex.ReThrow
+            ex.Rethrow
         Finally
             HostApplicationServices.WorkingDatabase = previousDwg
         End Try
@@ -125,6 +127,7 @@ Public Class FramePlotter
     Public Function PlotMultiFrame(copies As Integer) As String()
         If Not PlotFactory.ProcessPlotState = ProcessPlotState.NotPlotting Then MessageBoxInfo("Another plot".Translate) : Return {}
 
+        FileSystemHelper.CreateFolder("{TempFolder}".Compose)
         Dim output = New List(Of String)
         Dim errorMessage = New List(Of String)
         Dim documentsToClose = New List(Of Document)
@@ -160,7 +163,7 @@ Public Class FramePlotter
                                 InitializePlotProgressDialog(plotProgressDialog, plotSession.Count)
                                 plotEngine.BeginPlot(plotProgressDialog, Nothing)
                             End If
-                            Dim fileName = "{0}\_{1}".Compose(If(doc.GetPath = "", "{Desktop}".Compose, doc.GetPath), Randomizer.GetString(12))
+                            Dim fileName = "{TempFolder}\_{0}".Compose(Randomizer.GetString(12))
                             plotEngine.BeginDocument(plotInfo, doc.GetFileName, Nothing, copies, _plotToFile, fileName)
                             output.Add("{0}.pdf".Compose(fileName))
 
@@ -194,6 +197,7 @@ Public Class FramePlotter
     Public Function PlotMultiPage(copies As Integer) As String()
         If Not PlotFactory.ProcessPlotState = ProcessPlotState.NotPlotting Then MessageBoxInfo("Another plot".Translate) : Return {}
 
+        FileSystemHelper.CreateFolder("{TempFolder}".Compose)
         Dim output = New List(Of String)
         Dim errorMessage = New List(Of String)
         Dim documentsToClose = New List(Of Document)
@@ -231,7 +235,7 @@ Public Class FramePlotter
                                 If sheet = 1 Then
                                     InitializePlotProgressDialog(plotProgressDialog, plotSession.Count)
                                     plotEngine.BeginPlot(plotProgressDialog, Nothing)
-                                    Dim fileName = "{0}\_{1}".Compose(If(doc.GetPath = "", "{Desktop}".Compose, doc.GetPath), Randomizer.GetString(12))
+                                    Dim fileName = "{TempFolder}\_{1}".Compose(Randomizer.GetString(12))
                                     plotEngine.BeginDocument(plotInfo, doc.GetFileName, Nothing, copies, _plotToFile, fileName)
                                     output.Add("{0}.pdf".Compose(fileName))
                                 End If
@@ -359,6 +363,7 @@ Public Class FramePlotter
     Public Function PlotFramelessDrawings() As String()
         If Not PlotFactory.ProcessPlotState = ProcessPlotState.NotPlotting Then MessageBoxInfo("Another plot".Translate) : Return {}
 
+        FileSystemHelper.CreateFolder("{TempFolder}".Compose)
         Dim frameSizeData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Frames", "Name")
         Dim frameSizes = frameSizeData.GetStringsFromColumn("Name")
         Dim dialog = New ListBoxDialog("SelectForm".Translate, frameSizes, "", "[Thin]".Translate)
@@ -478,7 +483,7 @@ Public Class FramePlotter
 
                     InitializePlotProgressDialog(plotProgressDialog, 1)
                     plotEngine.BeginPlot(plotProgressDialog, Nothing)
-                    Dim output = "{0}\_{1}.pdf".Compose(If(document.GetPath = "", "{Desktop}".Compose, document.GetPath), Randomizer.GetString(12))
+                    Dim output = "{TempFolder}\_{0}.pdf".Compose(Randomizer.GetString(12))
                     plotEngine.BeginDocument(plotInfo, IO.Path.GetFileName(document.Name), Nothing, copies, _plotToFile, output)
                     plotProgressDialog.PlotProgressPos = 1
                     plotProgressDialog.PlotMsgString(PlotMessageIndex.SheetSetProgressCaption) = "Progress".Translate(1, 1)
