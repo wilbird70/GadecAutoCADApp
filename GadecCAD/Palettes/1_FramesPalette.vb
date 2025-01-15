@@ -787,6 +787,10 @@ Public Class FramesPalette
                         Dim framePlotter = New FramePlotter(frameSelection, "ToPDF")
                         framePlotter.SetPlotLayout()
                     Case "EditH"
+                        If doc.IsNamedDrawing Then
+                            Dim frameSetController = New FrameSetHandler(doc.Name, False)
+                            _frameListData = frameSetController.UpdatedFrameListData
+                        End If
                         DocumentEvents.DocumentEventsEnabled = doc.NotNamedDrawing
                         FrameHeaderHelper.EditHeader(doc, frameSelection, _frameListData)
                     Case "AddRev"
@@ -937,12 +941,19 @@ Public Class FramesPalette
             If documents.Contains(file) Then row.DefaultCellStyle.BackColor = Drawing.Color.PeachPuff
             Select Case True
                 Case Not file = doc.Name
-                Case Not FramesDataGridView.Columns.Contains("Num") : row.Selected = True
-                Case doc.ActiveFrame = "" : doc.ActiveFrame(row.Cells("Num").Value) : row.Selected = True
-                Case doc.ActiveFrame = row.Cells("Num").Value : row.Selected = True
+                Case Not FramesDataGridView.Columns.Contains("Num") : SelectRow(row)
+                Case doc.ActiveFrame = "" : doc.ActiveFrame(row.Cells("Num").Value) : SelectRow(row)
+                Case doc.ActiveFrame = row.Cells("Num").Value : SelectRow(row)
             End Select
         Next
         ReloadMenuStrip()
+    End Sub
+
+    Private Sub SelectRow(row As DataGridViewRow)
+        row.Selected = True
+        For Each cell In row.Cells.ToArray
+            If cell.Visible Then row.DataGridView.CurrentCell = cell : Exit For
+        Next
     End Sub
 
     ''' <summary>

@@ -18,6 +18,7 @@ Public Class DocumentEvents
     ''' Contains all ObjectIdCollections to track changes on blockreferences.
     ''' </summary>
     Private _modifiedObjects As New ModifiedObjects
+    Private _modifiedFields As Boolean = False
 
     ''' <summary>
     ''' Initializes a new instance of <see cref="DocumentEvents"/>.
@@ -176,7 +177,11 @@ Public Class DocumentEvents
     Private Sub ObjectErasedEventHandler(sender As Object, e As ObjectErasedEventArgs)
         If Not _DocumentEventsEnabled Then Exit Sub
 
-        If e.Erased Then ObjectDeletedEventHandler(e.DBObject) Else ObjectAddedEventHandler(e.DBObject)
+        If e.Erased Then
+            ObjectDeletedEventHandler(e.DBObject)
+        Else
+            ObjectAddedEventHandler(e.DBObject)
+        End If
     End Sub
 
     ''' <summary>
@@ -208,6 +213,9 @@ Public Class DocumentEvents
 
                     _modifiedObjects.ChangedBlockReferenceIds.Add(referenceId)
                 Case "AttributeReference"
+
+                    If e.DBObject.CastAsAttributeReference.HasFields Then _modifiedFields = True
+
                     referenceId = e.DBObject.OwnerId
                     If _modifiedObjects.ChangedAttributeOwnerIds.Contains(referenceId) Then Exit Sub
 
@@ -294,6 +302,8 @@ Public Class DocumentEvents
     ''' <param name="e"></param>
     Private Sub EnteringQuiescentStateEventHandler(sender As Object, e As EventArgs)
         Try
+            If _modifiedFields Then _modifiedFields = False : _thisDocument.Editor.Regen()
+
             If _modifiedObjects.ChangedSymbolIds.Count > 0 Then ProcessSymbolChanges(_modifiedObjects.ChangedSymbolIds)
             If _modifiedObjects.AddedFrameIds.Count > 0 Then AddFramesInFrameData(_modifiedObjects.AddedFrameIds)
             If _modifiedObjects.DeletedFrameIds.Count > 0 Then DeleteFramesFromFrameData(_modifiedObjects.DeletedFrameIds)

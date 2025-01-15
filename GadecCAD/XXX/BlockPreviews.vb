@@ -24,26 +24,24 @@ Public Class BlockPreviews
         ed.Command("-PURGE", "ALL", "*", "N")
 
         XRecordHelper.Delete(document.Database, "{Company}".Compose, "BlockPics")
-        If WindowIsSet(document, New Windows.Size(1500, 900)) Then
-            Dim color = Application.Preferences.Display.GraphicsWinModelBackgrndColor
-            Try
-                Application.Preferences.Display.GraphicsWinModelBackgrndColor = Drawing.Color.Black
-                Dim images = New Dictionary(Of String, Drawing.Bitmap)
-                Dim ids = SelectHelper.GetAllReferencesInModelspace(document)
-                Dim referenceData = ReferenceHelper.GetReferenceData(document.Database, ids)
-                For Each row In referenceData.Select
-                    Dim referenceImage = CapturePreviewImage(document, layoutId, row.GetExtents3d("BlockExtents"))
-                    images.TryAdd(row.GetString("BlockName"), referenceImage)
-                Next
-                XRecordImagesHelper.Save(document, "{Company}".Compose, "BlockPics", images)
-                XRecordHelper.Delete(document, "{Company}".Compose, "BlockPics", images.Keys.ToArray)
-            Catch ex As System.Exception
-                ex.Rethrow
-            Finally
-                Application.Preferences.Display.GraphicsWinModelBackgrndColor = color
-                SetWindow(document, Windows.WindowState.Maximized)
-            End Try
-        End If
+        Dim color = Application.Preferences.Display.GraphicsWinModelBackgrndColor
+        Try
+            Application.Preferences.Display.GraphicsWinModelBackgrndColor = Drawing.Color.Black
+            Dim images = New Dictionary(Of String, Drawing.Bitmap)
+            Dim ids = SelectHelper.GetAllReferencesInModelspace(document)
+            Dim referenceData = ReferenceHelper.GetReferenceData(document.Database, ids)
+            For Each row In referenceData.Select
+                Dim referenceImage = CapturePreviewImage(document, layoutId, row.GetExtents3d("BlockExtents"))
+                images.TryAdd(row.GetString("BlockName"), referenceImage)
+            Next
+            XRecordImagesHelper.Save(document, "{Company}".Compose, "BlockPics", images)
+            XRecordHelper.Delete(document, "{Company}".Compose, "BlockPics", images.Keys.ToArray)
+        Catch ex As System.Exception
+            ex.Rethrow
+        Finally
+            Application.Preferences.Display.GraphicsWinModelBackgrndColor = color
+            SetWindow(document, Windows.WindowState.Maximized)
+        End Try
         ed.Command("ZOOM", "E")
     End Sub
 
