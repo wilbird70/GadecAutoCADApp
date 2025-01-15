@@ -37,7 +37,7 @@ Public Module MenuCommands
     <CommandMethod("RELOADGADEC")>
     Public Sub commandReloadGadecMenu()
         Try
-            registerizer.MainSetting("MenuUpdate", "Reload")
+            'registerizer.MainSetting("MenuUpdate", "Reload")
             Dim menu = New GadecMenuHandler
             If menu.Available Then menu.Load(ActiveEditor)
         Catch ex As System.Exception

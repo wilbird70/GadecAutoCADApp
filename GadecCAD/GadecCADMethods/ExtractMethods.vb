@@ -32,8 +32,8 @@ Public Class ExtractMethods
             Case 0 : ExtractToMZXConsysCSV(document.GetPath, symbolData)
             Case 1 : ExtractToCheckWinguardCSV(document.GetPath, symbolData)
             Case 2
-                MessageBoxInfo("Deze functie zal op termijn verdwijnen.{L}Gebruik in plaats hiervan 'Symbol Counter' [SYMCOUNTER]".NotYetTranslated)
-                CreateToLegendBlock_Obsolete(document, symbolData)
+                'MessageBoxInfo("Deze functie zal op termijn verdwijnen.{L}Gebruik in plaats hiervan 'Symbol Counter' [SYMCOUNTER]".NotYetTranslated)
+                'CreateToLegendBlock_Obsolete(document, symbolData)
         End Select
     End Sub
 
@@ -103,8 +103,8 @@ Public Class ExtractMethods
             Case 0 : ExtractToMZXConsysCSV(folder, allSymbolData)
             Case 1 : ExtractToCheckWinguardCSV(folder, allSymbolData)
             Case 2
-                MessageBoxInfo("Deze functie zal op termijn verdwijnen.{L}Gebruik in plaats hiervan 'Symbol Counter' [SYMCOUNTER].{2L}Een aparte tekening als legenda gaat verdwijnen.".NotYetTranslated)
-                CreateToLegendDrawing_Obsolete(firstRow, allSymbolData)
+                'MessageBoxInfo("Deze functie zal op termijn verdwijnen.{L}Gebruik in plaats hiervan 'Symbol Counter' [SYMCOUNTER].{2L}Een aparte tekening als legenda gaat verdwijnen.".NotYetTranslated)
+                'CreateToLegendDrawing_Obsolete(firstRow, allSymbolData)
         End Select
     End Sub
 
@@ -556,138 +556,138 @@ Public Class ExtractMethods
 
     'obsolete private subs //////////////////////////////////////////////////////////////////////////////////////////
 
-    ''' <summary>
-    ''' Creates a legendblock from the reference database and allows the user to place it on the drawing.
-    ''' </summary>
-    ''' <param name="document">The present document.</param>
-    ''' <param name="referenceData">The reference database.</param>
-    Private Shared Sub CreateToLegendBlock_Obsolete(document As Document, referenceData As Data.DataTable)
-        Dim blockName = "MZX_Legend"
-        Dim definitionId = GetLegendBlockAndRemoveUnusedSymbols_Obsolete(document, referenceData)
-        If definitionId = ObjectId.Null Then Exit Sub
+    '''' <summary>
+    '''' Creates a legendblock from the reference database and allows the user to place it on the drawing.
+    '''' </summary>
+    '''' <param name="document">The present document.</param>
+    '''' <param name="referenceData">The reference database.</param>
+    'Private Shared Sub CreateToLegendBlock_Obsolete(document As Document, referenceData As Data.DataTable)
+    '    Dim blockName = "MZX_Legend"
+    '    Dim definitionId = GetLegendBlockAndRemoveUnusedSymbols_Obsolete(document, referenceData)
+    '    If definitionId = ObjectId.Null Then Exit Sub
 
-        Dim scale = If(document.Database.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
-        Dim command = "(command {Q}INSERT{Q} {Q}{0}{Q} {Q}SC{Q} {Q}{1}{Q} {Q}R{Q} 0 pause {Q}EXPLODE{Q} {Q}L{Q} {Q}-PURGE{Q} {Q}B{Q} {Q}{0}{Q} {Q}N{Q}) "
-        document.SendString(command.Compose(blockName, scale))
-    End Sub
+    '    Dim scale = If(document.Database.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
+    '    Dim command = "(command {Q}INSERT{Q} {Q}{0}{Q} {Q}SC{Q} {Q}{1}{Q} {Q}R{Q} 0 pause {Q}EXPLODE{Q} {Q}L{Q} {Q}-PURGE{Q} {Q}B{Q} {Q}{0}{Q} {Q}N{Q}) "
+    '    document.SendString(command.Compose(blockName, scale))
+    'End Sub
 
-    ''' <summary>
-    ''' Creates a legendblock from the reference database and places it in a new drawing.
-    ''' </summary>
-    ''' <param name="frameRow">The frame record.</param>
-    ''' <param name="referenceData">The reference database.</param>
-    Private Shared Sub CreateToLegendDrawing_Obsolete(frameRow As DataRow, referenceData As Data.DataTable)
-        DocumentEvents.DocumentEventsEnabled = True
-        Dim doc = DocumentsHelper.CreateNew()
-        Dim db = doc.Database
-        Dim sheet = 0
-        Dim definitionId = GetLegendBlockAndRemoveUnusedSymbols_Obsolete(doc, referenceData, sheet)
-        If definitionId = ObjectId.Null Then Exit Sub
+    '''' <summary>
+    '''' Creates a legendblock from the reference database and places it in a new drawing.
+    '''' </summary>
+    '''' <param name="frameRow">The frame record.</param>
+    '''' <param name="referenceData">The reference database.</param>
+    'Private Shared Sub CreateToLegendDrawing_Obsolete(frameRow As DataRow, referenceData As Data.DataTable)
+    '    DocumentEvents.DocumentEventsEnabled = True
+    '    Dim doc = DocumentsHelper.CreateNew()
+    '    Dim db = doc.Database
+    '    Dim sheet = 0
+    '    Dim definitionId = GetLegendBlockAndRemoveUnusedSymbols_Obsolete(doc, referenceData, sheet)
+    '    If definitionId = ObjectId.Null Then Exit Sub
 
-        Using doc.LockDocument
-            Dim referenceId = ReferenceHelper.InsertReference(db, db.CurrentSpaceId, db.Clayer, definitionId, New Point3d(0, 0, 0))
-            ReferenceHelper.ExplodeToOwnerSpace(db, referenceId)
-            DefinitionHelper.PurgeBlock(db, definitionId)
-        End Using
-        Dim description = "LEGEND".Translate
-        Dim drawingDate = Format(Now, "dd-MM-yyyy")
-        Dim generated = "GENERATED".Translate
-        Dim auto = "AUTO".Translate
-        Dim overrideString = "Drawing=D-0001-L;Sheet=;Size=A4;Descr2={0};Descr3=;Rev=0;Scale=1:1;Date={1};Descr={2};Drawn={3};Check=;Sheets={4}"
-        Dim overrideData = overrideString.Compose(description, drawingDate, generated, auto, sheet).Cut.ToIniDictionary
-        Dim frameListRow = ConvertToFrameListRow_Obsolete(frameRow, overrideData)
-        FrameInsertHelper.InsertFrames(doc, frameListRow)
-        doc.ZoomExtents
-    End Sub
+    '    Using doc.LockDocument
+    '        Dim referenceId = ReferenceHelper.InsertReference(db, db.CurrentSpaceId, db.Clayer, definitionId, New Point3d(0, 0, 0))
+    '        ReferenceHelper.ExplodeToOwnerSpace(db, referenceId)
+    '        DefinitionHelper.PurgeBlock(db, definitionId)
+    '    End Using
+    '    Dim description = "LEGEND".Translate
+    '    Dim drawingDate = Format(Now, "dd-MM-yyyy")
+    '    Dim generated = "GENERATED".Translate
+    '    Dim auto = "AUTO".Translate
+    '    Dim overrideString = "Drawing=D-0001-L;Sheet=;Size=A4;Descr2={0};Descr3=;Rev=0;Scale=1:1;Date={1};Descr={2};Drawn={3};Check=;Sheets={4}"
+    '    Dim overrideData = overrideString.Compose(description, drawingDate, generated, auto, sheet).Cut.ToIniDictionary
+    '    Dim frameListRow = ConvertToFrameListRow_Obsolete(frameRow, overrideData)
+    '    FrameInsertHelper.InsertFrames(doc, frameListRow)
+    '    doc.ZoomExtents
+    'End Sub
 
-    ''' <summary>
-    ''' Gets a full legendblock from the resource (TableBlocks.dwg) and removes all lines not mentioned in the reference database.
-    ''' </summary>
-    ''' <param name="document">The present document.</param>
-    ''' <param name="referenceData">The reference database.</param>
-    ''' <param name="sheets"></param>
-    ''' <returns>Objectid of the blocktablerecord of the legendblock definition.</returns>
-    Private Shared Function GetLegendBlockAndRemoveUnusedSymbols_Obsolete(document As Document, referenceData As Data.DataTable, Optional ByRef sheets As Integer = -1) As ObjectId
-        Dim dictionary = New Dictionary(Of String, Integer)
-        Dim legendData = DataSetHelper.LoadFromXml("{Support}\SetExtractInfo.xml".Compose).GetTable("Legend", "Name")
-        If IsNothing(legendData) Then Return ObjectId.Null
+    '''' <summary>
+    '''' Gets a full legendblock from the resource (TableBlocks.dwg) and removes all lines not mentioned in the reference database.
+    '''' </summary>
+    '''' <param name="document">The present document.</param>
+    '''' <param name="referenceData">The reference database.</param>
+    '''' <param name="sheets"></param>
+    '''' <returns>Objectid of the blocktablerecord of the legendblock definition.</returns>
+    'Private Shared Function GetLegendBlockAndRemoveUnusedSymbols_Obsolete(document As Document, referenceData As Data.DataTable, Optional ByRef sheets As Integer = -1) As ObjectId
+    '    Dim dictionary = New Dictionary(Of String, Integer)
+    '    Dim legendData = DataSetHelper.LoadFromXml("{Support}\SetExtractInfo.xml".Compose).GetTable("Legend", "Name")
+    '    If IsNothing(legendData) Then Return ObjectId.Null
 
-        For Each key In referenceData.GetUniqueStringsFromColumn("WNGKEY").ToSortedList
-            Dim symbolRow = referenceData.Rows.Find(key)
-            Dim type = symbolRow.GetString("TYPE")
-            Dim legendRow = legendData.Rows.Find(type)
-            Select Case True
-                Case symbolRow.GetValue("SlaveBlock") : Continue For
-                Case IsNothing(legendRow) : Continue For
-            End Select
-            Dim elementContent = legendRow.GetString("Content").Cut
-            If elementContent(0) = "idem" Then elementContent(0) = type
-            Select Case dictionary.ContainsKey(elementContent(0))
-                Case True : dictionary(elementContent(0)) += 1
-                Case Else : dictionary.Add(elementContent(0), 1)
-            End Select
-            For i = 1 To elementContent.Count - 1
-                dictionary.TryAdd(elementContent(i), 0)
-            Next
-        Next
+    '    For Each key In referenceData.GetUniqueStringsFromColumn("WNGKEY").ToSortedList
+    '        Dim symbolRow = referenceData.Rows.Find(key)
+    '        Dim type = symbolRow.GetString("TYPE")
+    '        Dim legendRow = legendData.Rows.Find(type)
+    '        Select Case True
+    '            Case symbolRow.GetValue("SlaveBlock") : Continue For
+    '            Case IsNothing(legendRow) : Continue For
+    '        End Select
+    '        Dim elementContent = legendRow.GetString("Content").Cut
+    '        If elementContent(0) = "idem" Then elementContent(0) = type
+    '        Select Case dictionary.ContainsKey(elementContent(0))
+    '            Case True : dictionary(elementContent(0)) += 1
+    '            Case Else : dictionary.Add(elementContent(0), 1)
+    '        End Select
+    '        For i = 1 To elementContent.Count - 1
+    '            dictionary.TryAdd(elementContent(i), 0)
+    '        Next
+    '    Next
 
-        Using importer = New DefinitionsImporter("{Resources}\TableBlocks.dwg".Compose)
-            Dim output = importer.ImportDefinition(document, "MZX_Legend")
-            If output = ObjectId.Null Then Return ObjectId.Null
+    '    Using importer = New DefinitionsImporter("{Resources}\TableBlocks.dwg".Compose)
+    '        Dim output = importer.ImportDefinition(document, "MZX_Legend")
+    '        If output = ObjectId.Null Then Return ObjectId.Null
 
-            Using document.LockDocument
-                Using tr = document.Database.TransactionManager.StartTransaction
+    '        Using document.LockDocument
+    '            Using tr = document.Database.TransactionManager.StartTransaction
 
-                    Dim definition = tr.GetBlockTableRecord(output, OpenMode.ForWrite)
-                    Dim tableIds = From objectId In definition.ToArray Where objectId.ObjectClass.DxfName.ToLower = "acad_table" Select objectId
-                    If tableIds.Count = 0 Then Return ObjectId.Null
+    '                Dim definition = tr.GetBlockTableRecord(output, OpenMode.ForWrite)
+    '                Dim tableIds = From objectId In definition.ToArray Where objectId.ObjectClass.DxfName.ToLower = "acad_table" Select objectId
+    '                If tableIds.Count = 0 Then Return ObjectId.Null
 
-                    Dim table = tr.GetTable(tableIds(0), OpenMode.ForWrite)
-                    For i = table.Rows.Count - 1 To 2 Step -1
-                        Dim celType = table.Cells(i, 1).TextString
-                        Select Case True
-                            Case Not dictionary.ContainsKey(celType) : table.DeleteRows(i, 1)
-                            Case dictionary(celType) > 0 : table.Cells(i, 2).TextString = dictionary(celType)
-                        End Select
-                    Next
-                    Select Case sheets = -1
-                        Case True
-                            table.DeleteColumns(5, 1)
-                            table.DeleteColumns(4, 1)
-                            table.DeleteColumns(2, 1)
-                            table.RecomputeTableBlock(True)
-                            table.Position = New Point3d(0, 0, 0)
-                        Case Else
-                            table.RecomputeTableBlock(True)
-                            Dim tableExtents = table.GeometricExtents
-                            sheets = Int((tableExtents.MaxPoint.X - tableExtents.MinPoint.X) / 260) + 1
-                    End Select
-                    tr.Commit()
-                End Using
-            End Using
-            Return output
-        End Using
-    End Function
+    '                Dim table = tr.GetTable(tableIds(0), OpenMode.ForWrite)
+    '                For i = table.Rows.Count - 1 To 2 Step -1
+    '                    Dim celType = table.Cells(i, 1).TextString
+    '                    Select Case True
+    '                        Case Not dictionary.ContainsKey(celType) : table.DeleteRows(i, 1)
+    '                        Case dictionary(celType) > 0 : table.Cells(i, 2).TextString = dictionary(celType)
+    '                    End Select
+    '                Next
+    '                Select Case sheets = -1
+    '                    Case True
+    '                        table.DeleteColumns(5, 1)
+    '                        table.DeleteColumns(4, 1)
+    '                        table.DeleteColumns(2, 1)
+    '                        table.RecomputeTableBlock(True)
+    '                        table.Position = New Point3d(0, 0, 0)
+    '                    Case Else
+    '                        table.RecomputeTableBlock(True)
+    '                        Dim tableExtents = table.GeometricExtents
+    '                        sheets = Int((tableExtents.MaxPoint.X - tableExtents.MinPoint.X) / 260) + 1
+    '                End Select
+    '                tr.Commit()
+    '            End Using
+    '        End Using
+    '        Return output
+    '    End Using
+    'End Function
 
-    ''' <summary>
-    ''' Converts the frame record to a framelist record, removes revision data, and overwrites some data with the specified data.
-    ''' </summary>
-    ''' <param name="frameRow">The frame record.</param>
-    ''' <param name="overrideData">The data to override.</param>
-    ''' <returns>A framelist record.</returns>
-    Private Shared Function ConvertToFrameListRow_Obsolete(frameRow As DataRow, overrideData As Dictionary(Of String, String)) As DataRow
-        Dim dataBuilder = New DataBuilder("Framelist")
-        For Each column In frameRow.GetAttributeColumns
-            Select Case column.StartsWith("Rev#")
-                Case True : dataBuilder.AppendValue(column, "")
-                Case Else : dataBuilder.AppendValue(column, frameRow.GetString(column))
-            End Select
-        Next
-        For Each pair In overrideData
-            dataBuilder.AppendValue(pair.Key, pair.Value)
-        Next
-        dataBuilder.AddNewlyCreatedRow()
-        Return dataBuilder.GetDataTable.Rows(0)
-    End Function
+    '''' <summary>
+    '''' Converts the frame record to a framelist record, removes revision data, and overwrites some data with the specified data.
+    '''' </summary>
+    '''' <param name="frameRow">The frame record.</param>
+    '''' <param name="overrideData">The data to override.</param>
+    '''' <returns>A framelist record.</returns>
+    'Private Shared Function ConvertToFrameListRow_Obsolete(frameRow As DataRow, overrideData As Dictionary(Of String, String)) As DataRow
+    '    Dim dataBuilder = New DataBuilder("Framelist")
+    '    For Each column In frameRow.GetAttributeColumns
+    '        Select Case column.StartsWith("Rev#")
+    '            Case True : dataBuilder.AppendValue(column, "")
+    '            Case Else : dataBuilder.AppendValue(column, frameRow.GetString(column))
+    '        End Select
+    '    Next
+    '    For Each pair In overrideData
+    '        dataBuilder.AppendValue(pair.Key, pair.Value)
+    '    Next
+    '    dataBuilder.AddNewlyCreatedRow()
+    '    Return dataBuilder.GetDataTable.Rows(0)
+    'End Function
 
 End Class
