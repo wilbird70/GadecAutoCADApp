@@ -5,6 +5,8 @@ VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GadecCAD", "GadecCAD\GadecCAD.vbproj", "{3F0498DD-7303-4239-B718-3EAA75D6DE06}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GadecCADCore", "GadecCADCore\GadecCADCore.vbproj", "{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,18 @@ Global
 		{3F0498DD-7303-4239-B718-3EAA75D6DE06}.Release|x64.ActiveCfg = Release|x64
 		{3F0498DD-7303-4239-B718-3EAA75D6DE06}.Release|x64.Build.0 = Release|x64
 		{3F0498DD-7303-4239-B718-3EAA75D6DE06}.Release|x64.Deploy.0 = Release|x64
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Debug|x64.Build.0 = Debug|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|x64.ActiveCfg = Release|Any CPU
+		{DFDA6CA3-2DC3-45CD-A761-7B01FFE14114}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
