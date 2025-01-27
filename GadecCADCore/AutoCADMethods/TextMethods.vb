@@ -1,9 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
-Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for the user to manipulate text objects.
@@ -37,7 +37,7 @@ Public Class TextMethods
                 Select Case entity.GetDBObjectType
                     Case "DBText"
                         Dim dialog = New InputBoxDialog("DBtext".Translate, entity.CastAsDBText.TextString)
-                        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
+                        If Not dialog.DialogResult = DialogResult.OK Then Continue Do
 
                         Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                         TextHelper.ChangeTextStrings(document, textToChange)
@@ -54,7 +54,7 @@ Public Class TextMethods
                 Case "AttributeReference"
                     Dim attribute = entity.CastAsAttributeReference
                     Dim dialog = New InputBoxDialog("Attribute".Translate(attribute.Tag), attribute.TextString)
-                    If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
+                    If Not dialog.DialogResult = DialogResult.OK Then Continue Do
 
                     Dim textToChange = New Dictionary(Of ObjectId, String) From {{entityId, dialog.InputText}}
                     TextHelper.ChangeTextStrings(document, textToChange)

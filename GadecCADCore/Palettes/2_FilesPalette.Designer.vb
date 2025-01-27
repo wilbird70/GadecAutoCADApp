@@ -71,7 +71,7 @@ Partial Class FilesPalette
         '
         'OpenFolderButton
         '
-        Me.OpenFolderButton.Image = Global.GadecCAD.My.Resources.Resources.Folder
+        Me.OpenFolderButton.Image = Global.GadecCADCore.My.Resources.Resources.Folder
         Me.OpenFolderButton.Location = New System.Drawing.Point(150, 445)
         Me.OpenFolderButton.Name = "OpenFolderButton"
         Me.OpenFolderButton.Size = New System.Drawing.Size(24, 24)
@@ -81,7 +81,7 @@ Partial Class FilesPalette
         '
         'ltSelectAll
         '
-        Me.ltSelectAll.Image = Global.GadecCAD.My.Resources.Resources.SelectAll
+        Me.ltSelectAll.Image = Global.GadecCADCore.My.Resources.Resources.SelectAll
         Me.ltSelectAll.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.ltSelectAll.Location = New System.Drawing.Point(2, 445)
         Me.ltSelectAll.Name = "ltSelectAll"

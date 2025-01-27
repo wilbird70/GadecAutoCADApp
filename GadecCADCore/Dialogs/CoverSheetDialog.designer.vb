@@ -1,6 +1,8 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class CoverSheetDialog
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -23,22 +25,22 @@ Partial Class CoverSheetDialog
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(CoverSheetDialog))
-        Me.ltCancel = New System.Windows.Forms.Button()
-        Me.Description1TextBox = New System.Windows.Forms.TextBox()
-        Me.Description2TextBox = New System.Windows.Forms.TextBox()
-        Me.ltSystem = New System.Windows.Forms.Label()
-        Me.ltDescription = New System.Windows.Forms.Label()
-        Me.ltStatus = New System.Windows.Forms.Label()
-        Me.StatusComboBox = New System.Windows.Forms.ComboBox()
-        Me.SystemTextBox = New System.Windows.Forms.TextBox()
-        Me.ltAttachments = New System.Windows.Forms.Button()
-        Me.ltOK = New System.Windows.Forms.Button()
-        Me.InformationButton = New System.Windows.Forms.Button()
+        Me.ltCancel = New Button()
+        Me.Description1TextBox = New TextBox()
+        Me.Description2TextBox = New TextBox()
+        Me.ltSystem = New Label()
+        Me.ltDescription = New Label()
+        Me.ltStatus = New Label()
+        Me.StatusComboBox = New ComboBox()
+        Me.SystemTextBox = New TextBox()
+        Me.ltAttachments = New Button()
+        Me.ltOK = New Button()
+        Me.InformationButton = New Button()
         Me.SuspendLayout()
         '
         'ltCancel
         '
-        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.ltCancel.DialogResult = DialogResult.Cancel
         Me.ltCancel.Location = New System.Drawing.Point(282, 110)
         Me.ltCancel.Name = "ltCancel"
         Me.ltCancel.Size = New System.Drawing.Size(85, 23)
@@ -126,7 +128,7 @@ Partial Class CoverSheetDialog
         '
         'InformationButton
         '
-        Me.InformationButton.Image = Global.GadecCAD.My.Resources.Resources.Information
+        Me.InformationButton.Image = Global.GadecCADCore.My.Resources.Resources.Information
         Me.InformationButton.Location = New System.Drawing.Point(15, 110)
         Me.InformationButton.Name = "InformationButton"
         Me.InformationButton.Size = New System.Drawing.Size(23, 23)
@@ -137,7 +139,7 @@ Partial Class CoverSheetDialog
         '
         Me.AcceptButton = Me.ltOK
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.CancelButton = Me.ltCancel
         Me.ClientSize = New System.Drawing.Size(379, 145)
         Me.Controls.Add(Me.InformationButton)
@@ -151,24 +153,24 @@ Partial Class CoverSheetDialog
         Me.Controls.Add(Me.ltStatus)
         Me.Controls.Add(Me.ltOK)
         Me.Controls.Add(Me.ltCancel)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.FormBorderStyle = FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "CoverSheetDialog"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.StartPosition = FormStartPosition.CenterParent
         Me.Text = "XXX"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents ltOK As System.Windows.Forms.Button
-    Friend WithEvents ltCancel As System.Windows.Forms.Button
-    Friend WithEvents Description1TextBox As System.Windows.Forms.TextBox
-    Friend WithEvents Description2TextBox As System.Windows.Forms.TextBox
-    Friend WithEvents ltSystem As System.Windows.Forms.Label
-    Friend WithEvents ltDescription As System.Windows.Forms.Label
-    Friend WithEvents ltStatus As System.Windows.Forms.Label
-    Friend WithEvents StatusComboBox As System.Windows.Forms.ComboBox
-    Friend WithEvents SystemTextBox As Windows.Forms.TextBox
-    Friend WithEvents ltAttachments As Windows.Forms.Button
-    Friend WithEvents InformationButton As Windows.Forms.Button
+    Friend WithEvents ltOK As Button
+    Friend WithEvents ltCancel As Button
+    Friend WithEvents Description1TextBox As TextBox
+    Friend WithEvents Description2TextBox As TextBox
+    Friend WithEvents ltSystem As Label
+    Friend WithEvents ltDescription As Label
+    Friend WithEvents ltStatus As Label
+    Friend WithEvents StatusComboBox As ComboBox
+    Friend WithEvents SystemTextBox As TextBox
+    Friend WithEvents ltAttachments As Button
+    Friend WithEvents InformationButton As Button
 End Class

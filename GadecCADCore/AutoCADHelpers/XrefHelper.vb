@@ -1,8 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports System.Threading
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides a method of re-rooting the paths to xrefs if the links are broken.
@@ -48,15 +49,15 @@ Public Class XrefHelper
                             Next
                             Dim prompt = ("SelectXref").Translate(btr.Name.Cut)
                             Dim dialog = New ListBoxDialog(prompt, foundFiles)
-                            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Do
+                            If Not dialog.DialogResult = DialogResult.OK Then Exit Do
 
                             btr.PathName = foundFiles(dialog.GetSelectedIndex)
                             xrefsToReload.Add(objectId)
                             Exit Do
                         Case Else
                             Dim prompt = ("FileNotFoundinFolder").Translate(searchFolder.Cut)
-                            Dim dialogResult = MessageBoxQuestion(prompt, Windows.Forms.MessageBoxButtons.OKCancel)
-                            If Not dialogResult = Windows.Forms.DialogResult.OK Then Exit Do
+                            Dim dialogResult = MessageBoxQuestion(prompt, MessageBoxButtons.OKCancel)
+                            If Not dialogResult = DialogResult.OK Then Exit Do
 
                             searchFolder = IO.Path.GetDirectoryName(searchFolder)
                             Select Case resultPath = "."

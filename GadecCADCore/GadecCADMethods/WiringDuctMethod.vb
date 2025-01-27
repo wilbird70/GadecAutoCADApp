@@ -1,9 +1,10 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides a method that allows the user to draw a wiringduct.
@@ -24,7 +25,7 @@ Public Class WiringDuctMethod
 
         Dim currentSelection = Registerizer.UserSetting("WiringDuct")
         Dim dialog = New ListBoxDialog("SelectDuct".Translate, items, currentSelection)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Registerizer.UserSetting("WiringDuct", items(dialog.GetSelectedIndex))
         Dim row = wiringDuctData.Rows.Find(items(dialog.GetSelectedIndex))

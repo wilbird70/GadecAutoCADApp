@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 
 ''' <summary>
 ''' <para><see cref="ListBoxDialog"/> allows the user to select an option from a list.</para>
@@ -117,7 +118,7 @@ Public Class ListBoxDialog
     ''' <param name="e"></param>
     Private Sub AcceptButton_Click(sender As Object, e As EventArgs) Handles ltOK.Click, InputListBox.DoubleClick
         Try
-            Me.DialogResult = Windows.Forms.DialogResult.OK
+            Me.DialogResult = DialogResult.OK
             Me.Hide()
         Catch ex As Exception
             GadecException(ex)

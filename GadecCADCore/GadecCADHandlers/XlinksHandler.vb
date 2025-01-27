@@ -1,9 +1,10 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="XlinksHandler"/> allows the user to check and modify the reference links.</para>

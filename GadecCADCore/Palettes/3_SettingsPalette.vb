@@ -1,7 +1,8 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.Windows
+Imports System.Data
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports Autodesk.AutoCAD.Windows
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="SettingsPalette"/> provides the design and functionality for the settings tab of the <see cref="PaletteSet"/>.</para>
@@ -214,7 +215,7 @@ Public Class SettingsPalette
     Private Sub DisciplinesListBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles DisciplinesListBox.SelectedIndexChanged
         Try
             'vastleggen geselecteerde discipline
-            Dim index = DirectCast(sender, Windows.Forms.ListBox).SelectedIndex
+            Dim index = DirectCast(sender, ListBox).SelectedIndex
             'selecteren van lagencollectie
             Dim layerData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Layers", "Name;Type")
             Dim disciplines = layerData.DefaultView.ToTable(True, "Name").GetStringsFromColumn("Name")

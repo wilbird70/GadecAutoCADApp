@@ -1,7 +1,8 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Drawing
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for displaying pictureballoons.

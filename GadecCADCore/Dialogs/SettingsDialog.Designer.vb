@@ -1,9 +1,11 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class SettingsDialog
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,11 +22,11 @@ Partial Class SettingsDialog
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.ltResetFactorySettings = New System.Windows.Forms.Label()
-        Me.ltOK = New System.Windows.Forms.Button()
-        Me.ltCancel = New System.Windows.Forms.Button()
+        Me.ltResetFactorySettings = New Label()
+        Me.ltOK = New Button()
+        Me.ltCancel = New Button()
         Me.SuspendLayout()
         '
         'ltResetFactorySettings
@@ -38,7 +40,7 @@ Partial Class SettingsDialog
         '
         'ltOK
         '
-        Me.ltOK.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.ltOK.DialogResult = DialogResult.OK
         Me.ltOK.Location = New System.Drawing.Point(190, 139)
         Me.ltOK.Name = "ltOK"
         Me.ltOK.Size = New System.Drawing.Size(86, 23)
@@ -48,7 +50,7 @@ Partial Class SettingsDialog
         '
         'ltCancel
         '
-        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.ltCancel.DialogResult = DialogResult.Cancel
         Me.ltCancel.Location = New System.Drawing.Point(282, 139)
         Me.ltCancel.Name = "ltCancel"
         Me.ltCancel.Size = New System.Drawing.Size(85, 23)
@@ -60,21 +62,21 @@ Partial Class SettingsDialog
         '
         Me.AcceptButton = Me.ltOK
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.CancelButton = Me.ltCancel
         Me.ClientSize = New System.Drawing.Size(379, 174)
         Me.Controls.Add(Me.ltOK)
         Me.Controls.Add(Me.ltCancel)
         Me.Controls.Add(Me.ltResetFactorySettings)
         Me.Name = "SettingsDialog"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.StartPosition = FormStartPosition.CenterParent
         Me.Text = "SettingsDialog"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
-    Friend WithEvents ltResetFactorySettings As Windows.Forms.Label
-    Friend WithEvents ltOK As Windows.Forms.Button
-    Friend WithEvents ltCancel As Windows.Forms.Button
+    Friend WithEvents ltResetFactorySettings As Label
+    Friend WithEvents ltOK As Button
+    Friend WithEvents ltCancel As Button
 End Class

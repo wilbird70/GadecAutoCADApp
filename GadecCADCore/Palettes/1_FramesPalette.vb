@@ -1,7 +1,8 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.Windows
+Imports System.Data
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports Autodesk.AutoCAD.Windows
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="FramesPalette"/> provides the design and functionality for the frames tab of the <see cref="PaletteSet"/>.</para>
@@ -245,7 +246,7 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub SelectAllButton_MouseDown(sender As Object, e As MouseEventArgs) Handles ltSelectAll.MouseDown
         Try
-            If e.Button = Windows.Forms.MouseButtons.Right Or e.Button = Windows.Forms.MouseButtons.Left Then
+            If e.Button = MouseButtons.Right Or e.Button = MouseButtons.Left Then
                 FramesDataGridView.SelectAll()
             End If
         Catch ex As Exception
@@ -542,7 +543,7 @@ Public Class FramesPalette
     Private Sub FramesDataGridView_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles FramesDataGridView.CellMouseDown
         Try
             Select Case True
-                Case Not e.Button = Windows.Forms.MouseButtons.Right
+                Case Not e.Button = MouseButtons.Right
                 Case e.RowIndex < 0
                 Case FramesDataGridView.Rows(e.RowIndex).Selected
                 Case Else
@@ -755,7 +756,7 @@ Public Class FramesPalette
 
                             Using pdfDocument = PdfSharpHelper.MergePdfFiles(files.ToArray)
                                 If dialog.Attachments.Count > 0 Then PdfSharpHelper.AddPdfFiles(pdfDocument, dialog.Attachments)
-                                Dim rects = {New Windows.Rect(120.0, 195.0, 37.4, 13.75), New Windows.Rect(157.5, 195.0, 37.4, 13.75)}
+                                Dim rects = {New System.Windows.Rect(120.0, 195.0, 37.4, 13.75), New System.Windows.Rect(157.5, 195.0, 37.4, 13.75)}
                                 PdfSharpHelper.AddSignFields(pdfDocument, 0, rects, drawingList.ProjectName)
                                 pdfDocument.Save(fileName)
                                 pdfDocument.Close()
@@ -1074,7 +1075,7 @@ Public Class FramesPalette
         Dim copies = 0
         Dim items = "1;2;3;4;5;6;7;8".Cut
         Dim dialog = New ListBoxDialog("SelectCopies".Translate, items)
-        If dialog.DialogResult = Windows.Forms.DialogResult.OK Then copies = items(dialog.GetSelectedIndex).ToInteger
+        If dialog.DialogResult = DialogResult.OK Then copies = items(dialog.GetSelectedIndex).ToInteger
         Return copies
     End Function
 

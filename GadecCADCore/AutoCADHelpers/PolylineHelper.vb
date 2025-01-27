@@ -1,9 +1,6 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
 
 ''' <summary>
 ''' Provides methods for polylines.

@@ -1,6 +1,10 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿Imports GadecCADCore.Extensions
+Imports System.Data
+Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class PictureBalloon
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -23,8 +27,8 @@ Partial Class PictureBalloon
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(PictureBalloon))
-        Me.PreviewPictureBox = New System.Windows.Forms.PictureBox()
-        Me.BackPictureBox = New System.Windows.Forms.PictureBox()
+        Me.PreviewPictureBox = New PictureBox()
+        Me.BackPictureBox = New PictureBox()
         CType(Me.PreviewPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.BackPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -46,11 +50,11 @@ Partial Class PictureBalloon
         'PictureBalloon
         '
         resources.ApplyResources(Me, "$this")
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.ControlBox = False
         Me.Controls.Add(Me.PreviewPictureBox)
         Me.Controls.Add(Me.BackPictureBox)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.FormBorderStyle = FormBorderStyle.None
         Me.Name = "PictureBalloon"
         Me.TopMost = True
         Me.TransparencyKey = System.Drawing.SystemColors.Control
@@ -59,6 +63,6 @@ Partial Class PictureBalloon
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents PreviewPictureBox As System.Windows.Forms.PictureBox
-    Friend WithEvents BackPictureBox As Windows.Forms.PictureBox
+    Friend WithEvents PreviewPictureBox As PictureBox
+    Friend WithEvents BackPictureBox As PictureBox
 End Class

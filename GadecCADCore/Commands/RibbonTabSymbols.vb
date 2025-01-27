@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.Runtime
 
 Public Module RibbonTabSymbols
@@ -24,7 +25,7 @@ Public Module RibbonTabSymbols
         Try
             Dim symbolData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Symbols", "Name")
             Dim dialog = New CodingDialog(symbolData)
-            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
             Dim encoder = New SymbolEncoder(ActiveDocument)
             Dim code = dialog.GetSymbolCodeInfo

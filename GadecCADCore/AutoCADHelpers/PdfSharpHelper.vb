@@ -1,6 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports System.Windows.Forms
-Imports PdfSharp
+Imports System.Windows
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
 
@@ -18,7 +17,7 @@ Public Class PdfSharpHelper
     ''' <param name="page">The zero-based page number.</param>
     ''' <param name="rectangles">A list of rectangles representing the signfields.</param>
     ''' <param name="description">The description entry in the subject of an e-mail, which is created after using a signfield (digitally signing the document).</param>
-    Public Shared Sub AddSignFields(ByRef pdfDocument As PdfDocument, page As Integer, rectangles As Windows.Rect(), description As String)
+    Public Shared Sub AddSignFields(ByRef pdfDocument As PdfDocument, page As Integer, rectangles As Rect(), description As String)
         Dim graphics = XGraphics.FromPdfPage(pdfDocument.Pages(page))
         Dim subject = "PdfSubject".Translate(description)
         Dim body = "PdfBody".Translate(description)
@@ -66,15 +65,6 @@ Public Class PdfSharpHelper
         If missingFiles.Count > 0 Then
             MessageBoxInfo("File error{2L}The following files could not included in the package:{2L}{0}".NotYetTranslated(String.Join(vbLf, missingFiles)))
         End If
-    End Sub
-
-    ''' <summary>
-    ''' Shows a dialogbox with the product-information of the PdfSharp class library.
-    ''' </summary>
-    Public Shared Sub ShowProductInfo()
-        Dim text = "{0}{2L}{1}".NotYetTranslated(ProductVersionInfo.Copyright, ProductVersionInfo.NuGetDescription)
-        Dim caption = "{0} - {1}".Compose(ProductVersionInfo.Product, ProductVersionInfo.Version)
-        MessageBox.Show(text, caption, Nothing, MessageBoxIcon.Information, Nothing, Nothing, "http://{0}".Compose(ProductVersionInfo.Url))
     End Sub
 
     'functions

@@ -15,7 +15,7 @@ Public Class ApplicationHelper
     ''' Gets the size of the AutoCAD application window.
     ''' </summary>
     ''' <returns>The window size.</returns>
-    Public Shared Function WindowSize() As Windows.Size
+    Public Shared Function WindowSize() As System.Windows.Size
         Return Core.Application.MainWindow.DeviceIndependentSize
     End Function
 

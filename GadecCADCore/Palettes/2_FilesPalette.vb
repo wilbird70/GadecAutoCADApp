@@ -1,7 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.Windows
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports Autodesk.AutoCAD.Windows
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="FilesPalette"/> provides the design and functionality for the files tab of the <see cref="PaletteSet"/>.</para>
@@ -174,7 +174,7 @@ Public Class FilesPalette
     ''' <param name="e"></param>
     Private Sub SelectAllButton_MouseDown(sender As Object, e As MouseEventArgs) Handles ltSelectAll.MouseDown
         Try
-            If e.Button = Windows.Forms.MouseButtons.Right Or e.Button = Windows.Forms.MouseButtons.Left Then
+            If e.Button = MouseButtons.Right Or e.Button = MouseButtons.Left Then
                 FilesDataGridView.SelectAll()
             End If
         Catch ex As Exception
@@ -252,7 +252,7 @@ Public Class FilesPalette
     Private Sub FilesDataGridView_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles FilesDataGridView.CellMouseDown
         Try
             Select Case True
-                Case Not e.Button = Windows.Forms.MouseButtons.Right
+                Case Not e.Button = MouseButtons.Right
                 Case e.RowIndex < 0
                 Case FilesDataGridView.Rows(e.RowIndex).Selected
                 Case Else

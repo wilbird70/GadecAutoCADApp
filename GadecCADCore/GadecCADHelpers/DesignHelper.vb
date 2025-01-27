@@ -1,9 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.ApplicationServices
-    Imports Autodesk.AutoCAD.DatabaseServices
-    Imports Autodesk.AutoCAD.EditorInput
-    Imports Autodesk.AutoCAD.Geometry
-    Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 Public Class DesignHelper
 

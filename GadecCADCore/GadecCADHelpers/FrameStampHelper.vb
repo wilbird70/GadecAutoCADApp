@@ -1,8 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides a legacy methode of updating the status in the double signature stamp.
@@ -25,7 +26,7 @@ Public Class FrameStampHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim currentFileName = document.Name
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("SignStampDrawnIni"), Registerizer.UserSetting("SignStampCheckIni"))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim revisionData = dialog.GetRevisionData.ToIniDictionary
         Registerizer.UserSetting("SignStampDrawnIni", revisionData("Drawn"))

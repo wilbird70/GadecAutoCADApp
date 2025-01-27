@@ -385,7 +385,7 @@ Partial Class HeaderDialog
         '
         'OverviewButton
         '
-        Me.OverviewButton.Image = Global.GadecCAD.My.Resources.Resources.Wisselen16
+        Me.OverviewButton.Image = Global.GadecCADCore.My.Resources.Resources.Wisselen16
         Me.OverviewButton.Location = New System.Drawing.Point(403, 280)
         Me.OverviewButton.Name = "OverviewButton"
         Me.OverviewButton.Size = New System.Drawing.Size(46, 23)
@@ -394,7 +394,7 @@ Partial Class HeaderDialog
         '
         'GoogleSeachButton
         '
-        Me.GoogleSeachButton.Image = Global.GadecCAD.My.Resources.Resources.Google
+        Me.GoogleSeachButton.Image = Global.GadecCADCore.My.Resources.Resources.Google
         Me.GoogleSeachButton.Location = New System.Drawing.Point(608, 13)
         Me.GoogleSeachButton.Name = "GoogleSeachButton"
         Me.GoogleSeachButton.Size = New System.Drawing.Size(24, 24)
@@ -404,7 +404,7 @@ Partial Class HeaderDialog
         'GadecPictureBox
         '
         Me.GadecPictureBox.BackColor = System.Drawing.SystemColors.Control
-        Me.GadecPictureBox.Image = Global.GadecCAD.My.Resources.Resources.Gadec_ES_logo
+        Me.GadecPictureBox.Image = Global.GadecCADCore.My.Resources.Resources.Gadec_ES_logo
         Me.GadecPictureBox.ImageLocation = ""
         Me.GadecPictureBox.Location = New System.Drawing.Point(218, 142)
         Me.GadecPictureBox.Name = "GadecPictureBox"

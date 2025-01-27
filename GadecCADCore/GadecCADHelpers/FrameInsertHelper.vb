@@ -1,9 +1,11 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for inserting, replacing and converting frames.
@@ -83,7 +85,7 @@ Public Class FrameInsertHelper
     Public Shared Sub ReplaceFrames(document As Document, Optional withDialog As Boolean = False)
         If withDialog Then
             Dim dialog = New DesignDialog("DF", 1.0)
-            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+            If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
         End If
         ReplaceFrames(document, document.FrameData)
         Dim frameIdCollections = FrameHelper.GetFrameIdCollections(document.FrameData(True))
@@ -140,7 +142,7 @@ Public Class FrameInsertHelper
 
             Dim items = possibleFrames.Select(Function(frame) "Frame-Scale".Translate(frame.Value.GetString("Name"), frame.Value.GetString("Scale")))
             Dim dialog = New ListBoxDialog("SelectScale".Translate, items.ToArray)
-            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Do
+            If Not dialog.DialogResult = DialogResult.OK Then Exit Do
 
             Dim index = dialog.GetSelectedIndex
             Dim scale = possibleFrames(index).Key
