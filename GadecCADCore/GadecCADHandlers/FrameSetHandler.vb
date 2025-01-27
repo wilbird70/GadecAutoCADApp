@@ -1,7 +1,8 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="FrameSetHandler"/> controles the frame database collections.</para>

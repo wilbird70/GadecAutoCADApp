@@ -1,9 +1,10 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods with polylines, like creating a revisioncloud, show its area size and joining lines and arcs together in a polyline.
@@ -101,7 +102,7 @@ Public Class PolylineMethods
             pair.Key.Highlight()
             ed.UpdateScreen()
             Dim areaString = (pair.Value / 1000000).ToFormatedString
-            Dim messageResult = MessageBoxQuestion("CalcArea".Translate(areaString, "m²"), Windows.Forms.MessageBoxButtons.OKCancel)
+            Dim messageResult = MessageBoxQuestion("CalcArea".Translate(areaString, "m²"), MessageBoxButtons.OKCancel)
             If messageResult = vbOK Then
                 Dim promptPointOptions = New PromptPointOptions("Sel Point:".Translate) With {.AllowNone = True}
                 Dim selectPointResult = ed.GetPoint(promptPointOptions)
@@ -144,7 +145,7 @@ Public Class PolylineMethods
                         Case "Polyline"
                             Dim entitySet = New DBObjectCollection
                             curve.Explode(entitySet)
-                            curves.AddRange(entitySet.ToArray)
+                            curves.AddRange(entitySet.ToList)
                         Case Else : curves.Add(curve)
                     End Select
                     curvesToDelete.Add(curve)

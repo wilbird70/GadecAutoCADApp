@@ -1,6 +1,8 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class TextBalloon
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -23,22 +25,22 @@ Partial Class TextBalloon
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TextBalloon))
-        Me.cDescr1 = New System.Windows.Forms.Label()
-        Me.cDescr2 = New System.Windows.Forms.Label()
-        Me.cDescr3 = New System.Windows.Forms.Label()
-        Me.cClient1 = New System.Windows.Forms.Label()
-        Me.cClient2 = New System.Windows.Forms.Label()
-        Me.cClient3 = New System.Windows.Forms.Label()
-        Me.cClient4 = New System.Windows.Forms.Label()
-        Me.cLastRev_Char = New System.Windows.Forms.Label()
-        Me.cLastRev_Date = New System.Windows.Forms.Label()
-        Me.cLastRev_Descr = New System.Windows.Forms.Label()
-        Me.cProject = New System.Windows.Forms.Label()
-        Me.cDossier = New System.Windows.Forms.Label()
-        Me.cScale = New System.Windows.Forms.Label()
-        Me.cDescr4 = New System.Windows.Forms.Label()
-        Me.cFilename = New System.Windows.Forms.Label()
-        Me.BackPictureBox = New System.Windows.Forms.PictureBox()
+        Me.cDescr1 = New Label()
+        Me.cDescr2 = New Label()
+        Me.cDescr3 = New Label()
+        Me.cClient1 = New Label()
+        Me.cClient2 = New Label()
+        Me.cClient3 = New Label()
+        Me.cClient4 = New Label()
+        Me.cLastRev_Char = New Label()
+        Me.cLastRev_Date = New Label()
+        Me.cLastRev_Descr = New Label()
+        Me.cProject = New Label()
+        Me.cDossier = New Label()
+        Me.cScale = New Label()
+        Me.cDescr4 = New Label()
+        Me.cFilename = New Label()
+        Me.BackPictureBox = New PictureBox()
         CType(Me.BackPictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -144,7 +146,7 @@ Partial Class TextBalloon
         '
         resources.ApplyResources(Me.cFilename, "cFilename")
         Me.cFilename.BackColor = System.Drawing.Color.Black
-        Me.cFilename.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.cFilename.FlatStyle = FlatStyle.Flat
         Me.cFilename.ForeColor = System.Drawing.Color.White
         Me.cFilename.Name = "cFilename"
         '
@@ -158,7 +160,7 @@ Partial Class TextBalloon
         'TextBalloon
         '
         resources.ApplyResources(Me, "$this")
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.ControlBox = False
         Me.Controls.Add(Me.cFilename)
         Me.Controls.Add(Me.cDescr4)
@@ -176,7 +178,7 @@ Partial Class TextBalloon
         Me.Controls.Add(Me.cDescr2)
         Me.Controls.Add(Me.cDescr1)
         Me.Controls.Add(Me.BackPictureBox)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.FormBorderStyle = FormBorderStyle.None
         Me.Name = "TextBalloon"
         Me.TopMost = True
         Me.TransparencyKey = System.Drawing.SystemColors.Control
@@ -185,20 +187,20 @@ Partial Class TextBalloon
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents cDescr1 As System.Windows.Forms.Label
-    Friend WithEvents cDescr2 As System.Windows.Forms.Label
-    Friend WithEvents cDescr3 As System.Windows.Forms.Label
-    Friend WithEvents cClient1 As System.Windows.Forms.Label
-    Friend WithEvents cClient2 As System.Windows.Forms.Label
-    Friend WithEvents cClient3 As System.Windows.Forms.Label
-    Friend WithEvents cClient4 As System.Windows.Forms.Label
-    Friend WithEvents cLastRev_Char As System.Windows.Forms.Label
-    Friend WithEvents cLastRev_Date As System.Windows.Forms.Label
-    Friend WithEvents cLastRev_Descr As System.Windows.Forms.Label
-    Friend WithEvents cProject As System.Windows.Forms.Label
-    Friend WithEvents cDossier As System.Windows.Forms.Label
-    Friend WithEvents cScale As System.Windows.Forms.Label
-    Friend WithEvents cDescr4 As System.Windows.Forms.Label
-    Friend WithEvents cFilename As System.Windows.Forms.Label
-    Friend WithEvents BackPictureBox As Windows.Forms.PictureBox
+    Friend WithEvents cDescr1 As Label
+    Friend WithEvents cDescr2 As Label
+    Friend WithEvents cDescr3 As Label
+    Friend WithEvents cClient1 As Label
+    Friend WithEvents cClient2 As Label
+    Friend WithEvents cClient3 As Label
+    Friend WithEvents cClient4 As Label
+    Friend WithEvents cLastRev_Char As Label
+    Friend WithEvents cLastRev_Date As Label
+    Friend WithEvents cLastRev_Descr As Label
+    Friend WithEvents cProject As Label
+    Friend WithEvents cDossier As Label
+    Friend WithEvents cScale As Label
+    Friend WithEvents cDescr4 As Label
+    Friend WithEvents cFilename As Label
+    Friend WithEvents BackPictureBox As PictureBox
 End Class

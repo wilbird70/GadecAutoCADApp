@@ -1,9 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Drawing
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Geometry
-Imports System.Drawing
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides a method to create Gadec blockpreviews.
@@ -20,7 +20,7 @@ Public Class BlockPreviews
         Dim db = document.Database
         Dim ed = document.Editor
         Dim layoutId = LayoutHelper.GetIdByName(db, "Model")
-        SetWindow(document, Windows.WindowState.Normal, New Windows.Point(0, 0), New Windows.Size(1500, 900))
+        SetWindow(document, System.Windows.WindowState.Normal, New System.Windows.Point(0, 0), New System.Windows.Size(1500, 900))
         ed.Command("-PURGE", "ALL", "*", "N")
 
         XRecordHelper.Delete(document.Database, "{Company}".Compose, "BlockPics")
@@ -40,7 +40,7 @@ Public Class BlockPreviews
             ex.Rethrow
         Finally
             Application.Preferences.Display.GraphicsWinModelBackgrndColor = color
-            SetWindow(document, Windows.WindowState.Maximized)
+            SetWindow(document, System.Windows.WindowState.Maximized)
         End Try
         ed.Command("ZOOM", "E")
     End Sub
@@ -72,11 +72,11 @@ Public Class BlockPreviews
     ''' <param name="state">The state of the window (eg. normal or maximized).</param>
     ''' <param name="location">The location of the window (by normal-state window).</param>
     ''' <param name="size">The size of the window (by normal-state window).</param>
-    Private Shared Sub SetWindow(document As Document, state As Windows.WindowState, Optional location As Windows.Point = Nothing, Optional size As Windows.Size = Nothing)
+    Private Shared Sub SetWindow(document As Document, state As System.Windows.WindowState, Optional location As System.Windows.Point = Nothing, Optional size As System.Windows.Size = Nothing)
         document.Window.WindowState = state
-        If state = Windows.WindowState.Normal Then
-            document.Window.DeviceIndependentLocation = If(NotNothing(location), location, New Windows.Point(0, 0))
-            document.Window.DeviceIndependentSize = If(NotNothing(size), size, New Windows.Size(100, 100))
+        If state = System.Windows.WindowState.Normal Then
+            document.Window.DeviceIndependentLocation = If(NotNothing(location), location, New System.Windows.Point(0, 0))
+            document.Window.DeviceIndependentSize = If(NotNothing(size), size, New System.Windows.Size(100, 100))
         End If
     End Sub
 
@@ -88,9 +88,9 @@ Public Class BlockPreviews
     ''' <param name="document">The present document.</param>
     ''' <param name="size">The requested size of the window.</param>
     ''' <returns>True if size matches the  dwgview window size.</returns>
-    Private Shared Function WindowIsSet(document As Document, size As Windows.Size) As Boolean
+    Private Shared Function WindowIsSet(document As Document, size As System.Windows.Size) As Boolean
         Select Case True
-            Case Not document.Window.WindowState = Windows.WindowState.Normal : Return False
+            Case Not document.Window.WindowState = System.Windows.WindowState.Normal : Return False
             Case Not document.Window.DeviceIndependentSize = size : Return False
             Case Else : Return True
         End Select

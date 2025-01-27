@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Windows.Forms
 
 ''' <summary>

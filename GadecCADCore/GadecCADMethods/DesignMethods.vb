@@ -1,9 +1,11 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for inserting items (symbol, frame, or drawing area) at the specific scale into the current drawing.
@@ -27,7 +29,7 @@ Public Class DesignMethods
         Dim scales = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Scales").GetStringsFromColumn("Name")
         scales(0) = scales(0).Translate
         Dim dialog = New ListBoxDialog("SelectScale".Translate, scales, "1:{0}".Compose(output))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Return output
+        If Not dialog.DialogResult = DialogResult.OK Then Return output
 
         If dialog.GetSelectedIndex > 0 Then
             output = scales(dialog.GetSelectedIndex).MidString(3).ToDouble
@@ -56,7 +58,7 @@ Public Class DesignMethods
         Dim sessionSettings = "{0};;".Compose(Registerizer.UserSetting(session)).Cut
         Dim dialog = New DesignCenter(sessionSettings, scale)
         If NotNothing(dialog.GetSession) Then Registerizer.UserSetting(session, Join(dialog.GetSession, ";"))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Or dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Or dialog.GetBlockName = "" Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = If(dialog.GetAllowScale, dialog.GetInsertScale, 1.0)
@@ -88,7 +90,7 @@ Public Class DesignMethods
         Dim ed = document.Editor
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim dialog = New DesignDialog("DA", scale)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK OrElse dialog.GetSourceFile = "" OrElse dialog.GetBlockName = "" Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK OrElse dialog.GetSourceFile = "" OrElse dialog.GetBlockName = "" Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -153,7 +155,7 @@ Public Class DesignMethods
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim detectorData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Detectors", "Name")
         Dim dialog = New DesignDialog("DD", scale)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -176,7 +178,7 @@ Public Class DesignMethods
         Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
         Dim wallmountData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Wallmounts", "Name")
         Dim dialog = New DesignDialog("DW", scale)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         SetDrawingScale(document, dialog.GetInsertScale)
         scale = dialog.GetInsertScale
@@ -199,7 +201,7 @@ Public Class DesignMethods
         Dim choices = radiusData.GetStringsFromColumn(Translator.Selected)
         Dim previousChoice = {Registerizer.UserSetting("DetectorRadiusCheckSelected").ToInteger, choices.Count - 1}.Min
         Dim dialog = New ListBoxDialog("CheckRadius".Translate, choices, choices(previousChoice))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Registerizer.UserSetting("DetectorRadiusCheckSelected", dialog.GetSelectedIndex)
         Dim row = radiusData.Rows(dialog.GetSelectedIndex)
@@ -280,7 +282,7 @@ Public Class DesignMethods
                 minimumDetectors += 1
             Loop
             Dim dialog = New ListBoxDialog("Select".Translate, solutions.Values.ToArray)
-            If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Continue Do
+            If Not dialog.DialogResult = DialogResult.OK Then Continue Do
 
             Dim selectedSolutionId = solutions.Keys(dialog.GetSelectedIndex)
             Dim distanceX = lengthX / numberOnX(selectedSolutionId) * 1000

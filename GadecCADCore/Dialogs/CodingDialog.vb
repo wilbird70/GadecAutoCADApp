@@ -1,6 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="CodingDialog"/> allows the user setting the parameters for coding symbols (blockreferences).</para>
@@ -176,7 +177,7 @@ Public Class CodingDialog
     ''' </summary>
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
-    Private Sub OptionsListBox_SelectedIndexChanged(sender As Windows.Forms.ListBox, e As EventArgs) Handles OptionsListBox.SelectedIndexChanged
+    Private Sub OptionsListBox_SelectedIndexChanged(sender As ListBox, e As EventArgs) Handles OptionsListBox.SelectedIndexChanged
         Try
             If _loaded Then SaveSettingsToRegistry()
             _currentOption = _optionList(OptionsListBox.SelectedIndex)

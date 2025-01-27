@@ -1,9 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.ApplicationServices
-Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Colors
+Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods that are no longer used, but not yet discarded.
@@ -19,8 +19,8 @@ Public Class NotUsed
     ''' <returns></returns>
     Public Shared Function MaximizeLengthOfText(text As String, font As Drawing.Font, maxLength As Integer) As String
         Dim output = text
-        If Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength Then
-            Do While Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength - 20
+        If System.Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength Then
+            Do While System.Windows.Forms.TextRenderer.MeasureText(output, font).Width > maxLength - 20
                 output = output.EraseEnd(1)
             Loop
             output &= "..."

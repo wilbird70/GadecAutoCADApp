@@ -1,7 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="LayerVisiblizer"/> thaws and turns on all layers, but keeps the current settings to reset them.</para>

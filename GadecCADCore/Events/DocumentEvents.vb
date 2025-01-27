@@ -1,7 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="DocumentEvents"/> adds several events to the <see cref="Document"/> required by the application.</para>

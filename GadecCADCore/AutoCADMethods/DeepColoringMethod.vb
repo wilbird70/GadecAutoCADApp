@@ -1,8 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides a method that allows the user to select entities to pick a new color and colors also its nested entities.
@@ -24,7 +25,7 @@ Public Class DeepColoringMethod
 
         Dim entityIds = selectionResult.Value.GetObjectIds.ToList
         Dim colorDialog = New Autodesk.AutoCAD.Windows.ColorDialog
-        If Not colorDialog.ShowDialog = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not colorDialog.ShowDialog = DialogResult.OK Then Exit Sub
 
         Dim chosenColor = colorDialog.Color
         Dim errorCount = 0

@@ -141,7 +141,7 @@ Partial Class DesignDialog
         '
         'FactorySettingsButton
         '
-        Me.FactorySettingsButton.Image = Global.GadecCAD.My.Resources.Resources.Factory
+        Me.FactorySettingsButton.Image = Global.GadecCADCore.My.Resources.Resources.Factory
         Me.FactorySettingsButton.Location = New System.Drawing.Point(188, 110)
         Me.FactorySettingsButton.Name = "FactorySettingsButton"
         Me.FactorySettingsButton.Size = New System.Drawing.Size(24, 24)
@@ -150,7 +150,7 @@ Partial Class DesignDialog
         '
         'RotateToLeftButtonDW
         '
-        Me.RotateToLeftButtonDW.Image = Global.GadecCAD.My.Resources.Resources.Rotate
+        Me.RotateToLeftButtonDW.Image = Global.GadecCADCore.My.Resources.Resources.Rotate
         Me.RotateToLeftButtonDW.Location = New System.Drawing.Point(248, 110)
         Me.RotateToLeftButtonDW.Name = "RotateToLeftButtonDW"
         Me.RotateToLeftButtonDW.Size = New System.Drawing.Size(24, 24)
@@ -159,7 +159,7 @@ Partial Class DesignDialog
         '
         'RotateToRightButtonDW
         '
-        Me.RotateToRightButtonDW.Image = Global.GadecCAD.My.Resources.Resources.Rotate2
+        Me.RotateToRightButtonDW.Image = Global.GadecCADCore.My.Resources.Resources.Rotate2
         Me.RotateToRightButtonDW.Location = New System.Drawing.Point(218, 110)
         Me.RotateToRightButtonDW.Name = "RotateToRightButtonDW"
         Me.RotateToRightButtonDW.Size = New System.Drawing.Size(24, 24)

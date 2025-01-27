@@ -1,6 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports System.Windows.Forms
+Imports System.Data
 Imports System.Drawing
+Imports System.Windows.Forms
 
 ''' <summary>
 ''' <para><see cref="TextBalloon"/> provides a text balloon.</para>

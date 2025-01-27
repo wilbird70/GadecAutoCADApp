@@ -1,8 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for manipulating blockreferences.

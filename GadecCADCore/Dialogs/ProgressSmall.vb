@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Windows.Forms
 
 ''' <summary>
 ''' <para><see cref="ProgressSmall"/> provides only a progressbar.</para>
@@ -52,7 +53,7 @@ Public Class ProgressSmall
         OutputProgessBar.Value += 1
         OutputProgessBar.Value -= 1
         PromptLabel.Text = prompt
-        Windows.Forms.Application.DoEvents()
+        Application.DoEvents()
         Me.Refresh()
     End Sub
 

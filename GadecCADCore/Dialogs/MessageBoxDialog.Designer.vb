@@ -1,9 +1,11 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class MessageBoxDialog
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,14 +22,14 @@ Partial Class MessageBoxDialog
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.OutputTextBox = New System.Windows.Forms.TextBox()
-        Me.CaptionLabel = New System.Windows.Forms.Label()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.ltCancel = New System.Windows.Forms.Button()
-        Me.Button0 = New System.Windows.Forms.Button()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.OutputTextBox = New TextBox()
+        Me.CaptionLabel = New Label()
+        Me.Button2 = New Button()
+        Me.ltCancel = New Button()
+        Me.Button0 = New Button()
+        Me.Button1 = New Button()
         Me.SuspendLayout()
         '
         'OutputTextBox
@@ -35,7 +37,7 @@ Partial Class MessageBoxDialog
         Me.OutputTextBox.Location = New System.Drawing.Point(12, 25)
         Me.OutputTextBox.Multiline = True
         Me.OutputTextBox.Name = "OutputTextBox"
-        Me.OutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
+        Me.OutputTextBox.ScrollBars = ScrollBars.Both
         Me.OutputTextBox.Size = New System.Drawing.Size(355, 108)
         Me.OutputTextBox.TabIndex = 0
         Me.OutputTextBox.WordWrap = False
@@ -51,7 +53,7 @@ Partial Class MessageBoxDialog
         '
         'Button2
         '
-        Me.Button2.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.Button2.DialogResult = DialogResult.OK
         Me.Button2.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button2.Location = New System.Drawing.Point(192, 139)
         Me.Button2.Name = "Button2"
@@ -63,7 +65,7 @@ Partial Class MessageBoxDialog
         '
         'ltCancel
         '
-        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.ltCancel.DialogResult = DialogResult.Cancel
         Me.ltCancel.Location = New System.Drawing.Point(282, 139)
         Me.ltCancel.Name = "ltCancel"
         Me.ltCancel.Size = New System.Drawing.Size(85, 23)
@@ -73,7 +75,7 @@ Partial Class MessageBoxDialog
         '
         'Button0
         '
-        Me.Button0.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.Button0.DialogResult = DialogResult.OK
         Me.Button0.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button0.Location = New System.Drawing.Point(12, 139)
         Me.Button0.Name = "Button0"
@@ -85,7 +87,7 @@ Partial Class MessageBoxDialog
         '
         'Button1
         '
-        Me.Button1.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.Button1.DialogResult = DialogResult.OK
         Me.Button1.Font = New System.Drawing.Font("Arial Narrow", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Button1.Location = New System.Drawing.Point(102, 139)
         Me.Button1.Name = "Button1"
@@ -99,7 +101,7 @@ Partial Class MessageBoxDialog
         '
         Me.AcceptButton = Me.Button0
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.CancelButton = Me.ltCancel
         Me.ClientSize = New System.Drawing.Size(379, 174)
         Me.Controls.Add(Me.Button1)
@@ -109,17 +111,17 @@ Partial Class MessageBoxDialog
         Me.Controls.Add(Me.OutputTextBox)
         Me.Controls.Add(Me.CaptionLabel)
         Me.Name = "MessageBoxDialog"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.StartPosition = FormStartPosition.CenterParent
         Me.Text = "MessageBoxDialog"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
-    Friend WithEvents OutputTextBox As Windows.Forms.TextBox
-    Friend WithEvents CaptionLabel As Windows.Forms.Label
-    Friend WithEvents Button2 As Windows.Forms.Button
-    Friend WithEvents ltCancel As Windows.Forms.Button
-    Friend WithEvents Button0 As Windows.Forms.Button
-    Friend WithEvents Button1 As Windows.Forms.Button
+    Friend WithEvents OutputTextBox As TextBox
+    Friend WithEvents CaptionLabel As Label
+    Friend WithEvents Button2 As Button
+    Friend WithEvents ltCancel As Button
+    Friend WithEvents Button0 As Button
+    Friend WithEvents Button1 As Button
 End Class

@@ -1,8 +1,10 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Geometry
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods to extraxt symbols and create legendblocks and csv-files.
@@ -26,7 +28,7 @@ Public Class ExtractMethods
 
         Dim items = "ExtractOptions".Translate.Cut
         Dim dialog = New ListBoxDialog("Select".Translate, items)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Select Case dialog.GetSelectedIndex
             Case 0 : ExtractToMZXConsysCSV(document.GetPath, symbolData)
@@ -45,8 +47,8 @@ Public Class ExtractMethods
         Dim documents = DocumentsHelper.GetDocumentNames()
         Dim documentsToClose = New List(Of Document)
         Dim allSymbolData = New Data.DataTable
-        Dim messageResult = MessageBoxQuestion("ReadFiles?".Translate(files.Count), Windows.Forms.MessageBoxButtons.YesNo)
-        If messageResult = Windows.Forms.DialogResult.No Then Exit Sub
+        Dim messageResult = MessageBoxQuestion("ReadFiles?".Translate(files.Count), MessageBoxButtons.YesNo)
+        If messageResult = DialogResult.No Then Exit Sub
 
         Dim firstRow As DataRow = Nothing
         Try
@@ -96,7 +98,7 @@ Public Class ExtractMethods
 
         Dim items = "ExtractOptions".Translate.Cut
         Dim dialog = New ListBoxDialog("Select".Translate, items)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim folder = IO.Path.GetDirectoryName(files(0))
         Select Case dialog.GetSelectedIndex
@@ -136,11 +138,11 @@ Public Class ExtractMethods
             Next
             clipbrdList.AddRange(unknownList)
             If clipbrdList.Count > 0 Then
-                Windows.Forms.Clipboard.SetText(String.Join(vbLf, clipbrdList))
+                Clipboard.SetText(String.Join(vbLf, clipbrdList))
                 Dim iniString = "Met aantallen=DesignCenter legenda met aantallen;Zonder aantallen=DesignCenter legenda zonder aantallen;Incl. onbekend=Legenda met aantallen van (ook) onbekende symbolen".NotYetTranslated
                 Dim buttons = iniString.Cut.ToIniDictionary
                 Dim dialog = New MessageBoxDialog("Maken van legenda".NotYetTranslated, clipbrdList.ToArray, buttons)
-                If dialog.DialogResult = Windows.Forms.DialogResult.OK Then
+                If dialog.DialogResult = DialogResult.OK Then
                     Select Case dialog.ButtonNumber
                         Case 0 : InsertLegendBlock(document, referenceData, True)
                         Case 1 : InsertLegendBlock(document, referenceData, False)
@@ -223,8 +225,8 @@ Public Class ExtractMethods
         Next
         If Not message = "" Then message = "NoPanelinfo".Translate(message)
 
-        Dim messageResult = MessageBoxQuestion("{0}{1}".Compose(message, "FileSaved".Translate), Windows.Forms.MessageBoxButtons.YesNo)
-        If messageResult = Windows.Forms.DialogResult.Yes Then Shell("notepad {0}".Compose(fileName), AppWinStyle.NormalFocus)
+        Dim messageResult = MessageBoxQuestion("{0}{1}".Compose(message, "FileSaved".Translate), MessageBoxButtons.YesNo)
+        If messageResult = DialogResult.Yes Then Shell("notepad {0}".Compose(fileName), AppWinStyle.NormalFocus)
     End Sub
 
     ''' <summary>
@@ -244,8 +246,8 @@ Public Class ExtractMethods
             elementData.Add("{0},{1}".Compose(key, row.GetString("BlockName")))
         Next
         TextFileHelper.Write(fileName, elementData.ToArray)
-        Dim messageResult = MessageBoxQuestion("FileSaved".Translate, Windows.Forms.MessageBoxButtons.YesNo)
-        If messageResult = Windows.Forms.DialogResult.Yes Then Shell("notepad {0}".Compose(fileName), AppWinStyle.NormalFocus)
+        Dim messageResult = MessageBoxQuestion("FileSaved".Translate, MessageBoxButtons.YesNo)
+        If messageResult = DialogResult.Yes Then Shell("notepad {0}".Compose(fileName), AppWinStyle.NormalFocus)
     End Sub
 
     ''' <summary>
@@ -314,9 +316,9 @@ Public Class ExtractMethods
                 End Select
             Next
         Next
-        Windows.Forms.Clipboard.SetText(String.Join("{CL}".Compose, clipboardMessage))
-        Select Case MessageBoxQuestion("ResumeWithDoubles?".Translate(String.Join(vbLf, dialogMessage)), Windows.Forms.MessageBoxButtons.YesNo)
-            Case Windows.Forms.DialogResult.No : Return True
+        Clipboard.SetText(String.Join("{CL}".Compose, clipboardMessage))
+        Select Case MessageBoxQuestion("ResumeWithDoubles?".Translate(String.Join(vbLf, dialogMessage)), MessageBoxButtons.YesNo)
+            Case DialogResult.No : Return True
             Case Else : Return False
         End Select
     End Function

@@ -1,7 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.Colors
-Imports GadecCAD.Extensions
+Imports Autodesk.AutoCAD.DatabaseServices
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="LayerHandler"/> can create, adjust or select a layer.</para>

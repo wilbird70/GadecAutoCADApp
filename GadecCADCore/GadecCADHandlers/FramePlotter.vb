@@ -1,10 +1,12 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
+'Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports Autodesk.AutoCAD.Geometry
 Imports Autodesk.AutoCAD.PlottingServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="FramePlotter"/> can plot frames to plotter, printer or pdf-file.</para>
@@ -367,7 +369,7 @@ Public Class FramePlotter
         Dim frameSizeData = DataSetHelper.LoadFromXml("{Support}\SetStandards.xml".Compose).GetTable("Frames", "Name")
         Dim frameSizes = frameSizeData.GetStringsFromColumn("Name")
         Dim dialog = New ListBoxDialog("SelectForm".Translate, frameSizes, "", "[Thin]".Translate)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Return {}
+        If Not dialog.DialogResult = System.Windows.Forms.DialogResult.OK Then Return {}
 
         Dim selectedItem = frameSizes(dialog.GetSelectedIndex)
 

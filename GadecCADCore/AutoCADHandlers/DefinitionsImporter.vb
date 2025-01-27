@@ -1,7 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="DefinitionsImporter"/> can import (nested) blockdefinitions from another dwg-file.</para>

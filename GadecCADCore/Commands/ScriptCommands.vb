@@ -1,7 +1,6 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.Runtime
-Imports GadecCAD.Extensions
 
 Public Module ScriptCommands
 

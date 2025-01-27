@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 
 ''' <summary>
 ''' <para><see cref="FrameSetModel"/> creates and contains a frame- and filelist database collection.</para>

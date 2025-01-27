@@ -1,7 +1,9 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
+Imports System.Windows.Forms
 Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.DatabaseServices
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' Provides methods for editing the data in frameheaders.
@@ -28,7 +30,7 @@ Public Class FrameHeaderHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim adaptableRow = MergingSelectedFrameRecords(frameListData, frameSelection)
         Dim dialog = New HeaderDialog(adaptableRow, document.IsNamedDrawing, _varies)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim xmlListDataSet = DataSetHelper.LoadFromXml("{0}\Drawinglist.xml".Compose(IO.Path.GetDirectoryName(document.Name)))
         Dim xmlListData = If(xmlListDataSet.Tables.Contains("Frames"), xmlListDataSet.GetTable("Frames", "Filename;Num"), Nothing)
@@ -134,7 +136,7 @@ Public Class FrameHeaderHelper
         Dim documents = DocumentsHelper.GetOpenDocuments()
         Dim currentFileName = document.Name
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim revisionData = dialog.GetRevisionData.ToIniDictionary
         Registerizer.UserSetting("RevisionDrawnIni", revisionData("Drawn"))
@@ -269,7 +271,7 @@ Public Class FrameHeaderHelper
         Next
         adaptableRow.Table.Rows.Add(adaptableRow)
         Dim dialog = New HeaderDialog(adaptableRow, document.IsNamedDrawing, _varies)
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim textToChange = New Dictionary(Of ObjectId, String)
         Dim newHdrStr = dialog.GetHeader
@@ -303,7 +305,7 @@ Public Class FrameHeaderHelper
     Public Shared Sub AddFramelessRevision(document As Document)
         Dim frameRow = FrameHelper.BuildFramelessRow(document)
         Dim dialog = New RevisionDialog(Registerizer.UserSetting("RevisionDrawnIni"), Registerizer.UserSetting("RevisionCheckIni"))
-        If Not dialog.DialogResult = Windows.Forms.DialogResult.OK Then Exit Sub
+        If Not dialog.DialogResult = DialogResult.OK Then Exit Sub
 
         Dim revisionData = dialog.GetRevisionData.ToIniDictionary
         Registerizer.UserSetting("RevisionDrawnIni", revisionData("Drawn"))

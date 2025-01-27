@@ -1,6 +1,6 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.Runtime
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 Public Module DevelopmentCommands
 

@@ -1,6 +1,7 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="OverviewDialog"/> provides an overview of all the frames in the current project (folder).</para>
@@ -305,7 +306,7 @@ Public Class OverviewDialog
     ''' <param name="e"></param>
     Private Sub SelectAllButton_MouseDown(sender As Object, e As MouseEventArgs) Handles ltSelectAll.MouseDown
         Try
-            If e.Button = Windows.Forms.MouseButtons.Right Or e.Button = Windows.Forms.MouseButtons.Left Then
+            If e.Button = MouseButtons.Right Or e.Button = MouseButtons.Left Then
                 FramesDataGridView.SelectAll()
             End If
         Catch ex As Exception

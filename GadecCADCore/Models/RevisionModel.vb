@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 
 ''' <summary>
 ''' <para><see cref="RevisionModel"/> contains a revisionlist database.</para>

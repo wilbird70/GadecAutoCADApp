@@ -1,6 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
 Imports Autodesk.AutoCAD.Runtime
-Imports GadecCAD.Extensions
 
 Public Module RibbonTabTexts
 

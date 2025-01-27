@@ -1,6 +1,10 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿Imports GadecCADCore.Extensions
+Imports System.Data
+Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class SettingsPalette
-    Inherits System.Windows.Forms.UserControl
+    Inherits UserControl
 
     'UserControl overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -22,24 +26,24 @@ Partial Class SettingsPalette
     'Do not modify it using the code editor
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.LanguageComboBox = New System.Windows.Forms.ComboBox()
-        Me.cLayer = New System.Windows.Forms.Label()
-        Me.LayersListBox = New System.Windows.Forms.ListBox()
-        Me.DisciplinesListBox = New System.Windows.Forms.ListBox()
-        Me.ltLayers = New System.Windows.Forms.Label()
-        Me.ltLanguage = New System.Windows.Forms.Label()
-        Me.ltManual = New System.Windows.Forms.Button()
-        Me.LanguagePictureBox = New System.Windows.Forms.PictureBox()
-        Me.ltChangelog = New System.Windows.Forms.Button()
-        Me.ltReloadMenu = New System.Windows.Forms.Button()
-        Me.ltFeedback = New System.Windows.Forms.Button()
-        Me.DepartmentsComboBox = New System.Windows.Forms.ComboBox()
-        Me.ltPlotSettings = New System.Windows.Forms.Label()
-        Me.PreviewCheckBox = New System.Windows.Forms.CheckBox()
-        Me.ltPreview = New System.Windows.Forms.Label()
-        Me.LinkToPlotFolderLabel = New System.Windows.Forms.Label()
-        Me.OpenPdfCheckBox = New System.Windows.Forms.CheckBox()
-        Me.ltOpenPdf = New System.Windows.Forms.Label()
+        Me.LanguageComboBox = New ComboBox()
+        Me.cLayer = New Label()
+        Me.LayersListBox = New ListBox()
+        Me.DisciplinesListBox = New ListBox()
+        Me.ltLayers = New Label()
+        Me.ltLanguage = New Label()
+        Me.ltManual = New Button()
+        Me.LanguagePictureBox = New PictureBox()
+        Me.ltChangelog = New Button()
+        Me.ltReloadMenu = New Button()
+        Me.ltFeedback = New Button()
+        Me.DepartmentsComboBox = New ComboBox()
+        Me.ltPlotSettings = New Label()
+        Me.PreviewCheckBox = New CheckBox()
+        Me.ltPreview = New Label()
+        Me.LinkToPlotFolderLabel = New Label()
+        Me.OpenPdfCheckBox = New CheckBox()
+        Me.ltOpenPdf = New Label()
         CType(Me.LanguagePictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -100,14 +104,14 @@ Partial Class SettingsPalette
         '
         'ltManual
         '
-        Me.ltManual.Image = Global.GadecCAD.My.Resources.Resources.Boek
+        Me.ltManual.Image = Global.GadecCADCore.My.Resources.Resources.Boek
         Me.ltManual.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.ltManual.Location = New System.Drawing.Point(3, 403)
         Me.ltManual.Name = "ltManual"
         Me.ltManual.Size = New System.Drawing.Size(171, 24)
         Me.ltManual.TabIndex = 52
         Me.ltManual.Text = "XXX"
-        Me.ltManual.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.ltManual.TextImageRelation = TextImageRelation.ImageBeforeText
         Me.ltManual.UseVisualStyleBackColor = True
         '
         'LanguagePictureBox
@@ -115,44 +119,44 @@ Partial Class SettingsPalette
         Me.LanguagePictureBox.Location = New System.Drawing.Point(124, 161)
         Me.LanguagePictureBox.Name = "LanguagePictureBox"
         Me.LanguagePictureBox.Size = New System.Drawing.Size(50, 50)
-        Me.LanguagePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.LanguagePictureBox.SizeMode = PictureBoxSizeMode.Zoom
         Me.LanguagePictureBox.TabIndex = 51
         Me.LanguagePictureBox.TabStop = False
         '
         'ltChangelog
         '
-        Me.ltChangelog.Image = Global.GadecCAD.My.Resources.Resources.Changelog
+        Me.ltChangelog.Image = Global.GadecCADCore.My.Resources.Resources.Changelog
         Me.ltChangelog.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.ltChangelog.Location = New System.Drawing.Point(3, 373)
         Me.ltChangelog.Name = "ltChangelog"
         Me.ltChangelog.Size = New System.Drawing.Size(171, 24)
         Me.ltChangelog.TabIndex = 46
         Me.ltChangelog.Text = "XXX"
-        Me.ltChangelog.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.ltChangelog.TextImageRelation = TextImageRelation.ImageBeforeText
         Me.ltChangelog.UseVisualStyleBackColor = True
         '
         'ltReloadMenu
         '
-        Me.ltReloadMenu.Image = Global.GadecCAD.My.Resources.Resources.bmpMOD
+        Me.ltReloadMenu.Image = Global.GadecCADCore.My.Resources.Resources.bmpMOD
         Me.ltReloadMenu.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.ltReloadMenu.Location = New System.Drawing.Point(3, 343)
         Me.ltReloadMenu.Name = "ltReloadMenu"
         Me.ltReloadMenu.Size = New System.Drawing.Size(171, 24)
         Me.ltReloadMenu.TabIndex = 35
         Me.ltReloadMenu.Text = "XXX"
-        Me.ltReloadMenu.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.ltReloadMenu.TextImageRelation = TextImageRelation.ImageBeforeText
         Me.ltReloadMenu.UseVisualStyleBackColor = True
         '
         'ltFeedback
         '
-        Me.ltFeedback.Image = Global.GadecCAD.My.Resources.Resources.send_16
+        Me.ltFeedback.Image = Global.GadecCADCore.My.Resources.Resources.send_16
         Me.ltFeedback.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me.ltFeedback.Location = New System.Drawing.Point(3, 433)
         Me.ltFeedback.Name = "ltFeedback"
         Me.ltFeedback.Size = New System.Drawing.Size(171, 24)
         Me.ltFeedback.TabIndex = 21
         Me.ltFeedback.Text = "XXX"
-        Me.ltFeedback.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText
+        Me.ltFeedback.TextImageRelation = TextImageRelation.ImageBeforeText
         Me.ltFeedback.UseVisualStyleBackColor = True
         '
         'DepartmentsComboBox
@@ -225,7 +229,7 @@ Partial Class SettingsPalette
         'SettingsPalette
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.Controls.Add(Me.OpenPdfCheckBox)
         Me.Controls.Add(Me.ltOpenPdf)
         Me.Controls.Add(Me.LinkToPlotFolderLabel)
@@ -251,22 +255,22 @@ Partial Class SettingsPalette
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents LanguageComboBox As System.Windows.Forms.ComboBox
-    Friend WithEvents ltFeedback As System.Windows.Forms.Button
-    Friend WithEvents ltReloadMenu As System.Windows.Forms.Button
-    Friend WithEvents cLayer As System.Windows.Forms.Label
-    Friend WithEvents LayersListBox As System.Windows.Forms.ListBox
-    Friend WithEvents DisciplinesListBox As System.Windows.Forms.ListBox
-    Friend WithEvents ltLayers As System.Windows.Forms.Label
-    Friend WithEvents ltLanguage As System.Windows.Forms.Label
-    Friend WithEvents ltChangelog As System.Windows.Forms.Button
-    Friend WithEvents LanguagePictureBox As System.Windows.Forms.PictureBox
-    Friend WithEvents ltManual As System.Windows.Forms.Button
-    Friend WithEvents DepartmentsComboBox As System.Windows.Forms.ComboBox
-    Friend WithEvents ltPlotSettings As System.Windows.Forms.Label
-    Friend WithEvents PreviewCheckBox As System.Windows.Forms.CheckBox
-    Friend WithEvents ltPreview As System.Windows.Forms.Label
-    Friend WithEvents LinkToPlotFolderLabel As Windows.Forms.Label
-    Friend WithEvents OpenPdfCheckBox As Windows.Forms.CheckBox
-    Friend WithEvents ltOpenPdf As Windows.Forms.Label
+    Friend WithEvents LanguageComboBox As ComboBox
+    Friend WithEvents ltFeedback As Button
+    Friend WithEvents ltReloadMenu As Button
+    Friend WithEvents cLayer As Label
+    Friend WithEvents LayersListBox As ListBox
+    Friend WithEvents DisciplinesListBox As ListBox
+    Friend WithEvents ltLayers As Label
+    Friend WithEvents ltLanguage As Label
+    Friend WithEvents ltChangelog As Button
+    Friend WithEvents LanguagePictureBox As PictureBox
+    Friend WithEvents ltManual As Button
+    Friend WithEvents DepartmentsComboBox As ComboBox
+    Friend WithEvents ltPlotSettings As Label
+    Friend WithEvents PreviewCheckBox As CheckBox
+    Friend WithEvents ltPreview As Label
+    Friend WithEvents LinkToPlotFolderLabel As Label
+    Friend WithEvents OpenPdfCheckBox As CheckBox
+    Friend WithEvents ltOpenPdf As Label
 End Class

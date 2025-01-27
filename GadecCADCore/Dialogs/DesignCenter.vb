@@ -1,7 +1,8 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Drawing
 Imports System.Windows.Forms
-Imports GadecCAD.Extensions
+Imports GadecCADCore.Extensions
 
 ''' <summary>
 ''' <para><see cref="DesignCenter"/> allows the user to select a item (symbol, frame, or drawing part) to insert into the current drawing.</para>
@@ -565,7 +566,7 @@ Public Class DesignCenter
 
         e.Paint(e.CellBounds, DataGridViewPaintParts.All And Not DataGridViewPaintParts.ContentForeground)
         Dim textColor = If(ItemsDataGridView.SelectedCells.Contains(ItemsDataGridView.Rows(e.RowIndex).Cells(e.ColumnIndex)), Color.White, SystemColors.ControlText)
-        e.Graphics.DrawString(e.Value.ToString(), e.CellStyle.Font, New SolidBrush(textColor), e.CellBounds.X, e.CellBounds.Y + 1.5, _itemsDataGridViewStringFormat)
+        e.Graphics.DrawString(e.Value.ToString(), e.CellStyle.Font, New SolidBrush(textColor), e.CellBounds.X, CInt(e.CellBounds.Y + 1.5), _itemsDataGridViewStringFormat)
         e.Handled = True
     End Sub
 

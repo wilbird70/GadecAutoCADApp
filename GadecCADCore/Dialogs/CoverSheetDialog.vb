@@ -1,4 +1,5 @@
 ﻿'Gadec Engineerings Software (c) 2022
+Imports System.Data
 Imports System.Windows.Forms
 
 ''' <summary>
@@ -138,20 +139,6 @@ Public Class CoverSheetDialog
             End Select
             _Attachments = attachments.ToArray
             ltAttachments.Font = FontHelper.ArialBold
-        Catch ex As Exception
-            GadecException(ex)
-        End Try
-    End Sub
-
-    ''' <summary>
-    ''' EventHandler for the event that occurs when the user clicks the Information button.
-    ''' <para>It displays a messagebox with information about the PdfSharp library.</para>
-    ''' </summary>
-    ''' <param name="sender"></param>
-    ''' <param name="e"></param>
-    Private Sub InformationButton_Click(sender As Object, e As EventArgs) Handles InformationButton.Click
-        Try
-            PdfSharpHelper.ShowProductInfo()
         Catch ex As Exception
             GadecException(ex)
         End Try

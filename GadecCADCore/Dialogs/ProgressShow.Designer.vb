@@ -1,9 +1,11 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿Imports System.Windows.Forms
+
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class ProgressShow
-    Inherits System.Windows.Forms.Form
+    Inherits Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,14 +22,14 @@ Partial Class ProgressShow
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ProgressShow))
-        Me.OutputProgressBar = New System.Windows.Forms.ProgressBar()
-        Me.PromptLabel = New System.Windows.Forms.Label()
-        Me.ValueLabel = New System.Windows.Forms.Label()
-        Me.MaxLabel = New System.Windows.Forms.Label()
-        Me.ltCancel = New System.Windows.Forms.Button()
+        Me.OutputProgressBar = New ProgressBar()
+        Me.PromptLabel = New Label()
+        Me.ValueLabel = New Label()
+        Me.MaxLabel = New Label()
+        Me.ltCancel = New Button()
         Me.SuspendLayout()
         '
         'OutputProgressBar
@@ -67,7 +69,7 @@ Partial Class ProgressShow
         '
         'ltCancel
         '
-        Me.ltCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.ltCancel.DialogResult = DialogResult.Cancel
         Me.ltCancel.Location = New System.Drawing.Point(282, 80)
         Me.ltCancel.Name = "ltCancel"
         Me.ltCancel.Size = New System.Drawing.Size(85, 23)
@@ -78,7 +80,7 @@ Partial Class ProgressShow
         'ProgressShow
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoScaleMode = AutoScaleMode.Font
         Me.CancelButton = Me.ltCancel
         Me.ClientSize = New System.Drawing.Size(379, 114)
         Me.Controls.Add(Me.ltCancel)
@@ -86,16 +88,16 @@ Partial Class ProgressShow
         Me.Controls.Add(Me.ValueLabel)
         Me.Controls.Add(Me.PromptLabel)
         Me.Controls.Add(Me.OutputProgressBar)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.FormBorderStyle = FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "ProgressShow"
         Me.Text = "XXX"
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents OutputProgressBar As System.Windows.Forms.ProgressBar
-    Friend WithEvents PromptLabel As System.Windows.Forms.Label
-    Friend WithEvents ValueLabel As System.Windows.Forms.Label
-    Friend WithEvents MaxLabel As System.Windows.Forms.Label
-    Friend WithEvents ltCancel As Windows.Forms.Button
+    Friend WithEvents OutputProgressBar As ProgressBar
+    Friend WithEvents PromptLabel As Label
+    Friend WithEvents ValueLabel As Label
+    Friend WithEvents MaxLabel As Label
+    Friend WithEvents ltCancel As Button
 End Class
