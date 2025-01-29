@@ -81,7 +81,7 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub Me_Click(sender As Object, e As EventArgs) Handles Me.Click
         Try
-            If _screenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
+            If ScreenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -156,7 +156,7 @@ Public Class FramesPalette
                 _toolTip.SetToolTip(OpenFolderButton, doc.GetPath)
                 Dim frameSetController = New FrameSetHandler(doc.Name, False)
                 _frameListData = frameSetController.UpdatedFrameListData
-                _GroupPrefixLength = {If(_prefixLengths.ContainsKey(doc.GetPath), _prefixLengths(doc.GetPath), 0), 0}.Max
+                _GroupPrefixLength = {If(PrefixLengths.ContainsKey(doc.GetPath), PrefixLengths(doc.GetPath), 0), 0}.Max
             Case Else
                 _frameListData = FrameHelper.ConvertToFramelist(doc.FrameData)
                 _GroupPrefixLength = -1
@@ -200,7 +200,7 @@ Public Class FramesPalette
         ltSelectAll.Enabled = True
 
         GroupingLabel.Text = {_GroupPrefixLength, 0}.Max
-        Select Case _prefixLengths.ContainsKey(doc.GetPath) AndAlso _prefixLengths(doc.GetPath) > -1
+        Select Case PrefixLengths.ContainsKey(doc.GetPath) AndAlso PrefixLengths(doc.GetPath) > -1
             Case True : GroupingLabel.Font = FontHelper.SansSerifBold
             Case Else : GroupingLabel.Font = FontHelper.SansSerifRegular
         End Select
@@ -311,9 +311,9 @@ Public Class FramesPalette
             Dim doc = ActiveDocument()
             If doc.IsNamedDrawing Then
                 _GroupPrefixLength = {_GroupPrefixLength + 1, 10}.Min
-                Select Case _prefixLengths.ContainsKey(doc.GetPath)
-                    Case True : _prefixLengths(doc.GetPath) = _GroupPrefixLength
-                    Case Else : _prefixLengths.Add(doc.GetPath, _GroupPrefixLength)
+                Select Case PrefixLengths.ContainsKey(doc.GetPath)
+                    Case True : PrefixLengths(doc.GetPath) = _GroupPrefixLength
+                    Case Else : PrefixLengths.Add(doc.GetPath, _GroupPrefixLength)
                 End Select
                 ReloadGridView()
             End If
@@ -333,9 +333,9 @@ Public Class FramesPalette
             Dim doc = ActiveDocument()
             If doc.IsNamedDrawing Then
                 _GroupPrefixLength = {_GroupPrefixLength - 1, -1}.Max
-                Select Case _prefixLengths.ContainsKey(doc.GetPath)
-                    Case True : _prefixLengths(doc.GetPath) = _GroupPrefixLength
-                    Case Else : _prefixLengths.Add(doc.GetPath, _GroupPrefixLength)
+                Select Case PrefixLengths.ContainsKey(doc.GetPath)
+                    Case True : PrefixLengths(doc.GetPath) = _GroupPrefixLength
+                    Case Else : PrefixLengths.Add(doc.GetPath, _GroupPrefixLength)
                 End Select
                 ReloadGridView()
             End If
@@ -883,7 +883,7 @@ Public Class FramesPalette
     ''' <param name="e"></param>
     Private Sub ContextMenuStripVisibleChangedEventHandler(sender As Object, e As EventArgs)
         Try
-            If _screenShot Then
+            If ScreenShot Then
                 Dim toolStrip = TryCast(sender, ToolStrip)
                 If Not toolStrip.Visible Then ImageHelper.GetScreenShot(toolStrip.Location, toolStrip.Size)
             End If
@@ -1026,7 +1026,7 @@ Public Class FramesPalette
     ''' <returns>A list of groupstrings.</returns>
     Private Function GetGroups(maxRows As Integer) As String()
         Dim doc = ActiveDocument()
-        _prefixLengths.TryAdd(doc.GetPath, -1)
+        PrefixLengths.TryAdd(doc.GetPath, -1)
         _selectedGroup = ""
         Select Case True
             Case doc.NotNamedDrawing
@@ -1059,7 +1059,7 @@ Public Class FramesPalette
                     For Each value In _groupedRows.Values
                         If biggestGroup < value.Count Then biggestGroup = value.Count
                     Next
-                    If _prefixLengths(doc.GetPath) > -1 OrElse _GroupPrefixLength > 7 OrElse biggestGroup < maxRows Then Exit Do
+                    If PrefixLengths(doc.GetPath) > -1 OrElse _GroupPrefixLength > 7 OrElse biggestGroup < maxRows Then Exit Do
 
                     _GroupPrefixLength += 1
                 Loop

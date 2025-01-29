@@ -280,7 +280,7 @@ Public Class DocumentEvents
             _ObjectModifiedEnabled = True 'ObjectModified-event weer aan
             Dim frameSetController = New FrameSetHandler(e.FileName, True)
             Dim path = IO.Path.GetDirectoryName(e.FileName)
-            _prefixLengths.TryAdd(path, -1)
+            PrefixLengths.TryAdd(path, -1)
             If _thisDocument.GetPath = "" Then Exit Sub
 
             PaletteHelper.ReloadFrameList()

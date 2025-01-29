@@ -52,12 +52,12 @@ Public Class ExtractMethods
 
         Dim firstRow As DataRow = Nothing
         Try
-            _progressbar = New ProgressShow("Starting...".Translate, files.Count)
+            Progressbar = New ProgressShow("Starting...".Translate, files.Count)
             Dim existingKeys = New List(Of String)
             For Each file In files
-                If _progressbar?.CancelPressed Then Exit For
+                If Progressbar?.CancelPressed Then Exit For
 
-                _progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+                Progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
                 Dim doc = DocumentsHelper.Open(file)
                 If IsNothing(doc) Then Continue For
 
@@ -69,7 +69,7 @@ Public Class ExtractMethods
                         Case Else : firstRow = frameData.Rows(0)
                     End Select
                 End If
-                _progressbar?.SetText("{0}{1}".Compose("Reading...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+                Progressbar?.SetText("{0}{1}".Compose("Reading...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
 
                 Dim referenceIds = SelectHelper.GetAllReferencesInModelspace(doc)
                 If referenceIds.Count > 0 Then
@@ -91,8 +91,8 @@ Public Class ExtractMethods
             ex.Rethrow
         Finally
             DocumentsHelper.Close(documentsToClose.ToArray)
-            _progressbar?.Dispose()
-            _progressbar = Nothing
+            Progressbar?.Dispose()
+            Progressbar = Nothing
         End Try
         If AbortByDuplicateAddresses(allSymbolData) Then Exit Sub
 
@@ -259,7 +259,7 @@ Public Class ExtractMethods
     ''' <param name="useAllSymbol">Whether all symbols (not just from DesignCenter) are desired in the legendblock.</param>
     Private Shared Sub InsertLegendBlock(document As Document, symbolData As Data.DataTable, withCounting As Boolean, Optional useAllSymbol As Boolean = False)
         Try
-            _progressbar = New ProgressShow("Creating legend".Translate, 5)
+            Progressbar = New ProgressShow("Creating legend".Translate, 5)
             Dim ed = document.Editor
             Dim db = document.Database
             Dim definitionId As ObjectId
@@ -267,7 +267,7 @@ Public Class ExtractMethods
                 Case True : definitionId = CreateAllSymbolsLegendBlock(document, symbolData, withCounting)
                 Case Else : definitionId = CreateDesignCenterLegendBlock(document, symbolData, withCounting)
             End Select
-            _progressbar?.Dispose()
+            Progressbar?.Dispose()
             If definitionId.IsNull Then Exit Sub
 
             Dim scale = If(db.ModelSpaceIsCurrent, CDbl(SysVarHandler.GetVar("DIMSCALE")), 1.0)
@@ -281,8 +281,8 @@ Public Class ExtractMethods
         Catch ex As System.Exception
             ex.Rethrow
         Finally
-            _progressbar?.Dispose()
-            _progressbar = Nothing
+            Progressbar?.Dispose()
+            Progressbar = Nothing
         End Try
     End Sub
 
@@ -411,7 +411,7 @@ Public Class ExtractMethods
                     selectionData.AssignDefaultViewSort("Index")
                     Dim sortedSelectionData = selectionData.DefaultView.ToTable()
                     Dim table = tr.GetTable(tableIds(0), OpenMode.ForWrite)
-                    _progressbar.SetMaximum(sortedSelectionData.Rows.Count)
+                    Progressbar.SetMaximum(sortedSelectionData.Rows.Count)
                     Dim cellFormat = If(Translator.Selected = "EN", "{1}", "{0} / \fArial|b0|i1;{1}")
                     table.Cells(0, 0).TextString = cellFormat.Compose("LegendHeader_Legend".Translate, "Legend")
                     table.Cells(1, 0).TextString = cellFormat.Compose("LegendHeader_Symbol".Translate, "Symbol")
@@ -424,11 +424,11 @@ Public Class ExtractMethods
                     Try
                         Dim rowNumber = 1
                         For Each selectionRow In sortedSelectionData.Rows.ToArray
-                            If _progressbar?.CancelPressed Then Exit For
+                            If Progressbar?.CancelPressed Then Exit For
 
                             rowNumber += 1
                             Dim symbolName = selectionRow.GetString("BlockName")
-                            _progressbar?.PerformStep("Processing".Translate(symbolName))
+                            Progressbar?.PerformStep("Processing".Translate(symbolName))
                             table.InsertRows(rowNumber + 1, 6.75, 1)
                             table.Cells(rowNumber, 1).TextString = symbolName.EraseStart(1)
                             table.Cells(rowNumber, 2).TextString = selectionRow.GetString("Count")
@@ -505,7 +505,7 @@ Public Class ExtractMethods
                     selectionData.AssignDefaultViewSort("BlockName")
                     Dim sortedSelectionData = selectionData.DefaultView.ToTable()
                     Dim table = tr.GetTable(tableIds(0), OpenMode.ForWrite)
-                    _progressbar.SetMaximum(sortedSelectionData.Rows.Count)
+                    Progressbar.SetMaximum(sortedSelectionData.Rows.Count)
                     Dim cellFormat = If(Translator.Selected = "EN", "{1}", "{0} / \fArial|b0|i1;{1}")
                     table.Cells(0, 0).TextString = cellFormat.Compose("LegendHeader_Legend".Translate, "Legend")
                     table.Cells(1, 0).TextString = cellFormat.Compose("LegendHeader_Symbol".Translate, "Symbol")
@@ -517,12 +517,12 @@ Public Class ExtractMethods
                     Dim designCenterData = DesignHelper.GetAllDesignCenterData
                     Dim rowNumber = 1
                     For Each selectionRow In sortedSelectionData.Rows.ToArray
-                        If _progressbar?.CancelPressed Then Exit For
+                        If Progressbar?.CancelPressed Then Exit For
 
                         rowNumber += 1
                         Dim symbolName = selectionRow.GetString("BlockName")
                         Dim designCenterRow = designCenterData.Select("BlockName = '_{0}'".Compose(symbolName)).FirstOrDefault
-                        _progressbar?.PerformStep("Processing".Translate(symbolName))
+                        Progressbar?.PerformStep("Processing".Translate(symbolName))
                         table.InsertRows(rowNumber + 1, 6.75, 1)
                         table.Cells(rowNumber, 1).TextString = symbolName
                         table.Cells(rowNumber, 2).TextString = selectionRow.GetString("Count")

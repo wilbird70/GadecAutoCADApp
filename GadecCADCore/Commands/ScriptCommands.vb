@@ -23,7 +23,7 @@ Public Module ScriptCommands
     <CommandMethod("PROGRESSBAR_PERFORMSTEP")>
     Public Sub commandProgressbarPerformStep()
         Try
-            _progressbar?.PerformStep("{0}{1}".compose("File:".Translate, FileSystemHelper.LimitDisplayLengthFileName(ActiveDocument.Name, 60)))
+            Progressbar?.PerformStep("{0}{1}".compose("File:".Translate, FileSystemHelper.LimitDisplayLengthFileName(ActiveDocument.Name, 60)))
         Catch ex As System.Exception
             GadecException(ex)
         End Try
@@ -35,8 +35,8 @@ Public Module ScriptCommands
     <CommandMethod("PROGRESSBAR_DISPOSE")>
     Public Sub commandProgressbarHideAndClose()
         Try
-            _progressbar?.Dispose()
-            _progressbar = Nothing
+            Progressbar?.Dispose()
+            Progressbar = Nothing
         Catch ex As System.Exception
             GadecException(ex)
         End Try

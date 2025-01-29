@@ -41,7 +41,7 @@ Public Class SettingsPalette
     ''' <param name="e"></param>
     Private Sub Me_Click(sender As Object, e As EventArgs) Handles Me.Click
         Try
-            If _screenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
+            If ScreenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -294,7 +294,7 @@ Public Class SettingsPalette
     ''' </summary>
     Private Sub LanguagePictureBox_DoubleClick(sender As Object, e As EventArgs) Handles LanguagePictureBox.DoubleClick
         Try
-            _screenShot = Not _screenShot
+            ScreenShot = Not ScreenShot
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -428,7 +428,7 @@ Public Class SettingsPalette
     ''' <param name="e"></param>
     Private Sub ContextMenuStripVisibleChangedEventHandler(sender As Object, e As EventArgs)
         Try
-            If _screenShot Then
+            If ScreenShot Then
                 Dim toolStrip = DirectCast(sender, ToolStrip)
                 If toolStrip.Visible Then ImageHelper.GetScreenShot(toolStrip.Location, toolStrip.Size)
             End If

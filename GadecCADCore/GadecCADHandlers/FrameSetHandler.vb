@@ -130,20 +130,20 @@ Public Class FrameSetHandler
     ''' Reads the data from the opened and/or modified documents.
     ''' </summary>
     Private Sub ReadDataFromOpenedAndModifiedDocuments()
-        _progressbar?.Dispose()
+        Progressbar?.Dispose()
         If _folderHasWritePermission And _readFilesForXmlFrameSet.Count > 4 Then
-            _progressbar = New ProgressShow("ReadingDocuments".Translate, _readFilesForXmlFrameSet.Count)
+            Progressbar = New ProgressShow("ReadingDocuments".Translate, _readFilesForXmlFrameSet.Count)
         End If
         For Each file In _readFilesForNewFrameSet
             Dim db As Database = Nothing
             Try
                 Select Case True
-                    Case _progressbar?.CancelPressed 'drawing stays Nothing
+                    Case Progressbar?.CancelPressed 'drawing stays Nothing
                     Case _documents.ContainsKey(file)
                         db = _documents(file).Database
                     Case Not _folderHasWritePermission 'drawing stays Nothing
                     Case Else
-                        _progressbar?.PerformStep("Reading".Translate(IO.Path.GetFileName(file)))
+                        Progressbar?.PerformStep("Reading".Translate(IO.Path.GetFileName(file)))
                         db = New Database(False, True)
                         db.ReadDwgFile(file, FileOpenMode.OpenForReadAndAllShare, True, "")
                 End Select
@@ -179,8 +179,8 @@ Public Class FrameSetHandler
                 db?.Dispose()
             End Try
         Next
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
     End Sub
 
     'private functions

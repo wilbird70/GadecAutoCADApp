@@ -106,7 +106,7 @@ Public Class PdfSharpHelper
         If Not System.IO.File.Exists(fileName) Then Return 0
 
         Try
-            Using sourceDoc = IO.PdfReader.Open(fileName, IO.PdfDocumentOpenMode.InformationOnly)
+            Using sourceDoc = IO.PdfReader.Open(fileName, IO.PdfDocumentOpenMode.Import)
                 Return sourceDoc.PageCount
             End Using
         Catch ex As Exception

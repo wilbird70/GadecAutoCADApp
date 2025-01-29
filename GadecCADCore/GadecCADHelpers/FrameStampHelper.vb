@@ -36,14 +36,14 @@ Public Class FrameStampHelper
         revisionData.TryAdd("Date1", revisionData("Date"))
         revisionData.TryAdd("Date2", revisionData("Date"))
         Try
-            If frameSelection.Count > 5 Then _progressbar = New ProgressShow("ProcessingDocuments".Translate, frameSelection.Count)
+            If frameSelection.Count > 5 Then Progressbar = New ProgressShow("ProcessingDocuments".Translate, frameSelection.Count)
             Dim filesFailedToSave = New List(Of String)
             Dim files = frameSelection.Keys.ToList
             For Each file In files
-                If _progressbar?.CancelPressed Then Exit For
+                If Progressbar?.CancelPressed Then Exit For
 
                 Dim fileName = IO.Path.GetFileName(file)
-                _progressbar?.PerformStep("Processing".Translate(fileName))
+                Progressbar?.PerformStep("Processing".Translate(fileName))
                 Dim lock As DocumentLock = Nothing
                 Dim db As Database = Nothing
                 Try
@@ -162,8 +162,8 @@ Public Class FrameStampHelper
             ex.AddData($"StatusData: {String.Join(", ", revisionData)}")
             ex.ReThrow
         Finally
-            _progressbar?.Dispose()
-            _progressbar = Nothing
+            Progressbar?.Dispose()
+            Progressbar = Nothing
         End Try
     End Sub
 
