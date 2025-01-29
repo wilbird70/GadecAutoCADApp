@@ -15,8 +15,8 @@ Public Class DocumentsHelper
     ''' <param name="documents">A list of documents.</param>
     ''' <param name="saveBeforeClose">If true, saves the documents first.</param>
     Public Shared Sub Close(documents As Document(), Optional saveBeforeClose As Boolean = False)
-        For i = 0 To documents.Count - 1
-            _progressbar?.SetText("Closing...".Translate(i + 1, documents.Count))
+        For i = 0 To documents.Length - 1
+            Progressbar?.SetText("Closing...".Translate(i + 1, documents.Length))
             Select Case saveBeforeClose
                 Case True : documents(i)?.CloseAndSave(documents(i)?.Name)
                 Case Else : documents(i)?.CloseAndDiscard()

@@ -82,10 +82,24 @@ Public Class XrefHelper
     ''' <param name="path">The file to check.</param>
     ''' <returns>True if found within the time-out, otherwise false.</returns>
     Private Shared Function fileExistsFast(ByVal path As String) As Boolean
-        Dim output = False
-        Dim thread = New Thread(New ThreadStart(Sub() output = IO.File.Exists(path)))
+        Dim cancellationTokenSource As New CancellationTokenSource()
+        Dim output As Boolean = False
+
+        ' Maak een nieuwe thread die de file check uitvoert
+        Dim thread = New Thread(New ThreadStart(Sub()
+                                                    If Not cancellationTokenSource.Token.IsCancellationRequested Then
+                                                        output = IO.File.Exists(path)
+                                                    End If
+                                                End Sub))
+
         thread.Start()
-        If Not thread.Join(500) Then thread.Abort()
+
+        ' Wacht maximaal 500 milliseconden, indien niet gereed, annuleer de thread
+        If Not thread.Join(500) Then
+            cancellationTokenSource.Cancel() ' Annuleer de thread
+            thread.Join() ' Wacht tot thread stopt na annulering
+        End If
+
         Return output
     End Function
 

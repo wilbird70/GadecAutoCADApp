@@ -61,7 +61,7 @@ Public Class ListBoxDialog
     ''' <param name="e"></param>
     Private Sub Me_Click(sender As Object, e As EventArgs) Handles Me.Click
         Try
-            If _screenShot Then ImageHelper.GetScreenShot(Me.Location, Me.Size)
+            If ScreenShot Then ImageHelper.GetScreenShot(Me.Location, Me.Size)
         Catch ex As Exception
             GadecException(ex)
         End Try

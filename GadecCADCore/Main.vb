@@ -3,23 +3,20 @@ Imports Autodesk.AutoCAD.ApplicationServices
 Imports Autodesk.AutoCAD.EditorInput
 Imports GadecCADCore.Extensions
 
-''' <summary>
-''' <para>Provides the main methods for the <see cref="GadecCAD"/> application.</para>
-''' <para></para>
-''' </summary>
+<Assembly: Runtime.Versioning.SupportedOSPlatform("windows")>
 Public Module Main
     ''' <summary>
     ''' A public field that contains a dialogbox with progressbar.
     ''' </summary>
-    Public _progressbar As ProgressShow
+    Public Property Progressbar As ProgressShow
     ''' <summary>
     ''' A public field that contains a dictionary for holding the group prefix length for each project (folder).
     ''' </summary>
-    Public _prefixLengths As New Dictionary(Of String, Integer) From {{"", -1}}
+    Public Property PrefixLengths As New Dictionary(Of String, Integer) From {{"", -1}}
     ''' <summary>
     ''' A public field that specifies whether to take a screenshot.
     ''' </summary>
-    Public _screenShot As Boolean = False
+    Public Property ScreenShot As Boolean = False
 
     'subs
 

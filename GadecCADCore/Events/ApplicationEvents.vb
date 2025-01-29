@@ -87,7 +87,7 @@ Public Class ApplicationEvents
             doc.DocumentEvents
             Dim frameIdCollections = FrameHelper.GetFrameIdCollections(doc.FrameData)
             XRecordObjectIdsHelper.Update(doc, "{Company}".Compose, "FrameWorkIDs", frameIdCollections)
-            _prefixLengths.TryAdd(doc.GetPath, -1)
+            PrefixLengths.TryAdd(doc.GetPath, -1)
 
         Catch ex As System.Exception
             GadecException(ex)

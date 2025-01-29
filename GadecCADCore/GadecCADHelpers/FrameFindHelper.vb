@@ -19,18 +19,18 @@ Public Class FrameFindHelper
     Public Shared Sub SearchThroughDocuments(files As String())
         Dim documents = DocumentsHelper.GetDocumentNames()
         Dim documentsToClose = New List(Of Document)
-        If files.Count > 5 Then _progressbar = New ProgressShow("Starting...".Translate, files.Count)
+        If files.Count > 5 Then Progressbar = New ProgressShow("Starting...".Translate, files.Count)
         For Each file In files
-            If _progressbar?.CancelPressed Then Exit For
+            If Progressbar?.CancelPressed Then Exit For
 
-            _progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+            Progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
             If documents.Contains(file) Then Continue For
 
             Dim doc = DocumentsHelper.Open(file, False)
             If IsNothing(doc) Then Continue For
 
             documentsToClose.Add(doc)
-            _progressbar?.SetText("{0}{1}".Compose("Reading...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+            Progressbar?.SetText("{0}{1}".Compose("Reading...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
             Dim frameData = doc.FrameData
             Dim frameIdCollections = FrameHelper.GetFrameIdCollections(doc.FrameData)
             XRecordObjectIdsHelper.Update(doc, "{Company}".Compose, "FrameWorkIDs", frameIdCollections)
@@ -40,8 +40,8 @@ Public Class FrameFindHelper
             documentsToClose.Clear()
         Next
         DocumentsHelper.Close(documentsToClose.ToArray, True)
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
     End Sub
 
     'functions

@@ -52,7 +52,7 @@ Public Class FilesPalette
     ''' <param name="e"></param>
     Private Sub Me_Click(sender As Object, e As EventArgs) Handles Me.Click
         Try
-            If _screenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
+            If ScreenShot Then ImageHelper.GetScreenShot(PaletteHelper.GetLocation, PaletteHelper.GetSize)
         Catch ex As Exception
             GadecException(ex)
         End Try
@@ -431,7 +431,7 @@ Public Class FilesPalette
     ''' <param name="e"></param>
     Private Sub ContextMenuStripVisibleChangedEventHandler(sender As Object, e As EventArgs)
         Try
-            If _screenShot Then
+            If ScreenShot Then
                 Dim toolStrip = TryCast(sender, ToolStrip)
                 If Not toolStrip.Visible Then ImageHelper.GetScreenShot(toolStrip.Location, toolStrip.Size)
             End If

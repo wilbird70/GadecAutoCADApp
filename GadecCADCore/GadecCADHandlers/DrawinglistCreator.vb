@@ -85,22 +85,22 @@ Public Class DrawinglistCreator
     ''' <param name="attachments">A list of attachments that will be listed in the drawinglist.</param>
     ''' <param name="onlyAttachments">If true, no drawings will be listed in the drawinglist.</param>
     Public Sub Create(Optional addStatusStamp As Boolean = False, Optional attachments As String() = Nothing, Optional onlyAttachments As Boolean = False)
-        _progressbar = New ProgressShow("Generate Coversheet and Drawinglist".Translate, 8, True)
+        Progressbar = New ProgressShow("Generate Coversheet and Drawinglist".Translate, 8, True)
         Dim newDatabase = New Database(True, True)
-        _progressbar?.PerformStep()
+        Progressbar?.PerformStep()
         Using tr = newDatabase.TransactionManager.StartTransaction
             Using import = New DefinitionsImporter("{Resources}\TableBlocks.dwg".Compose)
                 Dim coverDefinitionId = import.ImportDefinition(newDatabase, "Coversheet")
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 Dim listDefinitionId = import.ImportDefinition(newDatabase, "Drawinglist")
                 If coverDefinitionId = ObjectId.Null Or listDefinitionId = ObjectId.Null Then
-                    _progressbar?.Dispose()
-                    _progressbar = Nothing
+                    Progressbar?.Dispose()
+                    Progressbar = Nothing
                     newDatabase.Dispose()
                     Exit Sub
                 End If
 
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 Select Case addStatusStamp
                     Case True
                         _ProjectName = _drawinglistHeader.GetString("ProjectName")
@@ -122,7 +122,7 @@ Public Class DrawinglistCreator
                         _ProjectName = "{0}_DLST".Compose(_drawinglistHeader.GetString("System"))
                         _drawinglistHeader.SetString("Drawing", _ProjectName)
                 End Select
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 Dim coverDefinition = tr.GetBlockTableRecord(coverDefinitionId, OpenMode.ForWrite)
                 Dim coverTableIds = From objectId In coverDefinition.ToArray Where objectId.ObjectClass.DxfName.ToLower = "acad_table" Select objectId
                 If coverTableIds.Count > 0 Then
@@ -132,7 +132,7 @@ Public Class DrawinglistCreator
                     table.Cells(9, 0).TextString = "Enduser".Translate
                     WriteCoversheet(table, _drawinglistHeader)
                 End If
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 Dim listDefinition = tr.GetBlockTableRecord(listDefinitionId, OpenMode.ForWrite)
                 Dim listTableIds = From objectId In listDefinition.ToArray Where objectId.ObjectClass.DxfName.ToLower = "acad_table" Select objectId
                 If listTableIds.Count > 0 Then
@@ -176,15 +176,15 @@ Public Class DrawinglistCreator
                         If onlyAttachments Then table.DeleteRows(2, 3)
                     End If
                 End If
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 ReferenceHelper.InsertReference(newDatabase, SymbolUtilityServices.GetBlockModelSpaceId(newDatabase), newDatabase.Clayer, coverDefinitionId, New Point3d(0, 0, 0))
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 ReferenceHelper.InsertReference(newDatabase, SymbolUtilityServices.GetBlockModelSpaceId(newDatabase), newDatabase.Clayer, listDefinitionId, New Point3d(0, 0, 0))
                 _drawinglistHeader("Sheets") = Int(_selectedFrameList.Rows.Count / 18) + 2
-                _progressbar?.PerformStep()
+                Progressbar?.PerformStep()
                 FrameInsertHelper.InsertFrames(newDatabase, _drawinglistHeader)
-                _progressbar?.Dispose()
-                _progressbar = Nothing
+                Progressbar?.Dispose()
+                Progressbar = Nothing
             End Using
             tr.Commit()
         End Using

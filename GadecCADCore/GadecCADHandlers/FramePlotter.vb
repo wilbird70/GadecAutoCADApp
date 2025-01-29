@@ -133,10 +133,10 @@ Public Class FramePlotter
         Dim output = New List(Of String)
         Dim errorMessage = New List(Of String)
         Dim documentsToClose = New List(Of Document)
-        If _frameSelection.Count > 5 Then _progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
+        If _frameSelection.Count > 5 Then Progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
         Dim files = _frameSelection.Keys.ToList
         For Each file In files
-            If _progressbar?.CancelPressed Then Exit For
+            If Progressbar?.CancelPressed Then Exit For
 
             Dim doc = DocumentsHelper.Open(file)
             If IsNothing(doc) Then Continue For
@@ -144,7 +144,7 @@ Public Class FramePlotter
             If doc.WasClosed Then documentsToClose.Add(doc)
             Dim frameData = doc.FrameData.Copy
             frameData.AssignPrimaryKey("Num")
-            _progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
+            Progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
             SysVarHandler.SetVar(doc, "BACKGROUNDPLOT", 0)
             Dim plotSession = _frameSelection(file).Cut
             Using doc.LockDocument
@@ -185,8 +185,8 @@ Public Class FramePlotter
             documentsToClose.Clear()
         Next
         DocumentsHelper.Close(documentsToClose.ToArray)
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
         If errorMessage.Count > 0 Then MsgBox(String.Join(vbLf, errorMessage))
         Return output.ToArray
     End Function
@@ -203,16 +203,16 @@ Public Class FramePlotter
         Dim output = New List(Of String)
         Dim errorMessage = New List(Of String)
         Dim documentsToClose = New List(Of Document)
-        If _frameSelection.Count > 5 Then _progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
+        If _frameSelection.Count > 5 Then Progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
         Dim files = _frameSelection.Keys.ToList
         For Each file In files
-            If _progressbar?.CancelPressed Then Exit For
+            If Progressbar?.CancelPressed Then Exit For
 
             Dim doc = DocumentsHelper.Open(file)
             If IsNothing(doc) Then Continue For
 
             If doc.WasClosed Then documentsToClose.Add(doc)
-            _progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
+            Progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
             Dim frameData = doc.FrameData.Copy
             frameData.AssignPrimaryKey("Num")
             Dim plotSessions = GetPlotSessions(file, frameData)
@@ -258,8 +258,8 @@ Public Class FramePlotter
             documentsToClose.Clear()
         Next
         DocumentsHelper.Close(documentsToClose.ToArray)
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
         If errorMessage.Count > 0 Then MsgBox(String.Join(vbLf, errorMessage))
         Return output.ToArray
     End Function
@@ -315,10 +315,10 @@ Public Class FramePlotter
     ''' </summary>
     Public Sub SetPlotLayout()
         Dim documentsToClose = New List(Of Document)
-        If _frameSelection.Count > 5 Then _progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
+        If _frameSelection.Count > 5 Then Progressbar = New ProgressShow("ProcessingDocuments".Translate, _frameSelection.Count)
         Dim files = _frameSelection.Keys.ToList
         For Each file In files
-            If _progressbar?.CancelPressed Then Exit For
+            If Progressbar?.CancelPressed Then Exit For
 
             Dim doc = DocumentsHelper.Open(file)
             If IsNothing(doc) Then Continue For
@@ -326,7 +326,7 @@ Public Class FramePlotter
             If doc.WasClosed Then documentsToClose.Add(doc)
             Dim frameData = doc.FrameData.Copy
             frameData.AssignPrimaryKey("Num")
-            _progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
+            Progressbar?.PerformStep("Processing".Translate(doc.GetFileName))
             Using doc.LockDocument
                 Dim plotSesion = _frameSelection(file).Cut
                 For Each number In plotSesion
@@ -352,8 +352,8 @@ Public Class FramePlotter
             documentsToClose.Clear()
         Next
         DocumentsHelper.Close(documentsToClose.ToArray, True)
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
     End Sub
 
     'frameless
@@ -377,16 +377,16 @@ Public Class FramePlotter
 
         Dim output = New List(Of String)
         Dim documentsToClose = New List(Of Document)
-        If _frameSelection.Count > 5 Then _progressbar = New ProgressShow("Starting...".Translate, _frameSelection.Count)
+        If _frameSelection.Count > 5 Then Progressbar = New ProgressShow("Starting...".Translate, _frameSelection.Count)
         Dim files = _frameSelection.Keys.ToList
         For Each file In files
-            If _progressbar?.CancelPressed Then Exit For
+            If Progressbar?.CancelPressed Then Exit For
 
-            _progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+            Progressbar?.PerformStep("{0}{1}".Compose("Opening...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
             Dim doc = DocumentsHelper.Open(file)
             If IsNothing(doc) Then Continue For
 
-            _progressbar?.SetText("{0}{1}".Compose("Plotting...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
+            Progressbar?.SetText("{0}{1}".Compose("Plotting...".Translate, FileSystemHelper.LimitDisplayLengthFileName(file, 60)))
             If doc.WasClosed Then documentsToClose.Add(doc)
             Select Case plotOption
                 Case "NormalToPLT", "ThinToPLT"
@@ -401,8 +401,8 @@ Public Class FramePlotter
             documentsToClose.Clear()
         Next
         DocumentsHelper.Close(documentsToClose.ToArray)
-        _progressbar?.Dispose()
-        _progressbar = Nothing
+        Progressbar?.Dispose()
+        Progressbar = Nothing
         Return output.ToArray
     End Function
 

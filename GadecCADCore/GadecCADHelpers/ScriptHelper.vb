@@ -42,13 +42,13 @@ Public Class ScriptHelper
 
                 Dim scriptFile = "{AppDataFolder}\ScriptVarious.scr".Compose
                 IO.File.WriteAllLines(scriptFile, script)
-                _progressbar = New ProgressShow("Starting...".Translate, fileNames.Count, True)
+                Progressbar = New ProgressShow("Starting...".Translate, fileNames.Count, True)
                 Try
                     _HelpDocument = DocumentsHelper.CreateNew()
                     _HelpDocument.SendString("(command {Q}_SCRIPT{Q} {Q}{0}{Q}) ".Compose(scriptFile.Replace("\", "\\")))
                 Catch ex As System.Exception
-                    _progressbar?.Dispose()
-                    _progressbar = Nothing
+                    Progressbar?.Dispose()
+                    Progressbar = Nothing
                     ex.AddData($"Script: {selectedScript}")
                     ex.AddData($"{fileNames.Count} files")
                     ex.Rethrow
