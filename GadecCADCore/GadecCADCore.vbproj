@@ -10,7 +10,7 @@
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<OutputPath>..\..\..\..\Program Files\Autodesk\ApplicationPlugins\Gadec.bundle\Contents\</OutputPath>
+		<OutputPath>C:\Program Files\Autodesk\ApplicationPlugins\GadecCore.bundle\Contents</OutputPath>
 		<DocumentationFile>
 		</DocumentationFile>
 		<NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
@@ -25,29 +25,32 @@
 		<AssemblyVersion>2022.4.0.94</AssemblyVersion>
 		<FileVersion>1.0.0.0</FileVersion>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <OutputPath>C:\Program Files\Autodesk\ApplicationPlugins\GadecCore.bundle\Contents</OutputPath>
+	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="accoremgd">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\accoremgd.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\accoremgd.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="AcCui">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\AcCui.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\AcCui.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="acdbmgd">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\acdbmgd.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\acdbmgd.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="acmgd">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\acmgd.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\acmgd.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="Autodesk.AutoCAD.Interop">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\Autodesk.AutoCAD.Interop.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\Autodesk.AutoCAD.Interop.dll</HintPath>
 			<EmbedInteropTypes>True</EmbedInteropTypes>
 		</Reference>
 		<Reference Include="Autodesk.AutoCAD.Interop.Common">
-			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2024\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
+			<HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2025\Autodesk.AutoCAD.Interop.Common.dll</HintPath>
 			<EmbedInteropTypes>True</EmbedInteropTypes>
 		</Reference>
 	</ItemGroup>
@@ -144,6 +147,9 @@
 		<None Update="My Project\Application.myapp">
 			<Generator>MyApplicationCodeGenerator</Generator>
 			<LastGenOutput>Application.Designer.vb</LastGenOutput>
+		</None>
+		<None Update="My Project\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
 		</None>
 	</ItemGroup>
 	<ItemGroup>

@@ -30,208 +30,219 @@ Partial Class DesignCenter
         Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle5 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(DesignCenter))
-        Me.PicturePanel = New Panel()
-        Me.ltCancel = New Button()
-        Me.ltOK = New Button()
-        Me.ScaleComboBox = New ComboBox()
-        Me.ltScale = New Label()
-        Me.ModulesDataGridView = New DataGridView()
-        Me.PagesDataGridView = New DataGridView()
-        Me.ItemsDataGridView = New DataGridView()
-        Me.ltDescription = New Label()
-        CType(Me.ModulesDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.PagesDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ItemsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SuspendLayout()
-        '
-        'PicturePanel
-        '
-        Me.PicturePanel.AutoScroll = True
-        Me.PicturePanel.BackColor = System.Drawing.SystemColors.Window
-        Me.PicturePanel.BorderStyle = BorderStyle.FixedSingle
-        Me.PicturePanel.Location = New System.Drawing.Point(138, 12)
-        Me.PicturePanel.Name = "PicturePanel"
-        Me.PicturePanel.Size = New System.Drawing.Size(502, 421)
-        Me.PicturePanel.TabIndex = 5
-        '
-        'ltCancel
-        '
-        Me.ltCancel.DialogResult = DialogResult.Cancel
-        Me.ltCancel.Location = New System.Drawing.Point(555, 439)
-        Me.ltCancel.Name = "ltCancel"
-        Me.ltCancel.Size = New System.Drawing.Size(85, 23)
-        Me.ltCancel.TabIndex = 6
-        Me.ltCancel.Text = "XXX"
-        Me.ltCancel.UseVisualStyleBackColor = True
-        '
-        'ltOK
-        '
-        Me.ltOK.DialogResult = DialogResult.OK
-        Me.ltOK.Location = New System.Drawing.Point(463, 439)
-        Me.ltOK.Name = "ltOK"
-        Me.ltOK.Size = New System.Drawing.Size(86, 23)
-        Me.ltOK.TabIndex = 7
-        Me.ltOK.Text = "XXX"
-        Me.ltOK.UseVisualStyleBackColor = True
-        '
-        'ScaleComboBox
-        '
-        Me.ScaleComboBox.FormattingEnabled = True
-        Me.ScaleComboBox.Location = New System.Drawing.Point(407, 441)
-        Me.ScaleComboBox.Name = "ScaleComboBox"
-        Me.ScaleComboBox.Size = New System.Drawing.Size(50, 21)
-        Me.ScaleComboBox.TabIndex = 12
-        '
-        'ltScale
-        '
-        Me.ltScale.Location = New System.Drawing.Point(351, 443)
-        Me.ltScale.Name = "ltScale"
-        Me.ltScale.Size = New System.Drawing.Size(50, 15)
-        Me.ltScale.TabIndex = 13
-        Me.ltScale.Text = "XXX"
-        Me.ltScale.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        'ModulesDataGridView
-        '
-        Me.ModulesDataGridView.AllowUserToAddRows = False
-        Me.ModulesDataGridView.AllowUserToDeleteRows = False
-        Me.ModulesDataGridView.AllowUserToResizeColumns = False
-        Me.ModulesDataGridView.AllowUserToResizeRows = False
+        PicturePanel = New Panel()
+        ltCancel = New Button()
+        ltOK = New Button()
+        ScaleComboBox = New ComboBox()
+        ltScale = New Label()
+        ModulesDataGridView = New DataGridView()
+        PagesDataGridView = New DataGridView()
+        ItemsDataGridView = New DataGridView()
+        ltDescription = New Label()
+        CType(ModulesDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(PagesDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(ItemsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        SuspendLayout()
+        ' 
+        ' PicturePanel
+        ' 
+        PicturePanel.AutoScroll = True
+        PicturePanel.BackColor = Drawing.SystemColors.Window
+        PicturePanel.BorderStyle = BorderStyle.FixedSingle
+        PicturePanel.Location = New System.Drawing.Point(161, 14)
+        PicturePanel.Margin = New Padding(4, 3, 4, 3)
+        PicturePanel.Name = "PicturePanel"
+        PicturePanel.Size = New System.Drawing.Size(585, 485)
+        PicturePanel.TabIndex = 5
+        ' 
+        ' ltCancel
+        ' 
+        ltCancel.DialogResult = DialogResult.Cancel
+        ltCancel.Location = New System.Drawing.Point(648, 507)
+        ltCancel.Margin = New Padding(4, 3, 4, 3)
+        ltCancel.Name = "ltCancel"
+        ltCancel.Size = New System.Drawing.Size(99, 27)
+        ltCancel.TabIndex = 6
+        ltCancel.Text = "XXX"
+        ltCancel.UseVisualStyleBackColor = True
+        ' 
+        ' ltOK
+        ' 
+        ltOK.DialogResult = DialogResult.OK
+        ltOK.Location = New System.Drawing.Point(540, 507)
+        ltOK.Margin = New Padding(4, 3, 4, 3)
+        ltOK.Name = "ltOK"
+        ltOK.Size = New System.Drawing.Size(100, 27)
+        ltOK.TabIndex = 7
+        ltOK.Text = "XXX"
+        ltOK.UseVisualStyleBackColor = True
+        ' 
+        ' ScaleComboBox
+        ' 
+        ScaleComboBox.FormattingEnabled = True
+        ScaleComboBox.Location = New System.Drawing.Point(475, 509)
+        ScaleComboBox.Margin = New Padding(4, 3, 4, 3)
+        ScaleComboBox.Name = "ScaleComboBox"
+        ScaleComboBox.Size = New System.Drawing.Size(58, 23)
+        ScaleComboBox.TabIndex = 12
+        ' 
+        ' ltScale
+        ' 
+        ltScale.Location = New System.Drawing.Point(410, 511)
+        ltScale.Margin = New Padding(4, 0, 4, 0)
+        ltScale.Name = "ltScale"
+        ltScale.Size = New System.Drawing.Size(58, 17)
+        ltScale.TabIndex = 13
+        ltScale.Text = "XXX"
+        ltScale.TextAlign = Drawing.ContentAlignment.MiddleRight
+        ' 
+        ' ModulesDataGridView
+        ' 
+        ModulesDataGridView.AllowUserToAddRows = False
+        ModulesDataGridView.AllowUserToDeleteRows = False
+        ModulesDataGridView.AllowUserToResizeColumns = False
+        ModulesDataGridView.AllowUserToResizeRows = False
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.[True]
-        Me.ModulesDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
-        Me.ModulesDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.ModulesDataGridView.ColumnHeadersVisible = False
+        DataGridViewCellStyle1.BackColor = Drawing.SystemColors.Control
+        DataGridViewCellStyle1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle1.ForeColor = Drawing.SystemColors.WindowText
+        DataGridViewCellStyle1.SelectionBackColor = Drawing.SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
+        ModulesDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        ModulesDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        ModulesDataGridView.ColumnHeadersVisible = False
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Arial Narrow", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.[False]
-        Me.ModulesDataGridView.DefaultCellStyle = DataGridViewCellStyle2
-        Me.ModulesDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
-        Me.ModulesDataGridView.Location = New System.Drawing.Point(12, 12)
-        Me.ModulesDataGridView.MultiSelect = False
-        Me.ModulesDataGridView.Name = "ModulesDataGridView"
-        Me.ModulesDataGridView.RowHeadersVisible = False
-        Me.ModulesDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White
-        Me.ModulesDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ModulesDataGridView.RowTemplate.Height = 15
-        Me.ModulesDataGridView.RowTemplate.ReadOnly = True
-        Me.ModulesDataGridView.ScrollBars = ScrollBars.Vertical
-        Me.ModulesDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        Me.ModulesDataGridView.ShowCellToolTips = False
-        Me.ModulesDataGridView.Size = New System.Drawing.Size(120, 104)
-        Me.ModulesDataGridView.TabIndex = 41
-        '
-        'PagesDataGridView
-        '
-        Me.PagesDataGridView.AllowUserToAddRows = False
-        Me.PagesDataGridView.AllowUserToDeleteRows = False
-        Me.PagesDataGridView.AllowUserToResizeColumns = False
-        Me.PagesDataGridView.AllowUserToResizeRows = False
+        DataGridViewCellStyle2.BackColor = Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Arial Narrow", 6.75F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle2.ForeColor = Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = Drawing.SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
+        ModulesDataGridView.DefaultCellStyle = DataGridViewCellStyle2
+        ModulesDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
+        ModulesDataGridView.Location = New System.Drawing.Point(14, 14)
+        ModulesDataGridView.Margin = New Padding(4, 3, 4, 3)
+        ModulesDataGridView.MultiSelect = False
+        ModulesDataGridView.Name = "ModulesDataGridView"
+        ModulesDataGridView.RowHeadersVisible = False
+        ModulesDataGridView.RowTemplate.DefaultCellStyle.BackColor = Drawing.Color.White
+        ModulesDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        ModulesDataGridView.RowTemplate.Height = 15
+        ModulesDataGridView.RowTemplate.ReadOnly = True
+        ModulesDataGridView.ScrollBars = ScrollBars.Vertical
+        ModulesDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        ModulesDataGridView.ShowCellToolTips = False
+        ModulesDataGridView.Size = New System.Drawing.Size(140, 120)
+        ModulesDataGridView.TabIndex = 41
+        ' 
+        ' PagesDataGridView
+        ' 
+        PagesDataGridView.AllowUserToAddRows = False
+        PagesDataGridView.AllowUserToDeleteRows = False
+        PagesDataGridView.AllowUserToResizeColumns = False
+        PagesDataGridView.AllowUserToResizeRows = False
         DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.[True]
-        Me.PagesDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle3
-        Me.PagesDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.PagesDataGridView.ColumnHeadersVisible = False
+        DataGridViewCellStyle3.BackColor = Drawing.SystemColors.Control
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle3.ForeColor = Drawing.SystemColors.WindowText
+        DataGridViewCellStyle3.SelectionBackColor = Drawing.SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
+        PagesDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle3
+        PagesDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        PagesDataGridView.ColumnHeadersVisible = False
         DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle4.Font = New System.Drawing.Font("Arial Narrow", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle4.WrapMode = DataGridViewTriState.[False]
-        Me.PagesDataGridView.DefaultCellStyle = DataGridViewCellStyle4
-        Me.PagesDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
-        Me.PagesDataGridView.Location = New System.Drawing.Point(12, 122)
-        Me.PagesDataGridView.MultiSelect = False
-        Me.PagesDataGridView.Name = "PagesDataGridView"
-        Me.PagesDataGridView.RowHeadersVisible = False
-        Me.PagesDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White
-        Me.PagesDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.PagesDataGridView.RowTemplate.Height = 15
-        Me.PagesDataGridView.RowTemplate.ReadOnly = True
-        Me.PagesDataGridView.ScrollBars = ScrollBars.Vertical
-        Me.PagesDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        Me.PagesDataGridView.ShowCellToolTips = False
-        Me.PagesDataGridView.Size = New System.Drawing.Size(120, 311)
-        Me.PagesDataGridView.TabIndex = 42
-        '
-        'ItemsDataGridView
-        '
-        Me.ItemsDataGridView.AllowUserToAddRows = False
-        Me.ItemsDataGridView.AllowUserToDeleteRows = False
-        Me.ItemsDataGridView.AllowUserToResizeColumns = False
-        Me.ItemsDataGridView.AllowUserToResizeRows = False
+        DataGridViewCellStyle4.BackColor = Drawing.SystemColors.Window
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Arial Narrow", 6.75F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle4.ForeColor = Drawing.SystemColors.ControlText
+        DataGridViewCellStyle4.SelectionBackColor = Drawing.SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = DataGridViewTriState.False
+        PagesDataGridView.DefaultCellStyle = DataGridViewCellStyle4
+        PagesDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
+        PagesDataGridView.Location = New System.Drawing.Point(14, 141)
+        PagesDataGridView.Margin = New Padding(4, 3, 4, 3)
+        PagesDataGridView.MultiSelect = False
+        PagesDataGridView.Name = "PagesDataGridView"
+        PagesDataGridView.RowHeadersVisible = False
+        PagesDataGridView.RowTemplate.DefaultCellStyle.BackColor = Drawing.Color.White
+        PagesDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        PagesDataGridView.RowTemplate.Height = 15
+        PagesDataGridView.RowTemplate.ReadOnly = True
+        PagesDataGridView.ScrollBars = ScrollBars.Vertical
+        PagesDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        PagesDataGridView.ShowCellToolTips = False
+        PagesDataGridView.Size = New System.Drawing.Size(140, 359)
+        PagesDataGridView.TabIndex = 42
+        ' 
+        ' ItemsDataGridView
+        ' 
+        ItemsDataGridView.AllowUserToAddRows = False
+        ItemsDataGridView.AllowUserToDeleteRows = False
+        ItemsDataGridView.AllowUserToResizeColumns = False
+        ItemsDataGridView.AllowUserToResizeRows = False
         DataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control
-        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText
-        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.[True]
-        Me.ItemsDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
-        Me.ItemsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.ItemsDataGridView.ColumnHeadersVisible = False
-        Me.ItemsDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
-        Me.ItemsDataGridView.Location = New System.Drawing.Point(138, 12)
-        Me.ItemsDataGridView.Name = "ItemsDataGridView"
-        Me.ItemsDataGridView.RowHeadersVisible = False
-        Me.ItemsDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White
-        Me.ItemsDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ItemsDataGridView.RowTemplate.Height = 15
-        Me.ItemsDataGridView.RowTemplate.ReadOnly = True
-        Me.ItemsDataGridView.ScrollBars = ScrollBars.Vertical
-        Me.ItemsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        Me.ItemsDataGridView.ShowCellToolTips = False
-        Me.ItemsDataGridView.Size = New System.Drawing.Size(502, 421)
-        Me.ItemsDataGridView.TabIndex = 45
-        '
-        'ltDescription
-        '
-        Me.ltDescription.Location = New System.Drawing.Point(12, 444)
-        Me.ltDescription.Name = "ltDescription"
-        Me.ltDescription.Size = New System.Drawing.Size(350, 15)
-        Me.ltDescription.TabIndex = 46
-        Me.ltDescription.Text = "XXX"
-        Me.ltDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        '
-        'DesignCenter
-        '
-        Me.AcceptButton = Me.ltOK
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
-        Me.AutoScaleMode = AutoScaleMode.Font
-        Me.CancelButton = Me.ltCancel
-        Me.ClientSize = New System.Drawing.Size(652, 474)
-        Me.Controls.Add(Me.ltDescription)
-        Me.Controls.Add(Me.ItemsDataGridView)
-        Me.Controls.Add(Me.PagesDataGridView)
-        Me.Controls.Add(Me.ModulesDataGridView)
-        Me.Controls.Add(Me.ltScale)
-        Me.Controls.Add(Me.ScaleComboBox)
-        Me.Controls.Add(Me.ltOK)
-        Me.Controls.Add(Me.ltCancel)
-        Me.Controls.Add(Me.PicturePanel)
-        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Name = "DesignCenter"
-        Me.StartPosition = FormStartPosition.CenterParent
-        Me.Text = "XXX"
-        CType(Me.ModulesDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.PagesDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ItemsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.ResumeLayout(False)
+        DataGridViewCellStyle5.BackColor = Drawing.SystemColors.Control
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        DataGridViewCellStyle5.ForeColor = Drawing.SystemColors.WindowText
+        DataGridViewCellStyle5.SelectionBackColor = Drawing.SystemColors.Highlight
+        DataGridViewCellStyle5.SelectionForeColor = Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle5.WrapMode = DataGridViewTriState.True
+        ItemsDataGridView.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
+        ItemsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        ItemsDataGridView.ColumnHeadersVisible = False
+        ItemsDataGridView.EditMode = DataGridViewEditMode.EditProgrammatically
+        ItemsDataGridView.Location = New System.Drawing.Point(161, 14)
+        ItemsDataGridView.Margin = New Padding(4, 3, 4, 3)
+        ItemsDataGridView.Name = "ItemsDataGridView"
+        ItemsDataGridView.RowHeadersVisible = False
+        ItemsDataGridView.RowTemplate.DefaultCellStyle.BackColor = Drawing.Color.White
+        ItemsDataGridView.RowTemplate.DefaultCellStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25F, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Point, CByte(0))
+        ItemsDataGridView.RowTemplate.Height = 15
+        ItemsDataGridView.RowTemplate.ReadOnly = True
+        ItemsDataGridView.ScrollBars = ScrollBars.Vertical
+        ItemsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        ItemsDataGridView.ShowCellToolTips = False
+        ItemsDataGridView.Size = New System.Drawing.Size(586, 486)
+        ItemsDataGridView.TabIndex = 45
+        ' 
+        ' ltDescription
+        ' 
+        ltDescription.Location = New System.Drawing.Point(14, 512)
+        ltDescription.Margin = New Padding(4, 0, 4, 0)
+        ltDescription.Name = "ltDescription"
+        ltDescription.Size = New System.Drawing.Size(408, 17)
+        ltDescription.TabIndex = 46
+        ltDescription.Text = "XXX"
+        ltDescription.TextAlign = Drawing.ContentAlignment.MiddleLeft
+        ' 
+        ' DesignCenter
+        ' 
+        AcceptButton = ltOK
+        AutoScaleDimensions = New System.Drawing.SizeF(7F, 15F)
+        AutoScaleMode = AutoScaleMode.Font
+        BackColor = Drawing.Color.IndianRed
+        CancelButton = ltCancel
+        ClientSize = New System.Drawing.Size(761, 547)
+        Controls.Add(ltDescription)
+        Controls.Add(ItemsDataGridView)
+        Controls.Add(PagesDataGridView)
+        Controls.Add(ModulesDataGridView)
+        Controls.Add(ltScale)
+        Controls.Add(ScaleComboBox)
+        Controls.Add(ltOK)
+        Controls.Add(ltCancel)
+        Controls.Add(PicturePanel)
+        Icon = CType(resources.GetObject("$this.Icon"), Drawing.Icon)
+        Margin = New Padding(4, 3, 4, 3)
+        Name = "DesignCenter"
+        StartPosition = FormStartPosition.CenterParent
+        Text = "XXX"
+        CType(ModulesDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(PagesDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(ItemsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        ResumeLayout(False)
 
     End Sub
     Friend WithEvents PicturePanel As Panel

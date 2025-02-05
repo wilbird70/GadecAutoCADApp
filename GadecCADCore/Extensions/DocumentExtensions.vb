@@ -1,16 +1,11 @@
 ﻿'Gadec Engineerings Software (c) 2022
-Imports Autodesk.AutoCAD.ApplicationServices
 Imports System.Runtime.CompilerServices
+Imports Autodesk.AutoCAD.ApplicationServices
 
 Namespace Extensions
 
     Public Module DocumentExtensions
 
-        ''' <summary>
-        ''' Creates (if not exists) the <see cref="GadecCAD.DocumentEvents"/> for the document.
-        ''' </summary>
-        ''' <param name="eDocument"></param>
-        ''' <returns>The <see cref="GadecCAD.DocumentEvents"/>.</returns>
         <Extension()>
         Public Function DocumentEvents(ByVal eDocument As Document) As DocumentEvents
             Select Case eDocument.UserData.ContainsKey("DocumentEvents")
